@@ -201,6 +201,7 @@
           <button class="btn btn-gold" style="width:100%;padding:9px;font-size:13px" onclick="openUpgradeModal()">Ver plano Pro — R$19,90/mês</button>
         </div>
         <button class="clear-link" onclick="clearAll()">🗑 Limpar rota</button>
+        <button class="btn btn-primary" style="width:100%;padding:9px;font-size:13px;margin-top:4px" onclick="exportImage()">📸 Exportar imagem da rota</button>
       </div>
     </div>
     <div class="map-area">
@@ -461,9 +462,104 @@ function geoAdd(q){
   });
 }
 
+function exportImage(){
+  if(waypoints.length===0){alert('Adicione pontos na rota antes de exportar!');return;}
+  const MAPS_KEY='AIzaSyAr1Q-jwFyMH5Qwc8XPlzcvH_HJCmh1hwM';
+  const center=map.getCenter();
+  const zoom=map.getZoom();
+  const w=900,h=500;
+
+  // Build path for static map
+  const path='color:0xe94560ff|weight:4|'+waypoints.map(p=>p.lat+','+p.lng).join('|');
+  const markers=waypoints.map((p,i)=>'color:0x'+['e94560','f5a623','1D9E75','378ADD','a855f7','0ea5e9','f59e0b','10b981','ef4444','8b5cf6'][i%10]+'|label:'+(i+1)+'|'+p.lat+','+p.lng).join('&markers=');
+  const mapUrl='https://maps.googleapis.com/maps/api/staticmap?center='+center.lat()+','+center.lng()+'&zoom='+zoom+'&size='+w+'x'+h+'&path='+encodeURIComponent(path)+'&markers='+encodeURIComponent(markers.replace(/&markers=/g,'|'))+'&key='+MAPS_KEY;
+
+  // Build canvas card
+  const totalKm=document.getElementById('stat-km').textContent;
+  const totalTime=document.getElementById('stat-time').textContent;
+  const pts=waypoints.length;
+
+  const canvas=document.createElement('canvas');
+  canvas.width=w; canvas.height=h+220;
+  const ctx=canvas.getContext('2d');
+
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=function(){
+    // Map area
+    ctx.drawImage(img,0,0,w,h);
+
+    // Dark overlay strip at bottom of map
+    ctx.fillStyle='rgba(22,33,62,0.85)';
+    ctx.fillRect(0,h-60,w,60);
+
+    // Stats on overlay
+    ctx.fillStyle='#ffffff';
+    ctx.font='bold 15px Inter, sans-serif';
+    ctx.fillText('🗺️ MapRoots — Resumo da Rota',20,h-35);
+    ctx.font='14px Inter, sans-serif';
+    ctx.fillStyle='#f5a623';
+    ctx.fillText('📍 '+pts+' pontos   |   📏 '+totalKm+'   |   ⏱ '+totalTime,20,h-12);
+
+    // Info panel below map
+    ctx.fillStyle='#1a1a2e';
+    ctx.fillRect(0,h,w,220);
+
+    // Points list
+    const COLORS=['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
+    const cols=Math.ceil(waypoints.length/5);
+    const perCol=Math.ceil(waypoints.length/Math.max(cols,1));
+    const colW=w/Math.max(cols,1);
+
+    waypoints.forEach((pt,i)=>{
+      const col=Math.floor(i/perCol);
+      const row=i%perCol;
+      const x=col*colW+16;
+      const y=h+20+row*38;
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(x+10,y+8,10,0,Math.PI*2);
+      ctx.fillStyle=COLORS[i%10];
+      ctx.fill();
+      ctx.fillStyle='#0f0f1a';
+      ctx.font='bold 10px Inter, sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText(i+1,x+10,y+12);
+      ctx.textAlign='left';
+
+      // Name
+      ctx.fillStyle='#ffffff';
+      ctx.font='12px Inter, sans-serif';
+      const name=pt.name.length>28?pt.name.substring(0,26)+'…':pt.name;
+      ctx.fillText(name,x+26,y+8);
+
+      // Distance arrow
+      if(i<waypoints.length-1&&document.querySelectorAll('.seg-arrow span')[i]){
+        const dist=document.querySelectorAll('.seg-arrow span')[i].textContent;
+        ctx.fillStyle='#8a9bb5';
+        ctx.font='11px Inter, sans-serif';
+        ctx.fillText(dist,x+26,y+22);
+      }
+    });
+
+    // Download
+    const link=document.createElement('a');
+    link.download='maproots-rota.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  };
+  img.onerror=function(){
+    // Fallback: export just the info panel without map image
+    alert('Exportando apenas os dados da rota (o mapa requer configuração adicional).');
+  };
+  img.src=mapUrl;
+}
+
 function initMap(){window._mapReady=true;if(window._mapInitCb)window._mapInitCb();}
 setUserUI();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAr1Q-jwFyMH5Qwc8XPlzcvH_HJCmh1hwM&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
