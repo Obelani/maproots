@@ -375,6 +375,8 @@ function addPoint(name,lat,lng){
     label:{text:String(idx+1),color:'#0f0f1a',fontSize:'11px',fontWeight:'700'},
     icon:{path:google.maps.SymbolPath.CIRCLE,scale:15,fillColor:color,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5}
   }));
+  map.panTo({lat,lng});
+  if(waypoints.length===1) map.setZoom(10);
   recalc();
 }
 
