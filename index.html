@@ -9,13 +9,12 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --road: #1a1a2e; --road-mid: #16213e; --asphalt: #0f3460;
+    --road: #1a1a2e; --road-mid: #16213e;
     --accent: #e94560; --accent-light: #ff6b81; --gold: #f5a623;
     --white: #ffffff; --off-white: #f0f0f0; --muted: #8a9bb5;
     --border: rgba(255,255,255,0.1); --card: rgba(255,255,255,0.05);
     --card-hover: rgba(255,255,255,0.09); --radius: 10px; --radius-lg: 16px;
   }
-  html, body { height: 100%; }
   body { font-family: 'Inter', sans-serif; background: var(--road); color: var(--white); min-height: 100vh; overflow-x: hidden; }
   nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: var(--road-mid); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 200; }
   .logo { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
@@ -30,34 +29,36 @@
   .btn-primary:hover { background: var(--accent-light); }
   .btn-gold { background: var(--gold); color: var(--road); }
   .btn-gold:hover { opacity: 0.9; }
-  #landing { display: flex; flex-direction: column; align-items: center; padding: 80px 24px 60px; text-align: center; }
+
+  /* LANDING */
+  #landing { display: block; padding: 80px 24px 60px; text-align: center; }
   .hero-tag { font-size: 12px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
-  h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(36px, 6vw, 60px); font-weight: 700; line-height: 1.1; letter-spacing: -1px; max-width: 700px; margin-bottom: 20px; }
+  h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(36px, 6vw, 60px); font-weight: 700; line-height: 1.1; letter-spacing: -1px; max-width: 700px; margin: 0 auto 20px; }
   h1 em { font-style: normal; color: var(--accent); }
-  .hero-sub { font-size: 17px; color: var(--muted); max-width: 480px; line-height: 1.6; margin-bottom: 36px; }
-  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .hero-sub { font-size: 17px; color: var(--muted); max-width: 480px; line-height: 1.6; margin: 0 auto 36px; }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; }
   .hero-btns .btn { padding: 12px 28px; font-size: 15px; }
-  #pricing { padding: 60px 24px; max-width: 900px; margin: 0 auto; width: 100%; }
-  .section-label { text-align: center; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
-  .section-title { text-align: center; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; margin-bottom: 40px; }
-  .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-  .plan-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 24px; position: relative; }
+  .section-label { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; margin-bottom: 40px; }
+  .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; max-width: 600px; margin: 0 auto; }
+  .plan-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 24px; position: relative; text-align: left; }
   .plan-card.featured { border-color: var(--gold); background: rgba(245,166,35,0.08); }
   .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--road); font-size: 11px; font-weight: 600; padding: 3px 14px; border-radius: 20px; white-space: nowrap; }
-  .plan-name { font-size: 14px; font-weight: 500; color: var(--muted); margin-bottom: 8px; }
+  .plan-name { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
   .plan-price { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; margin-bottom: 4px; }
-  .plan-price sup { font-size: 16px; font-weight: 500; vertical-align: super; }
+  .plan-price sup { font-size: 16px; vertical-align: super; }
   .plan-period { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
   .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
   .plan-features li { font-size: 13px; color: var(--off-white); display: flex; align-items: center; gap: 8px; }
   .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 600; flex-shrink: 0; }
-  .plan-features li.muted-feat::before { content: '–'; color: var(--muted); }
-  .plan-features li.muted-feat { color: var(--muted); }
+  .plan-features li.off::before { content: '–'; color: var(--muted); }
+  .plan-features li.off { color: var(--muted); }
   .plan-btn { width: 100%; padding: 11px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--white); }
-  .plan-btn:hover { background: var(--card-hover); }
   .plan-btn.gold { background: var(--gold); color: var(--road); border: none; }
-  #app-view { display: none; height: calc(100vh - 53px); }
-  .app-layout { display: grid; grid-template-columns: 320px 1fr; height: 100%; }
+
+  /* APP */
+  #app-view { display: none; }
+  .app-layout { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 53px); }
   .sidebar { background: var(--road-mid); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
   .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); }
   .sidebar-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 10px; }
@@ -65,7 +66,7 @@
   .search-input { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px 9px 36px; color: var(--white); font-size: 13px; outline: none; }
   .search-input::placeholder { color: var(--muted); }
   .search-input:focus { border-color: rgba(255,255,255,0.3); }
-  .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--muted); pointer-events: none; }
+  .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
   #autocomplete-list { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--road); border: 1px solid var(--border); border-radius: var(--radius); z-index: 300; max-height: 180px; overflow-y: auto; display: none; }
   .ac-item { padding: 9px 12px; font-size: 13px; cursor: pointer; color: var(--off-white); border-bottom: 1px solid var(--border); }
   .ac-item:last-child { border-bottom: none; }
@@ -78,7 +79,7 @@
   .empty-state { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 13px; line-height: 1.6; }
   .empty-icon { font-size: 32px; margin-bottom: 12px; display: block; }
   .point-row { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 10px; }
-  .point-dot { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; color: var(--road); }
+  .point-dot { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; color: #0f0f1a; }
   .point-info { flex: 1; min-width: 0; }
   .point-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .point-del { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px 4px; font-size: 15px; line-height: 1; border-radius: 4px; }
@@ -88,14 +89,14 @@
   .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
   .clear-link { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; text-align: left; padding: 0; }
   .clear-link:hover { color: var(--accent); }
-  .paywall-banner { background: linear-gradient(135deg, rgba(245,166,35,0.15), rgba(233,69,96,0.15)); border: 1px solid rgba(245,166,35,0.3); border-radius: var(--radius); padding: 12px 14px; display: none; }
+  .paywall-banner { background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.3); border-radius: var(--radius); padding: 12px 14px; display: none; }
   .paywall-banner.visible { display: block; }
   .paywall-banner p { font-size: 12px; color: var(--off-white); margin-bottom: 8px; line-height: 1.5; }
   .paywall-banner strong { color: var(--gold); }
-  .map-area { position: relative; }
+  .map-area { position: relative; height: 100%; }
   #map-canvas { width: 100%; height: 100%; }
-  .map-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15,52,96,0.9); border: 1px solid var(--border); border-radius: 20px; padding: 7px 16px; font-size: 12px; color: var(--muted); pointer-events: none; white-space: nowrap; }
-  .loading-overlay { position: absolute; inset: 0; background: rgba(26,26,46,0.6); display: none; align-items: center; justify-content: center; font-size: 13px; color: var(--muted); gap: 10px; }
+  .map-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15,52,96,0.9); border: 1px solid var(--border); border-radius: 20px; padding: 7px 16px; font-size: 12px; color: var(--muted); pointer-events: none; white-space: nowrap; z-index: 10; }
+  .loading-overlay { position: absolute; inset: 0; background: rgba(26,26,46,0.6); display: none; align-items: center; justify-content: center; font-size: 13px; color: var(--muted); gap: 10px; z-index: 20; }
   .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -107,7 +108,7 @@
   .modal-input:focus { border-color: rgba(255,255,255,0.3); }
   .modal-btns { display: flex; gap: 8px; margin-top: 4px; }
   .modal-btns .btn { flex: 1; padding: 11px; font-size: 14px; }
-  .modal-error { font-size: 12px; color: var(--accent); margin-top: -4px; margin-bottom: 8px; min-height: 16px; }
+  .modal-error { font-size: 12px; color: var(--accent); min-height: 16px; margin-bottom: 8px; }
   .modal-switch { font-size: 13px; color: var(--muted); text-align: center; margin-top: 16px; }
   .modal-switch a { color: var(--off-white); cursor: pointer; text-decoration: underline; }
   .upgrade-features { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
@@ -140,34 +141,32 @@
     <button class="btn btn-ghost" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Ver planos</button>
   </div>
   <div id="pricing">
-    <p class="section-label" style="margin-top:80px">Planos</p>
-    <h2 class="section-title">Simples e direto</h2>
+    <p class="section-label">Planos</p>
+    <p class="section-title">Simples e direto</p>
     <div class="plans-grid">
       <div class="plan-card">
         <p class="plan-name">Gratuito</p>
-        <p class="plan-price">R$<sup></sup>0</p>
+        <p class="plan-price">R$0</p>
         <p class="plan-period">para sempre</p>
         <ul class="plan-features">
           <li>Até 5 pontos por rota</li>
           <li>Distância e tempo em km</li>
           <li>Clique no mapa ou busca por cidade</li>
-          <li class="muted-feat">Rotas ilimitadas salvas</li>
-          <li class="muted-feat">Exportar GPX / KML</li>
-          <li class="muted-feat">Compartilhar link da rota</li>
+          <li class="off">Rotas ilimitadas salvas</li>
+          <li class="off">Compartilhar link da rota</li>
         </ul>
         <button class="plan-btn" onclick="openApp()">Começar grátis</button>
       </div>
       <div class="plan-card featured">
         <div class="plan-badge">Mais popular</div>
         <p class="plan-name">Pro</p>
-        <p class="plan-price"><sup>R$</sup>19<sup style="font-size:18px">,90</sup></p>
+        <p class="plan-price">R$19,90</p>
         <p class="plan-period">por mês · cancele quando quiser</p>
         <ul class="plan-features">
           <li>Pontos ilimitados por rota</li>
           <li>Distância e tempo em km</li>
           <li>Clique no mapa ou busca por cidade</li>
           <li>Rotas ilimitadas salvas</li>
-          <li>Exportar GPX / KML</li>
           <li>Compartilhar link da rota</li>
         </ul>
         <button class="plan-btn gold" onclick="startCheckout()">Assinar Pro — R$19,90/mês</button>
@@ -194,10 +193,7 @@
         <div class="stat-box"><div class="stat-lbl">Limite</div><div class="stat-val" id="stat-limit" style="color:var(--gold)">5 pts</div></div>
       </div>
       <div class="points-area" id="points-area">
-        <div class="empty-state">
-          <span class="empty-icon">📍</span>
-          Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.
-        </div>
+        <div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>
       </div>
       <div class="sidebar-footer">
         <div class="paywall-banner" id="paywall-banner">
@@ -209,9 +205,7 @@
     </div>
     <div class="map-area">
       <div id="map-canvas"></div>
-      <div class="loading-overlay" id="loading">
-        <div class="spinner"></div> Calculando rota...
-      </div>
+      <div class="loading-overlay" id="loading"><div class="spinner"></div> Calculando...</div>
       <div class="map-hint">Clique no mapa para adicionar pontos</div>
     </div>
   </div>
@@ -239,7 +233,6 @@
     <ul class="upgrade-features">
       <li>Pontos ilimitados em qualquer rota</li>
       <li>Salve e acesse suas rotas de qualquer lugar</li>
-      <li>Exporte em GPX e KML para o seu GPS</li>
       <li>Compartilhe rotas com um link</li>
     </ul>
     <div class="modal-btns">
@@ -254,239 +247,226 @@ const SUPABASE_URL = 'https://rzovdzhllmzgdmtaxqij.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_eVYOnLpwqhJc63u2DKHO-w_MrSM9F3u';
 const MERCADOPAGO_LINK = 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_PLANO_ID';
 const FREE_LIMIT = 5;
-const POINT_COLORS = ['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
+const COLORS = ['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
 
 let map, geocoder, dirSvc, dirRender;
 let waypoints = [], markers = [];
 let user = null, isPro = false, authMode = 'login', acTimeout = null;
 
-async function sbFetch(path, opts = {}) {
-  const res = await fetch(SUPABASE_URL + path, {
-    ...opts,
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + (user?.access_token || SUPABASE_KEY), 'Content-Type': 'application/json', ...opts.headers }
-  });
-  return res.json();
+async function sbFetch(path, opts={}) {
+  const r = await fetch(SUPABASE_URL+path, {...opts, headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(user?.access_token||SUPABASE_KEY),'Content-Type':'application/json',...opts.headers}});
+  return r.json();
+}
+async function sbLogin(email,pass) {
+  const d = await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password:pass})});
+  if(d.error||d.error_code) throw new Error(d.error_description||d.message||d.error);
+  return {access_token:d.access_token,user:d.user};
+}
+async function sbRegister(email,pass) {
+  const d = await sbFetch('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password:pass})});
+  if(d.error||d.error_code) throw new Error(d.error_description||d.message||d.error);
+  return {access_token:d.access_token,user:d.user};
+}
+async function checkPro() {
+  if(!user) return false;
+  const d = await sbFetch('/rest/v1/subscriptions?user_id=eq.'+user.user.id+'&status=eq.active&select=id');
+  return Array.isArray(d)&&d.length>0;
 }
 
-async function sbLogin(email, password) {
-  const data = await sbFetch('/auth/v1/token?grant_type=password', { method: 'POST', body: JSON.stringify({ email, password }) });
-  if (data.error || data.error_code) throw new Error(data.error_description || data.message || data.error);
-  return { access_token: data.access_token, user: data.user };
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showLoading(v){document.getElementById('loading').style.display=v?'flex':'none';}
+
+function setUserUI(){
+  const li=!!user;
+  document.getElementById('btn-login').style.display=li?'none':'';
+  document.getElementById('btn-logout').style.display=li?'':'none';
+  document.getElementById('plan-badge').textContent=isPro?'Pro ⚡':'Gratuito';
+  document.getElementById('plan-badge').className='badge-plan'+(isPro?' pro':'');
+  document.getElementById('btn-upgrade').style.display=(li&&!isPro)?'':'none';
+  document.getElementById('stat-limit').textContent=isPro?'∞':FREE_LIMIT+' pts';
 }
 
-async function sbRegister(email, password) {
-  const data = await sbFetch('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email, password }) });
-  if (data.error || data.error_code) throw new Error(data.error_description || data.message || data.error);
-  return { access_token: data.access_token, user: data.user };
+function openApp(){
+  document.getElementById('landing').style.display='none';
+  document.getElementById('app-view').style.display='block';
+  if(window._mapReady) startMap(); else window._mapInitCb=startMap;
 }
 
-async function checkProStatus() {
-  if (!user) return false;
-  const data = await sbFetch('/rest/v1/subscriptions?user_id=eq.' + user.user.id + '&status=eq.active&select=id');
-  return Array.isArray(data) && data.length > 0;
+function openLoginModal(){authMode='login';renderAuth();openModal('modal-auth');}
+function openUpgradeModal(){openModal('modal-upgrade');}
+
+function renderAuth(){
+  const l=authMode==='login';
+  document.getElementById('auth-title').textContent=l?'Entrar':'Criar conta';
+  document.getElementById('auth-desc').textContent=l?'Acesse sua conta para salvar suas rotas.':'Crie uma conta gratuita agora.';
+  document.getElementById('auth-submit-btn').textContent=l?'Entrar':'Criar conta';
+  document.getElementById('auth-switch').innerHTML=l?'Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a>':'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+  document.getElementById('auth-error').textContent='';
+}
+function toggleAuthMode(){authMode=authMode==='login'?'register':'login';renderAuth();}
+
+async function submitAuth(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-pass').value;
+  const err=document.getElementById('auth-error');
+  err.textContent='';
+  if(!email||!pass){err.textContent='Preencha e-mail e senha.';return;}
+  try{
+    const d=authMode==='login'?await sbLogin(email,pass):await sbRegister(email,pass);
+    user=d;isPro=await checkPro();setUserUI();closeModal('modal-auth');openApp();
+  }catch(e){err.textContent=e.message;}
 }
 
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showLoading(v) { document.getElementById('loading').style.display = v ? 'flex' : 'none'; }
-
-function setUserUI() {
-  const loggedIn = !!user;
-  document.getElementById('btn-login').style.display = loggedIn ? 'none' : '';
-  document.getElementById('btn-logout').style.display = loggedIn ? '' : 'none';
-  document.getElementById('plan-badge').textContent = isPro ? 'Pro ⚡' : 'Gratuito';
-  document.getElementById('plan-badge').className = 'badge-plan' + (isPro ? ' pro' : '');
-  document.getElementById('btn-upgrade').style.display = (loggedIn && !isPro) ? '' : 'none';
-  document.getElementById('stat-limit').textContent = isPro ? '∞' : FREE_LIMIT + ' pts';
-}
-
-function openApp() {
-  document.getElementById('landing').style.display = 'none';
-  document.getElementById('app-view').style.display = '';
-  if (window._mapReady) startMap(); else window._mapInitCb = startMap;
-}
-
-function openLoginModal() { authMode = 'login'; renderAuthModal(); openModal('modal-auth'); }
-function openUpgradeModal() { openModal('modal-upgrade'); }
-
-function renderAuthModal() {
-  const isLogin = authMode === 'login';
-  document.getElementById('auth-title').textContent = isLogin ? 'Entrar' : 'Criar conta';
-  document.getElementById('auth-desc').textContent = isLogin ? 'Acesse sua conta para salvar suas rotas.' : 'Crie uma conta gratuita agora.';
-  document.getElementById('auth-submit-btn').textContent = isLogin ? 'Entrar' : 'Criar conta';
-  document.getElementById('auth-switch').innerHTML = isLogin
-    ? 'Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a>'
-    : 'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
-  document.getElementById('auth-error').textContent = '';
-}
-
-function toggleAuthMode() { authMode = authMode === 'login' ? 'register' : 'login'; renderAuthModal(); }
-
-async function submitAuth() {
-  const email = document.getElementById('auth-email').value.trim();
-  const pass = document.getElementById('auth-pass').value;
-  const errEl = document.getElementById('auth-error');
-  errEl.textContent = '';
-  if (!email || !pass) { errEl.textContent = 'Preencha e-mail e senha.'; return; }
-  try {
-    const data = authMode === 'login' ? await sbLogin(email, pass) : await sbRegister(email, pass);
-    user = data; isPro = await checkProStatus(); setUserUI(); closeModal('modal-auth'); openApp();
-  } catch (e) { errEl.textContent = e.message; }
-}
-
-function logout() {
-  user = null; isPro = false; setUserUI();
-  document.getElementById('landing').style.display = '';
-  document.getElementById('app-view').style.display = 'none';
+function logout(){
+  user=null;isPro=false;setUserUI();
+  document.getElementById('landing').style.display='block';
+  document.getElementById('app-view').style.display='none';
   clearAll();
 }
 
-function startCheckout() {
-  if (!user) { closeModal('modal-upgrade'); openLoginModal(); return; }
-  window.open(MERCADOPAGO_LINK + '&external_reference=' + encodeURIComponent(user.user.id), '_blank');
+function startCheckout(){
+  if(!user){closeModal('modal-upgrade');openLoginModal();return;}
+  window.open(MERCADOPAGO_LINK+'&external_reference='+encodeURIComponent(user.user.id),'_blank');
 }
 
-function startMap() {
-  map = new google.maps.Map(document.getElementById('map-canvas'), {
-    center: { lat: -25, lng: -52 }, zoom: 4, mapTypeId: 'roadmap',
-    disableDefaultUI: true, zoomControl: true,
-    styles: [
-      { featureType: 'all', elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
-      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f3460' }] },
-      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#16213e' }] },
-      { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#1a4a6b' }] },
-      { featureType: 'administrative.country', elementType: 'labels.text.fill', stylers: [{ color: '#8a9bb5' }] },
-      { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#a0aec0' }] },
-      { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-      { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-      { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#16213e' }] },
+function startMap(){
+  map=new google.maps.Map(document.getElementById('map-canvas'),{
+    center:{lat:-25,lng:-52},zoom:4,mapTypeId:'roadmap',disableDefaultUI:true,zoomControl:true,
+    styles:[
+      {featureType:'all',elementType:'geometry',stylers:[{color:'#1a1a2e'}]},
+      {featureType:'water',elementType:'geometry',stylers:[{color:'#0f3460'}]},
+      {featureType:'road',elementType:'geometry',stylers:[{color:'#16213e'}]},
+      {featureType:'road.highway',elementType:'geometry',stylers:[{color:'#1a4a6b'}]},
+      {featureType:'administrative.country',elementType:'labels.text.fill',stylers:[{color:'#8a9bb5'}]},
+      {featureType:'administrative.locality',elementType:'labels.text.fill',stylers:[{color:'#a0aec0'}]},
+      {featureType:'poi',stylers:[{visibility:'off'}]},
+      {featureType:'transit',stylers:[{visibility:'off'}]},
+      {featureType:'landscape',elementType:'geometry',stylers:[{color:'#16213e'}]},
     ]
   });
-  geocoder = new google.maps.Geocoder();
-  dirSvc = new google.maps.DirectionsService();
-  dirRender = new google.maps.DirectionsRenderer({ suppressMarkers: true, polylineOptions: { strokeColor: '#e94560', strokeWeight: 4, strokeOpacity: 0.9 } });
+  geocoder=new google.maps.Geocoder();
+  dirSvc=new google.maps.DirectionsService();
+  dirRender=new google.maps.DirectionsRenderer({suppressMarkers:true,polylineOptions:{strokeColor:'#e94560',strokeWeight:4,strokeOpacity:0.9}});
   dirRender.setMap(map);
-  map.addListener('click', (e) => {
-    if (!canAddPoint()) return;
+  map.addListener('click',(e)=>{
+    if(!canAdd())return;
     showLoading(true);
-    geocoder.geocode({ location: e.latLng }, (res, status) => {
+    geocoder.geocode({location:e.latLng},(res,st)=>{
       showLoading(false);
-      if (status === 'OK' && res[0]) addPoint(res[0].formatted_address, e.latLng.lat(), e.latLng.lng());
+      if(st==='OK'&&res[0])addPoint(res[0].formatted_address,e.latLng.lat(),e.latLng.lng());
     });
   });
 }
 
-function canAddPoint() {
-  const limit = isPro ? Infinity : FREE_LIMIT;
-  if (waypoints.length >= limit) { document.getElementById('paywall-banner').classList.add('visible'); return false; }
+function canAdd(){
+  if(waypoints.length>=(isPro?Infinity:FREE_LIMIT)){
+    document.getElementById('paywall-banner').classList.add('visible');return false;
+  }
   return true;
 }
 
-function addPoint(name, lat, lng) {
-  if (!canAddPoint()) return;
-  const idx = waypoints.length, color = POINT_COLORS[idx % POINT_COLORS.length];
-  waypoints.push({ name, lat, lng, color });
-  const marker = new google.maps.Marker({
-    position: { lat, lng }, map, zIndex: 10 + idx,
-    label: { text: String(idx + 1), color: '#0f0f1a', fontSize: '11px', fontWeight: '700' },
-    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 15, fillColor: color, fillOpacity: 1, strokeColor: '#ffffff', strokeWeight: 2.5 }
-  });
-  markers.push(marker);
-  recalcRoute();
+function addPoint(name,lat,lng){
+  if(!canAdd())return;
+  const idx=waypoints.length,color=COLORS[idx%COLORS.length];
+  waypoints.push({name,lat,lng,color});
+  markers.push(new google.maps.Marker({
+    position:{lat,lng},map,zIndex:10+idx,
+    label:{text:String(idx+1),color:'#0f0f1a',fontSize:'11px',fontWeight:'700'},
+    icon:{path:google.maps.SymbolPath.CIRCLE,scale:15,fillColor:color,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5}
+  }));
+  recalc();
 }
 
-function removePoint(idx) {
-  waypoints.splice(idx, 1); markers[idx].setMap(null); markers.splice(idx, 1);
-  markers.forEach((m, i) => {
-    const color = POINT_COLORS[i % POINT_COLORS.length];
-    m.setLabel({ text: String(i + 1), color: '#0f0f1a', fontSize: '11px', fontWeight: '700' });
-    m.setIcon({ path: google.maps.SymbolPath.CIRCLE, scale: 15, fillColor: color, fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2.5 });
-    waypoints[i].color = color;
+function removePoint(idx){
+  waypoints.splice(idx,1);markers[idx].setMap(null);markers.splice(idx,1);
+  markers.forEach((m,i)=>{
+    const c=COLORS[i%COLORS.length];
+    m.setLabel({text:String(i+1),color:'#0f0f1a',fontSize:'11px',fontWeight:'700'});
+    m.setIcon({path:google.maps.SymbolPath.CIRCLE,scale:15,fillColor:c,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5});
+    waypoints[i].color=c;
   });
   document.getElementById('paywall-banner').classList.remove('visible');
-  recalcRoute();
+  recalc();
 }
 
-function clearAll() {
-  waypoints = []; markers.forEach(m => m.setMap(null)); markers = [];
-  if (dirRender) dirRender.setDirections({ routes: [] });
+function clearAll(){
+  waypoints=[];markers.forEach(m=>m.setMap(null));markers=[];
+  if(dirRender)dirRender.setDirections({routes:[]});
   document.getElementById('paywall-banner').classList.remove('visible');
-  renderSidebar([]); updateStats(0, 0);
+  renderList([]);updateStats(0,0);
 }
 
-function recalcRoute() {
-  if (waypoints.length < 2) { if (dirRender) dirRender.setDirections({ routes: [] }); renderSidebar([]); updateStats(0, 0); return; }
-  const origin = { lat: waypoints[0].lat, lng: waypoints[0].lng };
-  const destination = { lat: waypoints[waypoints.length - 1].lat, lng: waypoints[waypoints.length - 1].lng };
-  const stops = waypoints.slice(1, -1).map(p => ({ location: new google.maps.LatLng(p.lat, p.lng), stopover: true }));
+function recalc(){
+  if(waypoints.length<2){if(dirRender)dirRender.setDirections({routes:[]});renderList([]);updateStats(0,0);return;}
+  const o={lat:waypoints[0].lat,lng:waypoints[0].lng};
+  const d={lat:waypoints[waypoints.length-1].lat,lng:waypoints[waypoints.length-1].lng};
+  const s=waypoints.slice(1,-1).map(p=>({location:new google.maps.LatLng(p.lat,p.lng),stopover:true}));
   showLoading(true);
-  dirSvc.route({ origin, destination, waypoints: stops, travelMode: google.maps.TravelMode.DRIVING, unitSystem: google.maps.UnitSystem.METRIC }, (result, status) => {
+  dirSvc.route({origin:o,destination:d,waypoints:s,travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.METRIC},(res,st)=>{
     showLoading(false);
-    if (status === 'OK') {
-      dirRender.setDirections(result);
-      const legs = result.routes[0].legs;
-      let totalDist = 0, totalTime = 0;
-      const segs = legs.map(l => { totalDist += l.distance.value; totalTime += l.duration.value; return Math.round(l.distance.value / 1000); });
-      updateStats(totalDist, totalTime); renderSidebar(segs);
+    if(st==='OK'){
+      dirRender.setDirections(res);
+      const legs=res.routes[0].legs;
+      let td=0,tt=0;
+      const segs=legs.map(l=>{td+=l.distance.value;tt+=l.duration.value;return Math.round(l.distance.value/1000);});
+      updateStats(td,tt);renderList(segs);
     }
   });
 }
 
-function updateStats(distM, timeSec) {
-  const km = Math.round(distM / 1000);
-  document.getElementById('stat-km').textContent = km > 0 ? km.toLocaleString('pt-BR') + ' km' : '— km';
-  document.getElementById('stat-pts').textContent = waypoints.length;
-  if (timeSec > 0) {
-    const h = Math.floor(timeSec / 3600), m = Math.round((timeSec % 3600) / 60);
-    document.getElementById('stat-time').textContent = h > 0 ? h + 'h ' + m + 'min' : m + 'min';
-  } else { document.getElementById('stat-time').textContent = '—'; }
+function updateStats(dm,ts){
+  document.getElementById('stat-km').textContent=dm>0?Math.round(dm/1000).toLocaleString('pt-BR')+' km':'— km';
+  document.getElementById('stat-pts').textContent=waypoints.length;
+  if(ts>0){const h=Math.floor(ts/3600),m=Math.round((ts%3600)/60);document.getElementById('stat-time').textContent=h>0?h+'h '+m+'min':m+'min';}
+  else document.getElementById('stat-time').textContent='—';
 }
 
-function renderSidebar(segs) {
-  const area = document.getElementById('points-area');
-  if (waypoints.length === 0) { area.innerHTML = '<div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>'; return; }
-  let html = '';
-  waypoints.forEach((pt, i) => {
-    html += '<div class="point-row"><div class="point-dot" style="background:' + pt.color + '">' + (i+1) + '</div><div class="point-info"><div class="point-name">' + pt.name + '</div></div><button class="point-del" onclick="removePoint(' + i + ')">✕</button></div>';
-    if (i < segs.length) html += '<div class="seg-arrow"><div class="seg-line"></div><span>↓ ' + segs[i].toLocaleString('pt-BR') + ' km</span><div class="seg-line"></div></div>';
+function renderList(segs){
+  const a=document.getElementById('points-area');
+  if(!waypoints.length){a.innerHTML='<div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>';return;}
+  let h='';
+  waypoints.forEach((pt,i)=>{
+    h+='<div class="point-row"><div class="point-dot" style="background:'+pt.color+'">'+(i+1)+'</div><div class="point-info"><div class="point-name">'+pt.name+'</div></div><button class="point-del" onclick="removePoint('+i+')">✕</button></div>';
+    if(i<segs.length)h+='<div class="seg-arrow"><div class="seg-line"></div><span>↓ '+segs[i].toLocaleString('pt-BR')+' km</span><div class="seg-line"></div></div>';
   });
-  area.innerHTML = html;
+  a.innerHTML=h;
 }
 
-document.getElementById('search-input').addEventListener('input', (e) => {
+document.getElementById('search-input').addEventListener('input',e=>{
   clearTimeout(acTimeout);
-  const val = e.target.value.trim(), list = document.getElementById('autocomplete-list');
-  if (!val || val.length < 3 || !window.google) { list.style.display = 'none'; return; }
-  acTimeout = setTimeout(() => {
-    new google.maps.places.AutocompleteService().getPlacePredictions({ input: val, language: 'pt' }, (preds, status) => {
-      list.innerHTML = '';
-      if (status !== 'OK' || !preds) { list.style.display = 'none'; return; }
-      preds.slice(0, 5).forEach(p => {
-        const div = document.createElement('div'); div.className = 'ac-item'; div.textContent = p.description;
-        div.onclick = () => { document.getElementById('search-input').value = ''; list.style.display = 'none'; geocodeAndAdd(p.description); };
+  const val=e.target.value.trim(),list=document.getElementById('autocomplete-list');
+  if(!val||val.length<3||!window.google){list.style.display='none';return;}
+  acTimeout=setTimeout(()=>{
+    new google.maps.places.AutocompleteService().getPlacePredictions({input:val,language:'pt'},(preds,st)=>{
+      list.innerHTML='';
+      if(st!=='OK'||!preds){list.style.display='none';return;}
+      preds.slice(0,5).forEach(p=>{
+        const div=document.createElement('div');div.className='ac-item';div.textContent=p.description;
+        div.onclick=()=>{document.getElementById('search-input').value='';list.style.display='none';geoAdd(p.description);};
         list.appendChild(div);
       });
-      list.style.display = 'block';
+      list.style.display='block';
     });
-  }, 280);
+  },280);
 });
 
-document.getElementById('search-input').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') { const val = document.getElementById('search-input').value.trim(); if (val) { document.getElementById('autocomplete-list').style.display = 'none'; geocodeAndAdd(val); document.getElementById('search-input').value = ''; } }
+document.getElementById('search-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const v=document.getElementById('search-input').value.trim();if(v){document.getElementById('autocomplete-list').style.display='none';geoAdd(v);document.getElementById('search-input').value='';}}
 });
 
-document.addEventListener('click', (e) => { if (!e.target.closest('.search-wrap')) document.getElementById('autocomplete-list').style.display = 'none'; });
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))document.getElementById('autocomplete-list').style.display='none';});
 
-function geocodeAndAdd(query) {
-  if (!canAddPoint()) return;
+function geoAdd(q){
+  if(!canAdd())return;
   showLoading(true);
-  geocoder.geocode({ address: query }, (res, status) => {
+  geocoder.geocode({address:q},(res,st)=>{
     showLoading(false);
-    if (status === 'OK' && res[0]) { const loc = res[0].geometry.location; addPoint(res[0].formatted_address, loc.lat(), loc.lng()); }
+    if(st==='OK'&&res[0]){const l=res[0].geometry.location;addPoint(res[0].formatted_address,l.lat(),l.lng());}
   });
 }
 
-function initMap() { window._mapReady = true; if (window._mapInitCb) window._mapInitCb(); }
+function initMap(){window._mapReady=true;if(window._mapInitCb)window._mapInitCb();}
 setUserUI();
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAr1Q-jwFyMH5Qwc8XPlzcvH_HJCmh1hwM&libraries=places&callback=initMap" async defer></script>
