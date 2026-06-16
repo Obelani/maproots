@@ -473,45 +473,20 @@ function geoAdd(q){
 
 function exportImage(){
   if(waypoints.length===0){alert('Adicione pontos na rota antes de exportar!');return;}
-  const MAPS_KEY='AIzaSyAr1Q-jwFyMH5Qwc8XPlzcvH_HJCmh1hwM';
   const COLORS=['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
-  const COLORS_HEX=['e94560','f5a623','1D9E75','378ADD','a855f7','0ea5e9','f59e0b','10b981','ef4444','8b5cf6'];
   const totalKm=document.getElementById('stat-km').textContent;
   const totalTime=document.getElementById('stat-time').textContent;
   const pts=waypoints.length;
   const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(function(s){return s.textContent;});
 
-  // Encoded polyline for real road curves
-  // Use detailed step-by-step path points for real road curves
-  // Static Maps URL has limit, so sample every Nth point to stay under limit
-  let pathPoints=[];
-  try{if(window._lastDirectionsResult&&window._lastDirectionsResult.length){pathPoints=window._lastDirectionsResult;}}catch(e){}
+  // Capture the actual live map from screen using html2canvas
+  const mapEl=document.getElementById('map-canvas');
 
-  let pathParam='';
-  if(pathPoints.length>0){
-    // Sample points to stay under URL limit (~2000 chars for path)
-    const maxPts=80;
-    const step=Math.max(1,Math.floor(pathPoints.length/maxPts));
-    let sampled=[];
-    for(var pi=0;pi<pathPoints.length;pi+=step){sampled.push(pathPoints[pi]);}
-    // Always include last point
-    sampled.push(pathPoints[pathPoints.length-1]);
-    pathParam='path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(sampled.join('|'));
-  } else {
-    pathParam='path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(waypoints.map(function(p){return p.lat+','+p.lng;}).join('|'));
-  }
-
-  const markersParam=waypoints.map(function(p,i){
-    return 'markers=size:mid%7Ccolor:0x'+COLORS_HEX[i%10]+'ff%7Clabel:'+(i+1)+'%7C'+p.lat+','+p.lng;
-  }).join('&');
-
-  const staticUrl='https://maps.googleapis.com/maps/api/staticmap?size=800x600&maptype=roadmap&'+pathParam+'&'+markersParam+'&key='+MAPS_KEY;
-
-  // Points list
+  // Build points list HTML
   let listHtml='';
   waypoints.forEach(function(p,i){
-    const name=p.name.replace(/,.*$/,'').substring(0,20);
-    const country=p.name.split(',').slice(-1)[0].trim().substring(0,10);
+    const name=p.name.replace(/,.*$/,'').substring(0,22);
+    const country=p.name.split(',').slice(-1)[0].trim().substring(0,12);
     const dist=segs[i]?'<span style="color:#e94560;font-size:10px;white-space:nowrap">↓ '+segs[i]+'</span>':'';
     listHtml+='<tr>'
       +'<td style="padding:3px 5px 3px 0;vertical-align:middle">'
@@ -524,66 +499,60 @@ function exportImage(){
     +'</tr>';
   });
 
-  const w=window.open('','_blank');
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MapRoots Rota</title>');
-  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#f0f4f8}.page{width:1100px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12)}.body{display:flex}.sidebar{width:230px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;height:100%;object-fit:cover;display:block}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media print{body{background:#fff}.page{box-shadow:none;border-radius:0;width:100%;margin:0}button{display:none}}</style>');
-  w.document.write('</head><body>');
+  // Use html2canvas to capture live map then build export page
+  html2canvas(mapEl,{useCORS:true,allowTaint:true,scale:1.5,logging:false}).then(function(mapCanvas){
+    const mapDataUrl=mapCanvas.toDataURL('image/jpeg',0.92);
 
-  // Action buttons
-  w.document.write('<div id="btnbar" style="text-align:center;padding:12px;display:flex;gap:10px;justify-content:center">');
-  w.document.write('<button onclick="window.print()" style="background:#e94560;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">🖨️ Salvar PDF</button>');
-  w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">⬇️ Baixar Imagem</button>');
-  w.document.write('<button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer">✕ Fechar</button>');
-  w.document.write('</div>');
-
-  w.document.write('<div class="page">');
-
-  // Header
-  w.document.write('<div style="background:#1a1a2e;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">');
-  w.document.write('<div style="font-size:18px;font-weight:700;color:#fff">Map<span style="color:#e94560">Roots</span> — Roteiro da Viagem</div>');
-  w.document.write('<div style="font-size:12px;color:#f5a623;display:flex;gap:16px"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div>');
-  w.document.write('</div>');
-
-  w.document.write('<div class="body">');
-
-  // Sidebar
-  w.document.write('<div class="sidebar">');
-
-  // Stats card at top
-  w.document.write('<div style="background:#1a1a2e;padding:14px 16px">');
-  w.document.write('<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#8a9bb5;margin-bottom:10px">Resumo da viagem</div>');
-  w.document.write('<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">');
-  w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">DISTÂNCIA</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalKm+'</div></div>');
-  w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">TEMPO EST.</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalTime+'</div></div>');
-  w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;grid-column:span 2"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">PONTOS NA ROTA</div><div style="font-size:15px;font-weight:700;color:#e94560">'+pts+' destinos</div></div>');
-  w.document.write('</div></div>');
-
-  // Points list
-  w.document.write('<div style="padding:12px 14px;overflow-y:auto;flex:1">');
-  w.document.write('<div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px">Roteiro</div>');
-  w.document.write('<table style="width:100%;border-collapse:collapse">'+listHtml+'</table>');
-  w.document.write('</div></div>');
-
-  // Map
-  w.document.write('<div class="map-area"><img id="mapimg" src="'+staticUrl+'" crossorigin="anonymous" /></div>');
-  w.document.write('</div>');
-  w.document.write('<div class="footer">Gerado por MapRoots — maproots.vercel.app</div>');
-  w.document.write('</div>');
-
-  // Download image button logic using html2canvas
-  w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
-  w.document.write('<sc'+'ript>');
-  w.document.write('document.getElementById("dlbtn").onclick=function(){');
-  w.document.write('  var bar=document.getElementById("btnbar");bar.style.display="none";');
-  w.document.write('  html2canvas(document.querySelector(".page"),{scale:2,useCORS:true,allowTaint:true}).then(function(canvas){');
-  w.document.write('    bar.style.display="flex";');
-  w.document.write('    var a=document.createElement("a");a.download="maproots-rota.png";a.href=canvas.toDataURL("image/png");a.click();');
-  w.document.write('  }).catch(function(){bar.style.display="flex";alert("Use Salvar PDF para exportar.");});');
-  w.document.write('};');
-  w.document.write('</sc'+'ript>');
-
-  w.document.write('</body></html>');
-  w.document.close();
+    const w=window.open('','_blank');
+    w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MapRoots Rota</title>');
+    w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#f0f4f8}.page{width:1100px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12)}.body{display:flex}.sidebar{width:230px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;height:100%;object-fit:cover;display:block;min-height:500px}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media print{body{background:#fff}.page{box-shadow:none;border-radius:0;width:100%;margin:0}#btnbar{display:none}}</style>');
+    w.document.write('</head><body>');
+    w.document.write('<div id="btnbar" style="text-align:center;padding:12px;display:flex;gap:10px;justify-content:center">');
+    w.document.write('<button onclick="window.print()" style="background:#e94560;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">🖨️ Salvar PDF</button>');
+    w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">⬇️ Baixar Imagem</button>');
+    w.document.write('<button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer">✕ Fechar</button>');
+    w.document.write('</div>');
+    w.document.write('<div class="page" id="exportpage">');
+    // Header
+    w.document.write('<div style="background:#1a1a2e;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">');
+    w.document.write('<div style="font-size:18px;font-weight:700;color:#fff">Map<span style="color:#e94560">Roots</span> — Roteiro da Viagem</div>');
+    w.document.write('<div style="font-size:12px;color:#f5a623;display:flex;gap:16px"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div>');
+    w.document.write('</div>');
+    w.document.write('<div class="body">');
+    // Sidebar
+    w.document.write('<div class="sidebar">');
+    w.document.write('<div style="background:#1a1a2e;padding:14px 16px">');
+    w.document.write('<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#8a9bb5;margin-bottom:10px">Resumo da viagem</div>');
+    w.document.write('<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">');
+    w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">DISTÂNCIA</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalKm+'</div></div>');
+    w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">TEMPO EST.</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalTime+'</div></div>');
+    w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;grid-column:span 2"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">PONTOS NA ROTA</div><div style="font-size:15px;font-weight:700;color:#e94560">'+pts+' destinos</div></div>');
+    w.document.write('</div></div>');
+    w.document.write('<div style="padding:12px 14px;overflow-y:auto;flex:1">');
+    w.document.write('<div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px">Roteiro</div>');
+    w.document.write('<table style="width:100%;border-collapse:collapse">'+listHtml+'</table>');
+    w.document.write('</div></div>');
+    // Map — captured from screen
+    w.document.write('<div class="map-area"><img src="'+mapDataUrl+'" style="width:100%;display:block" /></div>');
+    w.document.write('</div>');
+    w.document.write('<div class="footer">Gerado por MapRoots — maproots.vercel.app</div>');
+    w.document.write('</div>');
+    // Download button
+    w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
+    w.document.write('<sc'+'ript>');
+    w.document.write('document.getElementById("dlbtn").onclick=function(){');
+    w.document.write('  var bar=document.getElementById("btnbar");bar.style.display="none";');
+    w.document.write('  html2canvas(document.getElementById("exportpage"),{scale:2}).then(function(c){');
+    w.document.write('    bar.style.display="flex";');
+    w.document.write('    var a=document.createElement("a");a.download="maproots-rota.png";a.href=c.toDataURL("image/png");a.click();');
+    w.document.write('  }).catch(function(){bar.style.display="flex";});');
+    w.document.write('};');
+    w.document.write('</sc'+'ript>');
+    w.document.write('</body></html>');
+    w.document.close();
+  }).catch(function(){
+    alert('Erro ao capturar o mapa. Tente usar Salvar PDF.');
+  });
 }
 
 function initMap(){window._mapReady=true;if(window._mapInitCb)window._mapInitCb();}
