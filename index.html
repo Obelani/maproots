@@ -470,64 +470,36 @@ function exportImage(){
   const totalKm=document.getElementById('stat-km').textContent;
   const totalTime=document.getElementById('stat-time').textContent;
   const pts=waypoints.length;
-  const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(s=>s.textContent);
+  const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(function(s){return s.textContent;});
 
-  // Build Static Maps URL
-  const pathCoords=waypoints.map(p=>p.lat+','+p.lng).join('|');
-  let markersParam=waypoints.map((p,i)=>'markers=color:0x'+COLORS_HEX[i%10]+'ff%7Clabel:'+(i+1)+'%7C'+p.lat+','+p.lng).join('&');
-  const staticUrl='https://maps.googleapis.com/maps/api/staticmap'
-    +'?size=860x380'
-    +'&maptype=roadmap'
-    +'&path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(pathCoords)
-    +'&'+markersParam
-    +'&key='+MAPS_KEY;
+  const pathCoords=waypoints.map(function(p){return p.lat+','+p.lng;}).join('|');
+  const markersParam=waypoints.map(function(p,i){return 'markers=color:0x'+COLORS_HEX[i%10]+'ff%7Clabel:'+(i+1)+'%7C'+p.lat+','+p.lng;}).join('&');
+  const staticUrl='https://maps.googleapis.com/maps/api/staticmap?size=860x380&maptype=roadmap&path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(pathCoords)+'&'+markersParam+'&key='+MAPS_KEY;
 
-  // Open export in new tab as HTML page
-  const rows=Math.ceil(pts/2);
-  const colW=pts>8?'50%':'100%';
   let pointsHtml='';
-  waypoints.forEach((p,i)=>{
-    const name=p.name.length>45?p.name.substring(0,43)+'…':p.name;
-    pointsHtml+=`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;width:${colW};box-sizing:border-box;padding-right:16px">
-      <div style="width:26px;height:26px;border-radius:50%;background:${COLORS[i%10]};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0f0f1a;flex-shrink:0">${i+1}</div>
-      <div>
-        <div style="font-size:13px;color:#fff;line-height:1.3">${name}</div>
-        ${segs[i]?'<div style="font-size:11px;color:#8a9bb5;margin-top:2px">↓ '+segs[i]+'</div>':''}
-      </div>
-    </div>`;
+  waypoints.forEach(function(p,i){
+    const name=p.name.length>45?p.name.substring(0,43)+'...':p.name;
+    const dist=segs[i]?'<div style="font-size:11px;color:#8a9bb5;margin-top:2px">'+String.fromCharCode(8595)+' '+segs[i]+'</div>':'';
+    pointsHtml+='<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;width:'+(pts>8?'50%':'100%')+';box-sizing:border-box;padding-right:16px">'
+      +'<div style="width:26px;height:26px;border-radius:50%;background:'+COLORS[i%10]+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0f0f1a;flex-shrink:0">'+(i+1)+'</div>'
+      +'<div><div style="font-size:13px;color:#fff;line-height:1.3">'+name+'</div>'+dist+'</div>'
+      +'</div>';
   });
 
-  const html=`<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>MapRoots — Rota</title>
-<style>
-  body{margin:0;background:#1a1a2e;font-family:Arial,sans-serif;padding:0}
-  @media print{body{background:#1a1a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-</style></head>
-<body>
-<div style="background:#1a1a2e;min-height:100vh;padding:0">
-  <!-- Header -->
-  <div style="background:#16213e;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1)">
-    <div style="font-size:20px;font-weight:700;color:#fff">🗺️ Map<span style="color:#e94560">Roots</span></div>
-    <div style="font-size:13px;color:#f5a623">📍 ${pts} pontos &nbsp;|&nbsp; 📏 ${totalKm} &nbsp;|&nbsp; ⏱ ${totalTime}</div>
-  </div>
-  <!-- Map image -->
-  <img src="${staticUrl}" style="width:100%;display:block;max-height:380px;object-fit:cover" />
-  <!-- Points list -->
-  <div style="padding:20px 24px">
-    <div style="font-size:12px;color:#8a9bb5;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Pontos da rota</div>
-    <div style="display:flex;flex-wrap:wrap">${pointsHtml}</div>
-  </div>
-  <!-- Footer -->
-  <div style="background:#16213e;padding:10px 24px;text-align:center;font-size:11px;color:#8a9bb5;border-top:1px solid rgba(255,255,255,0.1)">
-    Gerado por MapRoots — maproots.vercel.app
-  </div>
-</div>
-<script>setTimeout(()=>window.print(),800)</script>
-</body></html>`;
-
-  const blob=new Blob([html],{type:'text/html'});
-  const url=URL.createObjectURL(blob);
-  window.open(url,'_blank');
+  const w=window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MapRoots Rota</title>');
+  w.document.write('<style>body{margin:0;background:#1a1a2e;font-family:Arial,sans-serif}');
+  w.document.write('@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>');
+  w.document.write('<div style="background:#16213e;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1)">');
+  w.document.write('<div style="font-size:20px;font-weight:700;color:#fff">Map<span style="color:#e94560">Roots</span></div>');
+  w.document.write('<div style="font-size:13px;color:#f5a623">'+pts+' pontos &nbsp;|&nbsp; '+totalKm+' &nbsp;|&nbsp; '+totalTime+'</div></div>');
+  w.document.write('<img src="'+staticUrl+'" style="width:100%;display:block;max-height:380px;object-fit:cover" />');
+  w.document.write('<div style="padding:20px 24px"><div style="font-size:12px;color:#8a9bb5;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Pontos da rota</div>');
+  w.document.write('<div style="display:flex;flex-wrap:wrap">'+pointsHtml+'</div></div>');
+  w.document.write('<div style="background:#16213e;padding:10px 24px;text-align:center;font-size:11px;color:#8a9bb5;border-top:1px solid rgba(255,255,255,0.1)">Gerado por MapRoots — maproots.vercel.app</div>');
+  w.document.write('</body></html>');
+  w.document.close();
+  setTimeout(function(){w.print();},1000);
 }
 
 function initMap(){window._mapReady=true;if(window._mapInitCb)window._mapInitCb();}
