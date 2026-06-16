@@ -472,88 +472,99 @@ function exportImage(){
   const pts=waypoints.length;
   const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(function(s){return s.textContent;});
 
-  // Get encoded polyline from current directions result
+  // Encoded polyline for real road curves
   let encodedPath='';
-  try {
-    const result=window._lastDirectionsResult;
-    if(result&&result.routes&&result.routes[0]&&result.routes[0].overview_polyline){
-      encodedPath=result.routes[0].overview_polyline;
-    }
-  } catch(e){}
+  try{if(window._lastDirectionsResult){encodedPath=window._lastDirectionsResult;}}catch(e){}
 
-  // Build static map URL - use encoded polyline if available for real road curves
   let pathParam='';
   if(encodedPath){
     pathParam='path=color:0xe94560ff%7Cweight:4%7Cenc:'+encodeURIComponent(encodedPath);
   } else {
-    const pathCoords=waypoints.map(function(p){return p.lat+','+p.lng;}).join('|');
-    pathParam='path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(pathCoords);
+    pathParam='path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(waypoints.map(function(p){return p.lat+','+p.lng;}).join('|'));
   }
 
   const markersParam=waypoints.map(function(p,i){
     return 'markers=size:mid%7Ccolor:0x'+COLORS_HEX[i%10]+'ff%7Clabel:'+(i+1)+'%7C'+p.lat+','+p.lng;
   }).join('&');
 
-  const staticUrl='https://maps.googleapis.com/maps/api/staticmap'
-    +'?size=800x600'
-    +'&maptype=roadmap'
-    +'&'+pathParam
-    +'&'+markersParam
-    +'&key='+MAPS_KEY;
+  const staticUrl='https://maps.googleapis.com/maps/api/staticmap?size=800x600&maptype=roadmap&'+pathParam+'&'+markersParam+'&key='+MAPS_KEY;
 
-  // Points list HTML — clean, no dark box
+  // Points list
   let listHtml='';
   waypoints.forEach(function(p,i){
-    const name=p.name.replace(/,.*$/,'').substring(0,22);
-    const country=p.name.split(',').slice(-1)[0].trim().substring(0,12);
-    const dist=segs[i]?'<span style="color:#e94560;font-size:11px;white-space:nowrap">↓ '+segs[i]+'</span>':'';
+    const name=p.name.replace(/,.*$/,'').substring(0,20);
+    const country=p.name.split(',').slice(-1)[0].trim().substring(0,10);
+    const dist=segs[i]?'<span style="color:#e94560;font-size:10px;white-space:nowrap">↓ '+segs[i]+'</span>':'';
     listHtml+='<tr>'
-      +'<td style="padding:4px 6px 4px 0;vertical-align:middle">'
-        +'<span style="display:inline-flex;width:22px;height:22px;border-radius:50%;background:'+COLORS[i%10]+';align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0a0a1a">'+(i+1)+'</span>'
+      +'<td style="padding:3px 5px 3px 0;vertical-align:middle">'
+        +'<span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:'+COLORS[i%10]+';align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0a0a1a">'+(i+1)+'</span>'
       +'</td>'
-      +'<td style="padding:4px 4px;font-size:12px;color:#1a1a2e;line-height:1.3;width:100%">'
-        +'<span style="font-weight:600">'+name+'</span>'
-        +'<span style="color:#888;font-size:10px"> — '+country+'</span>'
+      +'<td style="padding:3px 4px;font-size:11px;color:#1a1a2e;line-height:1.3;width:100%">'
+        +'<b>'+name+'</b><span style="color:#888;font-size:9px"> — '+country+'</span>'
       +'</td>'
-      +'<td style="padding:4px 0 4px 8px;text-align:right">'+dist+'</td>'
+      +'<td style="padding:3px 0 3px 6px;text-align:right">'+dist+'</td>'
     +'</tr>';
   });
 
-  // Total row
-  listHtml+='<tr style="border-top:2px solid #e0e6ef">'
-    +'<td colspan="2" style="padding:8px 4px 4px;font-size:13px;font-weight:700;color:#1a1a2e">TOTAL</td>'
-    +'<td style="padding:8px 0 4px 8px;font-size:13px;font-weight:700;color:#e94560;text-align:right;white-space:nowrap">'+totalKm+'</td>'
-  +'</tr>';
-
   const w=window.open('','_blank');
   w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MapRoots Rota</title>');
-  w.document.write('<style>');
-  w.document.write('*{box-sizing:border-box;margin:0;padding:0}');
-  w.document.write('body{font-family:Arial,sans-serif;background:#f0f4f8}');
-  w.document.write('.page{width:1100px;margin:20px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12)}');
-  w.document.write('.header{background:#1a1a2e;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}');
-  w.document.write('.logo{font-size:18px;font-weight:700;color:#fff}.logo span{color:#e94560}');
-  w.document.write('.stats{font-size:12px;color:#f5a623;display:flex;gap:16px}');
-  w.document.write('.body{display:flex}');
-  w.document.write('.sidebar{width:220px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;padding:16px 14px}');
-  w.document.write('.sidebar h3{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#999;margin-bottom:10px}');
-  w.document.write('.map-area{flex:1}');
-  w.document.write('.map-area img{width:100%;height:100%;object-fit:cover;display:block}');
-  w.document.write('.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}');
-  w.document.write('@media print{body{background:#fff}.page{box-shadow:none;margin:0;border-radius:0;width:100%}button{display:none}}');
-  w.document.write('</style></head><body>');
-  w.document.write('<div style="text-align:center;padding:12px">');
-  w.document.write('<button onclick="window.print()" style="background:#e94560;color:#fff;border:none;padding:8px 24px;border-radius:6px;font-size:13px;cursor:pointer;margin-right:8px">🖨️ Salvar PDF / Imprimir</button>');
-  w.document.write('<button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer">✕ Fechar</button></div>');
+  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#f0f4f8}.page{width:1100px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12)}.body{display:flex}.sidebar{width:230px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;height:100%;object-fit:cover;display:block}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media print{body{background:#fff}.page{box-shadow:none;border-radius:0;width:100%;margin:0}button{display:none}}</style>');
+  w.document.write('</head><body>');
+
+  // Action buttons
+  w.document.write('<div id="btnbar" style="text-align:center;padding:12px;display:flex;gap:10px;justify-content:center">');
+  w.document.write('<button onclick="window.print()" style="background:#e94560;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">🖨️ Salvar PDF</button>');
+  w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">⬇️ Baixar Imagem</button>');
+  w.document.write('<button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer">✕ Fechar</button>');
+  w.document.write('</div>');
+
   w.document.write('<div class="page">');
-  w.document.write('<div class="header"><div class="logo">Map<span>Roots</span> — Roteiro da Viagem</div>');
-  w.document.write('<div class="stats"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div></div>');
+
+  // Header
+  w.document.write('<div style="background:#1a1a2e;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">');
+  w.document.write('<div style="font-size:18px;font-weight:700;color:#fff">Map<span style="color:#e94560">Roots</span> — Roteiro da Viagem</div>');
+  w.document.write('<div style="font-size:12px;color:#f5a623;display:flex;gap:16px"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div>');
+  w.document.write('</div>');
+
   w.document.write('<div class="body">');
-  w.document.write('<div class="sidebar"><h3>Roteiro</h3><table style="width:100%;border-collapse:collapse">'+listHtml+'</table></div>');
-  w.document.write('<div class="map-area"><img src="'+staticUrl+'" /></div>');
+
+  // Sidebar
+  w.document.write('<div class="sidebar">');
+
+  // Stats card at top
+  w.document.write('<div style="background:#1a1a2e;padding:14px 16px">');
+  w.document.write('<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#8a9bb5;margin-bottom:10px">Resumo da viagem</div>');
+  w.document.write('<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">');
+  w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">DISTÂNCIA</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalKm+'</div></div>');
+  w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">TEMPO EST.</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalTime+'</div></div>');
+  w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;grid-column:span 2"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">PONTOS NA ROTA</div><div style="font-size:15px;font-weight:700;color:#e94560">'+pts+' destinos</div></div>');
+  w.document.write('</div></div>');
+
+  // Points list
+  w.document.write('<div style="padding:12px 14px;overflow-y:auto;flex:1">');
+  w.document.write('<div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px">Roteiro</div>');
+  w.document.write('<table style="width:100%;border-collapse:collapse">'+listHtml+'</table>');
+  w.document.write('</div></div>');
+
+  // Map
+  w.document.write('<div class="map-area"><img id="mapimg" src="'+staticUrl+'" crossorigin="anonymous" /></div>');
   w.document.write('</div>');
   w.document.write('<div class="footer">Gerado por MapRoots — maproots.vercel.app</div>');
-  w.document.write('</div></body></html>');
+  w.document.write('</div>');
+
+  // Download image button logic using html2canvas
+  w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
+  w.document.write('<sc'+'ript>');
+  w.document.write('document.getElementById("dlbtn").onclick=function(){');
+  w.document.write('  var bar=document.getElementById("btnbar");bar.style.display="none";');
+  w.document.write('  html2canvas(document.querySelector(".page"),{scale:2,useCORS:true,allowTaint:true}).then(function(canvas){');
+  w.document.write('    bar.style.display="flex";');
+  w.document.write('    var a=document.createElement("a");a.download="maproots-rota.png";a.href=canvas.toDataURL("image/png");a.click();');
+  w.document.write('  }).catch(function(){bar.style.display="flex";alert("Use Salvar PDF para exportar.");});');
+  w.document.write('};');
+  w.document.write('</sc'+'ript>');
+
+  w.document.write('</body></html>');
   w.document.close();
 }
 
