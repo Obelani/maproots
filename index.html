@@ -3,69 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>RotaLivre — Planejador de Rotas</title>
+<title>MapRoots — Planejador de Rotas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --road: #1a1a2e;
-    --road-mid: #16213e;
-    --asphalt: #0f3460;
-    --accent: #e94560;
-    --accent-light: #ff6b81;
-    --gold: #f5a623;
-    --white: #ffffff;
-    --off-white: #f0f0f0;
-    --muted: #8a9bb5;
-    --border: rgba(255,255,255,0.1);
-    --card: rgba(255,255,255,0.05);
-    --card-hover: rgba(255,255,255,0.09);
-    --radius: 10px;
-    --radius-lg: 16px;
+    --road: #1a1a2e; --road-mid: #16213e; --asphalt: #0f3460;
+    --accent: #e94560; --accent-light: #ff6b81; --gold: #f5a623;
+    --white: #ffffff; --off-white: #f0f0f0; --muted: #8a9bb5;
+    --border: rgba(255,255,255,0.1); --card: rgba(255,255,255,0.05);
+    --card-hover: rgba(255,255,255,0.09); --radius: 10px; --radius-lg: 16px;
   }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--road);
-    color: var(--white);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* NAV */
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 24px;
-    background: var(--road-mid);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 200;
-  }
-  .logo {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  html, body { height: 100%; }
+  body { font-family: 'Inter', sans-serif; background: var(--road); color: var(--white); min-height: 100vh; overflow-x: hidden; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: var(--road-mid); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 200; }
+  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
   .logo span { color: var(--accent); }
   .nav-right { display: flex; align-items: center; gap: 10px; }
-  .badge-plan {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
+  .badge-plan { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; background: var(--card); border: 1px solid var(--border); color: var(--muted); }
   .badge-plan.pro { background: rgba(245,166,35,0.15); border-color: rgba(245,166,35,0.4); color: var(--gold); }
   .btn { padding: 8px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
   .btn-ghost { background: transparent; color: var(--white); border: 1px solid var(--border); }
@@ -74,95 +30,22 @@
   .btn-primary:hover { background: var(--accent-light); }
   .btn-gold { background: var(--gold); color: var(--road); }
   .btn-gold:hover { opacity: 0.9; }
-
-  /* HERO / LANDING */
-  #landing {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 80px 24px 60px;
-    text-align: center;
-  }
-  .hero-tag {
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
-  h1 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(36px, 6vw, 60px);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -1px;
-    max-width: 700px;
-    margin-bottom: 20px;
-  }
+  #landing { display: flex; flex-direction: column; align-items: center; padding: 80px 24px 60px; text-align: center; }
+  .hero-tag { font-size: 12px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(36px, 6vw, 60px); font-weight: 700; line-height: 1.1; letter-spacing: -1px; max-width: 700px; margin-bottom: 20px; }
   h1 em { font-style: normal; color: var(--accent); }
-  .hero-sub {
-    font-size: 17px;
-    color: var(--muted);
-    max-width: 480px;
-    line-height: 1.6;
-    margin-bottom: 36px;
-  }
+  .hero-sub { font-size: 17px; color: var(--muted); max-width: 480px; line-height: 1.6; margin-bottom: 36px; }
   .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
   .hero-btns .btn { padding: 12px 28px; font-size: 15px; }
-
-  /* PRICING */
-  #pricing {
-    padding: 60px 24px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .section-label {
-    text-align: center;
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-  }
-  .section-title {
-    text-align: center;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 30px;
-    font-weight: 700;
-    margin-bottom: 40px;
-  }
+  #pricing { padding: 60px 24px; max-width: 900px; margin: 0 auto; width: 100%; }
+  .section-label { text-align: center; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .section-title { text-align: center; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; margin-bottom: 40px; }
   .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-  .plan-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 28px 24px;
-    position: relative;
-    transition: border-color 0.2s;
-  }
-  .plan-card:hover { border-color: rgba(255,255,255,0.2); }
+  .plan-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 24px; position: relative; }
   .plan-card.featured { border-color: var(--gold); background: rgba(245,166,35,0.08); }
-  .plan-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--gold);
-    color: var(--road);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 14px;
-    border-radius: 20px;
-    white-space: nowrap;
-  }
+  .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--road); font-size: 11px; font-weight: 600; padding: 3px 14px; border-radius: 20px; white-space: nowrap; }
   .plan-name { font-size: 14px; font-weight: 500; color: var(--muted); margin-bottom: 8px; }
-  .plan-price {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
+  .plan-price { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; margin-bottom: 4px; }
   .plan-price sup { font-size: 16px; font-weight: 500; vertical-align: super; }
   .plan-period { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
   .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
@@ -170,195 +53,66 @@
   .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 600; flex-shrink: 0; }
   .plan-features li.muted-feat::before { content: '–'; color: var(--muted); }
   .plan-features li.muted-feat { color: var(--muted); }
-  .plan-btn { width: 100%; padding: 11px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
-
-  /* APP */
-  #app-view { display: none; }
-  .app-layout { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 53px); }
-
-  /* SIDEBAR */
-  .sidebar {
-    background: var(--road-mid);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+  .plan-btn { width: 100%; padding: 11px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--white); }
+  .plan-btn:hover { background: var(--card-hover); }
+  .plan-btn.gold { background: var(--gold); color: var(--road); border: none; }
+  #app-view { display: none; height: calc(100vh - 53px); }
+  .app-layout { display: grid; grid-template-columns: 320px 1fr; height: 100%; }
+  .sidebar { background: var(--road-mid); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
   .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); }
   .sidebar-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 10px; }
   .search-wrap { position: relative; }
-  .search-input {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 9px 12px 9px 36px;
-    color: var(--white);
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.15s;
-  }
+  .search-input { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px 9px 36px; color: var(--white); font-size: 13px; outline: none; }
   .search-input::placeholder { color: var(--muted); }
   .search-input:focus { border-color: rgba(255,255,255,0.3); }
   .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--muted); pointer-events: none; }
-  #autocomplete-list {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0; right: 0;
-    background: var(--road);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    z-index: 300;
-    max-height: 180px;
-    overflow-y: auto;
-    display: none;
-  }
+  #autocomplete-list { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--road); border: 1px solid var(--border); border-radius: var(--radius); z-index: 300; max-height: 180px; overflow-y: auto; display: none; }
   .ac-item { padding: 9px 12px; font-size: 13px; cursor: pointer; color: var(--off-white); border-bottom: 1px solid var(--border); }
   .ac-item:last-child { border-bottom: none; }
   .ac-item:hover { background: var(--card-hover); }
-
   .sidebar-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
   .stat-box { background: var(--card); border-radius: var(--radius); padding: 10px 12px; }
   .stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
   .stat-val { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; }
-
   .points-area { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; }
   .empty-state { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 13px; line-height: 1.6; }
   .empty-icon { font-size: 32px; margin-bottom: 12px; display: block; }
-
-  .point-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 9px 10px;
-    transition: border-color 0.15s;
-  }
-  .point-row:hover { border-color: rgba(255,255,255,0.2); }
-  .point-dot {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
-    flex-shrink: 0;
-    color: var(--road);
-  }
+  .point-row { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 10px; }
+  .point-dot { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; color: var(--road); }
   .point-info { flex: 1; min-width: 0; }
   .point-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .point-dist-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .point-del { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px 4px; font-size: 15px; line-height: 1; border-radius: 4px; }
-  .point-del:hover { color: var(--accent); background: rgba(233,69,96,0.1); }
-
+  .point-del:hover { color: var(--accent); }
   .seg-arrow { text-align: center; color: var(--muted); font-size: 11px; padding: 2px 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .seg-line { height: 1px; flex: 1; background: var(--border); }
-  .seg-km { white-space: nowrap; }
-
   .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
   .clear-link { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; text-align: left; padding: 0; }
   .clear-link:hover { color: var(--accent); }
-
-  /* PAYWALL BANNER */
-  .paywall-banner {
-    background: linear-gradient(135deg, rgba(245,166,35,0.15), rgba(233,69,96,0.15));
-    border: 1px solid rgba(245,166,35,0.3);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    display: none;
-  }
+  .paywall-banner { background: linear-gradient(135deg, rgba(245,166,35,0.15), rgba(233,69,96,0.15)); border: 1px solid rgba(245,166,35,0.3); border-radius: var(--radius); padding: 12px 14px; display: none; }
   .paywall-banner.visible { display: block; }
   .paywall-banner p { font-size: 12px; color: var(--off-white); margin-bottom: 8px; line-height: 1.5; }
   .paywall-banner strong { color: var(--gold); }
-
-  /* MAP */
   .map-area { position: relative; }
   #map-canvas { width: 100%; height: 100%; }
-  .map-hint {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(15,52,96,0.9);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 7px 16px;
-    font-size: 12px;
-    color: var(--muted);
-    pointer-events: none;
-    white-space: nowrap;
-  }
-  .loading-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(26,26,46,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: var(--muted);
-    gap: 10px;
-    display: none;
-  }
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
+  .map-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15,52,96,0.9); border: 1px solid var(--border); border-radius: 20px; padding: 7px 16px; font-size: 12px; color: var(--muted); pointer-events: none; white-space: nowrap; }
+  .loading-overlay { position: absolute; inset: 0; background: rgba(26,26,46,0.6); display: none; align-items: center; justify-content: center; font-size: 13px; color: var(--muted); gap: 10px; }
+  .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* MODAL */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 500;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
   .modal-backdrop.open { display: flex; }
-  .modal {
-    background: var(--road-mid);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 32px;
-    max-width: 420px;
-    width: 100%;
-  }
+  .modal { background: var(--road-mid); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; max-width: 420px; width: 100%; }
   .modal h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
   .modal p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
-  .modal-input {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    color: var(--white);
-    font-size: 14px;
-    outline: none;
-    margin-bottom: 10px;
-    transition: border-color 0.15s;
-  }
+  .modal-input { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; color: var(--white); font-size: 14px; outline: none; margin-bottom: 10px; }
   .modal-input:focus { border-color: rgba(255,255,255,0.3); }
   .modal-btns { display: flex; gap: 8px; margin-top: 4px; }
   .modal-btns .btn { flex: 1; padding: 11px; font-size: 14px; }
   .modal-error { font-size: 12px; color: var(--accent); margin-top: -4px; margin-bottom: 8px; min-height: 16px; }
   .modal-switch { font-size: 13px; color: var(--muted); text-align: center; margin-top: 16px; }
   .modal-switch a { color: var(--off-white); cursor: pointer; text-decoration: underline; }
-
-  /* UPGRADE MODAL */
   .upgrade-features { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
   .upgrade-features li { font-size: 13px; display: flex; align-items: center; gap: 8px; }
   .upgrade-features li::before { content: '✓'; color: var(--gold); font-weight: 600; }
-
   @media (max-width: 700px) {
     .app-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
     .sidebar { max-height: 45vh; }
@@ -367,9 +121,8 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="logo">🗺️ Rota<span>Livre</span></div>
+  <div class="logo">🗺️ Map<span>Roots</span></div>
   <div class="nav-right">
     <span class="badge-plan" id="plan-badge">Gratuito</span>
     <button class="btn btn-gold" id="btn-upgrade" style="display:none" onclick="openUpgradeModal()">Upgrade Pro</button>
@@ -378,7 +131,6 @@
   </div>
 </nav>
 
-<!-- LANDING -->
 <div id="landing">
   <p class="hero-tag">Planejador de viagens</p>
   <h1>Sua rota,<br/><em>do jeito que você quer</em></h1>
@@ -387,8 +139,7 @@
     <button class="btn btn-primary" onclick="openApp()">Começar grátis</button>
     <button class="btn btn-ghost" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Ver planos</button>
   </div>
-
-  <div id="pricing" style="width:100%">
+  <div id="pricing">
     <p class="section-label" style="margin-top:80px">Planos</p>
     <h2 class="section-title">Simples e direto</h2>
     <div class="plans-grid">
@@ -400,11 +151,11 @@
           <li>Até 5 pontos por rota</li>
           <li>Distância e tempo em km</li>
           <li>Clique no mapa ou busca por cidade</li>
-          <li class="muted-feat">Rotas ilimitadas</li>
+          <li class="muted-feat">Rotas ilimitadas salvas</li>
           <li class="muted-feat">Exportar GPX / KML</li>
-          <li class="muted-feat">Salvar e compartilhar rotas</li>
+          <li class="muted-feat">Compartilhar link da rota</li>
         </ul>
-        <button class="plan-btn btn-ghost" onclick="openApp()">Começar grátis</button>
+        <button class="plan-btn" onclick="openApp()">Começar grátis</button>
       </div>
       <div class="plan-card featured">
         <div class="plan-badge">Mais popular</div>
@@ -419,13 +170,12 @@
           <li>Exportar GPX / KML</li>
           <li>Compartilhar link da rota</li>
         </ul>
-        <button class="plan-btn btn-gold" onclick="startCheckout()">Assinar Pro — R$19,90/mês</button>
+        <button class="plan-btn gold" onclick="startCheckout()">Assinar Pro — R$19,90/mês</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app-view">
   <div class="app-layout">
     <div class="sidebar">
@@ -451,7 +201,7 @@
       </div>
       <div class="sidebar-footer">
         <div class="paywall-banner" id="paywall-banner">
-          <p>Você atingiu o limite de <strong>5 pontos</strong> no plano gratuito. Faça upgrade para adicionar pontos ilimitados.</p>
+          <p>Você atingiu o limite de <strong>5 pontos</strong> no plano gratuito.</p>
           <button class="btn btn-gold" style="width:100%;padding:9px;font-size:13px" onclick="openUpgradeModal()">Ver plano Pro — R$19,90/mês</button>
         </div>
         <button class="clear-link" onclick="clearAll()">🗑 Limpar rota</button>
@@ -467,7 +217,6 @@
   </div>
 </div>
 
-<!-- MODAL LOGIN / CADASTRO -->
 <div class="modal-backdrop" id="modal-auth">
   <div class="modal">
     <h3 id="auth-title">Entrar</h3>
@@ -483,7 +232,6 @@
   </div>
 </div>
 
-<!-- MODAL UPGRADE -->
 <div class="modal-backdrop" id="modal-upgrade">
   <div class="modal">
     <h3>⚡ Upgrade para Pro</h3>
@@ -501,10 +249,245 @@
   </div>
 </div>
 
-<script src="app.js"></script>
 <script>
-  // Inicia Google Maps depois que a API carregar
-  function initMap() { window._mapReady = true; if (window._mapInitCb) window._mapInitCb(); }
+const SUPABASE_URL = 'https://rzovdzhllmzgdmtaxqij.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_eVYOnLpwqhJc63u2DKHO-w_MrSM9F3u';
+const MERCADOPAGO_LINK = 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_PLANO_ID';
+const FREE_LIMIT = 5;
+const POINT_COLORS = ['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
+
+let map, geocoder, dirSvc, dirRender;
+let waypoints = [], markers = [];
+let user = null, isPro = false, authMode = 'login', acTimeout = null;
+
+async function sbFetch(path, opts = {}) {
+  const res = await fetch(SUPABASE_URL + path, {
+    ...opts,
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + (user?.access_token || SUPABASE_KEY), 'Content-Type': 'application/json', ...opts.headers }
+  });
+  return res.json();
+}
+
+async function sbLogin(email, password) {
+  const data = await sbFetch('/auth/v1/token?grant_type=password', { method: 'POST', body: JSON.stringify({ email, password }) });
+  if (data.error || data.error_code) throw new Error(data.error_description || data.message || data.error);
+  return { access_token: data.access_token, user: data.user };
+}
+
+async function sbRegister(email, password) {
+  const data = await sbFetch('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email, password }) });
+  if (data.error || data.error_code) throw new Error(data.error_description || data.message || data.error);
+  return { access_token: data.access_token, user: data.user };
+}
+
+async function checkProStatus() {
+  if (!user) return false;
+  const data = await sbFetch('/rest/v1/subscriptions?user_id=eq.' + user.user.id + '&status=eq.active&select=id');
+  return Array.isArray(data) && data.length > 0;
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showLoading(v) { document.getElementById('loading').style.display = v ? 'flex' : 'none'; }
+
+function setUserUI() {
+  const loggedIn = !!user;
+  document.getElementById('btn-login').style.display = loggedIn ? 'none' : '';
+  document.getElementById('btn-logout').style.display = loggedIn ? '' : 'none';
+  document.getElementById('plan-badge').textContent = isPro ? 'Pro ⚡' : 'Gratuito';
+  document.getElementById('plan-badge').className = 'badge-plan' + (isPro ? ' pro' : '');
+  document.getElementById('btn-upgrade').style.display = (loggedIn && !isPro) ? '' : 'none';
+  document.getElementById('stat-limit').textContent = isPro ? '∞' : FREE_LIMIT + ' pts';
+}
+
+function openApp() {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('app-view').style.display = '';
+  if (window._mapReady) startMap(); else window._mapInitCb = startMap;
+}
+
+function openLoginModal() { authMode = 'login'; renderAuthModal(); openModal('modal-auth'); }
+function openUpgradeModal() { openModal('modal-upgrade'); }
+
+function renderAuthModal() {
+  const isLogin = authMode === 'login';
+  document.getElementById('auth-title').textContent = isLogin ? 'Entrar' : 'Criar conta';
+  document.getElementById('auth-desc').textContent = isLogin ? 'Acesse sua conta para salvar suas rotas.' : 'Crie uma conta gratuita agora.';
+  document.getElementById('auth-submit-btn').textContent = isLogin ? 'Entrar' : 'Criar conta';
+  document.getElementById('auth-switch').innerHTML = isLogin
+    ? 'Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a>'
+    : 'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+  document.getElementById('auth-error').textContent = '';
+}
+
+function toggleAuthMode() { authMode = authMode === 'login' ? 'register' : 'login'; renderAuthModal(); }
+
+async function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass = document.getElementById('auth-pass').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.textContent = '';
+  if (!email || !pass) { errEl.textContent = 'Preencha e-mail e senha.'; return; }
+  try {
+    const data = authMode === 'login' ? await sbLogin(email, pass) : await sbRegister(email, pass);
+    user = data; isPro = await checkProStatus(); setUserUI(); closeModal('modal-auth'); openApp();
+  } catch (e) { errEl.textContent = e.message; }
+}
+
+function logout() {
+  user = null; isPro = false; setUserUI();
+  document.getElementById('landing').style.display = '';
+  document.getElementById('app-view').style.display = 'none';
+  clearAll();
+}
+
+function startCheckout() {
+  if (!user) { closeModal('modal-upgrade'); openLoginModal(); return; }
+  window.open(MERCADOPAGO_LINK + '&external_reference=' + encodeURIComponent(user.user.id), '_blank');
+}
+
+function startMap() {
+  map = new google.maps.Map(document.getElementById('map-canvas'), {
+    center: { lat: -25, lng: -52 }, zoom: 4, mapTypeId: 'roadmap',
+    disableDefaultUI: true, zoomControl: true,
+    styles: [
+      { featureType: 'all', elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
+      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f3460' }] },
+      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#16213e' }] },
+      { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#1a4a6b' }] },
+      { featureType: 'administrative.country', elementType: 'labels.text.fill', stylers: [{ color: '#8a9bb5' }] },
+      { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#a0aec0' }] },
+      { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+      { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+      { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#16213e' }] },
+    ]
+  });
+  geocoder = new google.maps.Geocoder();
+  dirSvc = new google.maps.DirectionsService();
+  dirRender = new google.maps.DirectionsRenderer({ suppressMarkers: true, polylineOptions: { strokeColor: '#e94560', strokeWeight: 4, strokeOpacity: 0.9 } });
+  dirRender.setMap(map);
+  map.addListener('click', (e) => {
+    if (!canAddPoint()) return;
+    showLoading(true);
+    geocoder.geocode({ location: e.latLng }, (res, status) => {
+      showLoading(false);
+      if (status === 'OK' && res[0]) addPoint(res[0].formatted_address, e.latLng.lat(), e.latLng.lng());
+    });
+  });
+}
+
+function canAddPoint() {
+  const limit = isPro ? Infinity : FREE_LIMIT;
+  if (waypoints.length >= limit) { document.getElementById('paywall-banner').classList.add('visible'); return false; }
+  return true;
+}
+
+function addPoint(name, lat, lng) {
+  if (!canAddPoint()) return;
+  const idx = waypoints.length, color = POINT_COLORS[idx % POINT_COLORS.length];
+  waypoints.push({ name, lat, lng, color });
+  const marker = new google.maps.Marker({
+    position: { lat, lng }, map, zIndex: 10 + idx,
+    label: { text: String(idx + 1), color: '#0f0f1a', fontSize: '11px', fontWeight: '700' },
+    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 15, fillColor: color, fillOpacity: 1, strokeColor: '#ffffff', strokeWeight: 2.5 }
+  });
+  markers.push(marker);
+  recalcRoute();
+}
+
+function removePoint(idx) {
+  waypoints.splice(idx, 1); markers[idx].setMap(null); markers.splice(idx, 1);
+  markers.forEach((m, i) => {
+    const color = POINT_COLORS[i % POINT_COLORS.length];
+    m.setLabel({ text: String(i + 1), color: '#0f0f1a', fontSize: '11px', fontWeight: '700' });
+    m.setIcon({ path: google.maps.SymbolPath.CIRCLE, scale: 15, fillColor: color, fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2.5 });
+    waypoints[i].color = color;
+  });
+  document.getElementById('paywall-banner').classList.remove('visible');
+  recalcRoute();
+}
+
+function clearAll() {
+  waypoints = []; markers.forEach(m => m.setMap(null)); markers = [];
+  if (dirRender) dirRender.setDirections({ routes: [] });
+  document.getElementById('paywall-banner').classList.remove('visible');
+  renderSidebar([]); updateStats(0, 0);
+}
+
+function recalcRoute() {
+  if (waypoints.length < 2) { if (dirRender) dirRender.setDirections({ routes: [] }); renderSidebar([]); updateStats(0, 0); return; }
+  const origin = { lat: waypoints[0].lat, lng: waypoints[0].lng };
+  const destination = { lat: waypoints[waypoints.length - 1].lat, lng: waypoints[waypoints.length - 1].lng };
+  const stops = waypoints.slice(1, -1).map(p => ({ location: new google.maps.LatLng(p.lat, p.lng), stopover: true }));
+  showLoading(true);
+  dirSvc.route({ origin, destination, waypoints: stops, travelMode: google.maps.TravelMode.DRIVING, unitSystem: google.maps.UnitSystem.METRIC }, (result, status) => {
+    showLoading(false);
+    if (status === 'OK') {
+      dirRender.setDirections(result);
+      const legs = result.routes[0].legs;
+      let totalDist = 0, totalTime = 0;
+      const segs = legs.map(l => { totalDist += l.distance.value; totalTime += l.duration.value; return Math.round(l.distance.value / 1000); });
+      updateStats(totalDist, totalTime); renderSidebar(segs);
+    }
+  });
+}
+
+function updateStats(distM, timeSec) {
+  const km = Math.round(distM / 1000);
+  document.getElementById('stat-km').textContent = km > 0 ? km.toLocaleString('pt-BR') + ' km' : '— km';
+  document.getElementById('stat-pts').textContent = waypoints.length;
+  if (timeSec > 0) {
+    const h = Math.floor(timeSec / 3600), m = Math.round((timeSec % 3600) / 60);
+    document.getElementById('stat-time').textContent = h > 0 ? h + 'h ' + m + 'min' : m + 'min';
+  } else { document.getElementById('stat-time').textContent = '—'; }
+}
+
+function renderSidebar(segs) {
+  const area = document.getElementById('points-area');
+  if (waypoints.length === 0) { area.innerHTML = '<div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>'; return; }
+  let html = '';
+  waypoints.forEach((pt, i) => {
+    html += '<div class="point-row"><div class="point-dot" style="background:' + pt.color + '">' + (i+1) + '</div><div class="point-info"><div class="point-name">' + pt.name + '</div></div><button class="point-del" onclick="removePoint(' + i + ')">✕</button></div>';
+    if (i < segs.length) html += '<div class="seg-arrow"><div class="seg-line"></div><span>↓ ' + segs[i].toLocaleString('pt-BR') + ' km</span><div class="seg-line"></div></div>';
+  });
+  area.innerHTML = html;
+}
+
+document.getElementById('search-input').addEventListener('input', (e) => {
+  clearTimeout(acTimeout);
+  const val = e.target.value.trim(), list = document.getElementById('autocomplete-list');
+  if (!val || val.length < 3 || !window.google) { list.style.display = 'none'; return; }
+  acTimeout = setTimeout(() => {
+    new google.maps.places.AutocompleteService().getPlacePredictions({ input: val, language: 'pt' }, (preds, status) => {
+      list.innerHTML = '';
+      if (status !== 'OK' || !preds) { list.style.display = 'none'; return; }
+      preds.slice(0, 5).forEach(p => {
+        const div = document.createElement('div'); div.className = 'ac-item'; div.textContent = p.description;
+        div.onclick = () => { document.getElementById('search-input').value = ''; list.style.display = 'none'; geocodeAndAdd(p.description); };
+        list.appendChild(div);
+      });
+      list.style.display = 'block';
+    });
+  }, 280);
+});
+
+document.getElementById('search-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { const val = document.getElementById('search-input').value.trim(); if (val) { document.getElementById('autocomplete-list').style.display = 'none'; geocodeAndAdd(val); document.getElementById('search-input').value = ''; } }
+});
+
+document.addEventListener('click', (e) => { if (!e.target.closest('.search-wrap')) document.getElementById('autocomplete-list').style.display = 'none'; });
+
+function geocodeAndAdd(query) {
+  if (!canAddPoint()) return;
+  showLoading(true);
+  geocoder.geocode({ address: query }, (res, status) => {
+    showLoading(false);
+    if (status === 'OK' && res[0]) { const loc = res[0].geometry.location; addPoint(res[0].formatted_address, loc.lat(), loc.lng()); }
+  });
+}
+
+function initMap() { window._mapReady = true; if (window._mapInitCb) window._mapInitCb(); }
+setUserUI();
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAr1Q-jwFyMH5Qwc8XPlzcvH_HJCmh1hwM&libraries=places&callback=initMap" async defer></script>
 </body>
