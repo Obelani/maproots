@@ -403,7 +403,15 @@ function recalc(){
     showLoading(false);
     if(st==='OK'){
       dirRender.setDirections(res);
-      window._lastDirectionsResult=res.routes[0].overview_polyline.points;
+      window._lastDirectionsResult=(function(){
+        var pts=[];
+        res.routes[0].legs.forEach(function(leg){
+          leg.steps.forEach(function(step){
+            step.path.forEach(function(p){pts.push(p.lat()+','+p.lng());});
+          });
+        });
+        return pts;
+      })();
       const legs=res.routes[0].legs;
       let td=0,tt=0;
       const segs=legs.map(l=>{td+=l.distance.value;tt+=l.duration.value;return Math.round(l.distance.value/1000);});
@@ -474,12 +482,21 @@ function exportImage(){
   const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(function(s){return s.textContent;});
 
   // Encoded polyline for real road curves
-  let encodedPath='';
-  try{if(window._lastDirectionsResult){encodedPath=window._lastDirectionsResult;}}catch(e){}
+  // Use detailed step-by-step path points for real road curves
+  // Static Maps URL has limit, so sample every Nth point to stay under limit
+  let pathPoints=[];
+  try{if(window._lastDirectionsResult&&window._lastDirectionsResult.length){pathPoints=window._lastDirectionsResult;}}catch(e){}
 
   let pathParam='';
-  if(encodedPath){
-    pathParam='path=color:0xe94560ff%7Cweight:4%7Cenc:'+encodeURIComponent(encodedPath);
+  if(pathPoints.length>0){
+    // Sample points to stay under URL limit (~2000 chars for path)
+    const maxPts=80;
+    const step=Math.max(1,Math.floor(pathPoints.length/maxPts));
+    let sampled=[];
+    for(var pi=0;pi<pathPoints.length;pi+=step){sampled.push(pathPoints[pi]);}
+    // Always include last point
+    sampled.push(pathPoints[pathPoints.length-1]);
+    pathParam='path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(sampled.join('|'));
   } else {
     pathParam='path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(waypoints.map(function(p){return p.lat+','+p.lng;}).join('|'));
   }
