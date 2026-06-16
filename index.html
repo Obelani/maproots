@@ -403,6 +403,7 @@ function recalc(){
     showLoading(false);
     if(st==='OK'){
       dirRender.setDirections(res);
+      window._lastDirectionsResult=res.routes[0].overview_polyline;
       const legs=res.routes[0].legs;
       let td=0,tt=0;
       const segs=legs.map(l=>{td+=l.distance.value;tt+=l.duration.value;return Math.round(l.distance.value/1000);});
