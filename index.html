@@ -334,15 +334,8 @@ function startMap(){
   map=new google.maps.Map(document.getElementById('map-canvas'),{
     center:{lat:-25,lng:-52},zoom:4,mapTypeId:'roadmap',disableDefaultUI:true,zoomControl:true,
     styles:[
-      {featureType:'all',elementType:'geometry',stylers:[{color:'#1a1a2e'}]},
-      {featureType:'water',elementType:'geometry',stylers:[{color:'#0f3460'}]},
-      {featureType:'road',elementType:'geometry',stylers:[{color:'#16213e'}]},
-      {featureType:'road.highway',elementType:'geometry',stylers:[{color:'#1a4a6b'}]},
-      {featureType:'administrative.country',elementType:'labels.text.fill',stylers:[{color:'#8a9bb5'}]},
-      {featureType:'administrative.locality',elementType:'labels.text.fill',stylers:[{color:'#a0aec0'}]},
       {featureType:'poi',stylers:[{visibility:'off'}]},
       {featureType:'transit',stylers:[{visibility:'off'}]},
-      {featureType:'landscape',elementType:'geometry',stylers:[{color:'#16213e'}]},
     ]
   });
   geocoder=new google.maps.Geocoder();
