@@ -472,34 +472,85 @@ function exportImage(){
   const pts=waypoints.length;
   const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(function(s){return s.textContent;});
 
+  // Static map — large, centered on route
+  const bounds=new google.maps.LatLngBounds();
+  waypoints.forEach(function(p){bounds.extend({lat:p.lat,lng:p.lng});});
+  const center=bounds.getCenter();
   const pathCoords=waypoints.map(function(p){return p.lat+','+p.lng;}).join('|');
-  const markersParam=waypoints.map(function(p,i){return 'markers=color:0x'+COLORS_HEX[i%10]+'ff%7Clabel:'+(i+1)+'%7C'+p.lat+','+p.lng;}).join('&');
-  const staticUrl='https://maps.googleapis.com/maps/api/staticmap?size=860x380&maptype=roadmap&path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(pathCoords)+'&'+markersParam+'&key='+MAPS_KEY;
+  const markersParam=waypoints.map(function(p,i){
+    return 'markers=size:mid%7Ccolor:0x'+COLORS_HEX[i%10]+'ff%7Clabel:'+(i+1)+'%7C'+p.lat+','+p.lng;
+  }).join('&');
+  const staticUrl='https://maps.googleapis.com/maps/api/staticmap'
+    +'?size=800x600'
+    +'&maptype=roadmap'
+    +'&path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(pathCoords)
+    +'&'+markersParam
+    +'&key='+MAPS_KEY;
 
-  let pointsHtml='';
+  // Points list HTML
+  let listHtml='';
   waypoints.forEach(function(p,i){
-    const name=p.name.length>45?p.name.substring(0,43)+'...':p.name;
-    const dist=segs[i]?'<div style="font-size:11px;color:#8a9bb5;margin-top:2px">'+String.fromCharCode(8595)+' '+segs[i]+'</div>':'';
-    pointsHtml+='<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;width:'+(pts>8?'50%':'100%')+';box-sizing:border-box;padding-right:16px">'
-      +'<div style="width:26px;height:26px;border-radius:50%;background:'+COLORS[i%10]+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0f0f1a;flex-shrink:0">'+(i+1)+'</div>'
-      +'<div><div style="font-size:13px;color:#fff;line-height:1.3">'+name+'</div>'+dist+'</div>'
-      +'</div>';
+    const name=p.name.replace(/,.*$/,'').substring(0,22);
+    const country=p.name.split(',').slice(-1)[0].trim().substring(0,12);
+    listHtml+='<tr>'
+      +'<td style="padding:3px 6px 3px 0;vertical-align:middle">'
+        +'<span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:'+COLORS[i%10]+';align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0a0a1a">'+(i+1)+'</span>'
+      +'</td>'
+      +'<td style="padding:3px 4px;font-size:12px;color:#1a1a2e;line-height:1.3">'
+        +'<span style="font-weight:600">'+name+'</span>'
+        +'<span style="color:#666;font-size:10px"> — '+country+'</span>'
+      +'</td>'
+      +'<td style="padding:3px 0 3px 4px;font-size:11px;color:#e94560;white-space:nowrap;text-align:right">'+(segs[i]||'')+'</td>'
+    +'</tr>';
   });
 
   const w=window.open('','_blank');
   w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MapRoots Rota</title>');
-  w.document.write('<style>body{margin:0;background:#1a1a2e;font-family:Arial,sans-serif}');
-  w.document.write('@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>');
-  w.document.write('<div style="background:#16213e;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1)">');
-  w.document.write('<div style="font-size:20px;font-weight:700;color:#fff">Map<span style="color:#e94560">Roots</span></div>');
-  w.document.write('<div style="font-size:13px;color:#f5a623">'+pts+' pontos &nbsp;|&nbsp; '+totalKm+' &nbsp;|&nbsp; '+totalTime+'</div></div>');
-  w.document.write('<img src="'+staticUrl+'" style="width:100%;display:block;max-height:380px;object-fit:cover" />');
-  w.document.write('<div style="padding:20px 24px"><div style="font-size:12px;color:#8a9bb5;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Pontos da rota</div>');
-  w.document.write('<div style="display:flex;flex-wrap:wrap">'+pointsHtml+'</div></div>');
-  w.document.write('<div style="background:#16213e;padding:10px 24px;text-align:center;font-size:11px;color:#8a9bb5;border-top:1px solid rgba(255,255,255,0.1)">Gerado por MapRoots — maproots.vercel.app</div>');
-  w.document.write('</body></html>');
+  w.document.write('<style>');
+  w.document.write('*{box-sizing:border-box;margin:0;padding:0}');
+  w.document.write('body{font-family:Arial,sans-serif;background:#f0f4f8}');
+  w.document.write('.page{width:1100px;margin:20px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12)}');
+  w.document.write('.header{background:#1a1a2e;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}');
+  w.document.write('.logo{font-size:18px;font-weight:700;color:#fff}');
+  w.document.write('.logo span{color:#e94560}');
+  w.document.write('.stats{font-size:12px;color:#f5a623;display:flex;gap:16px}');
+  w.document.write('.body{display:flex}');
+  w.document.write('.sidebar{width:220px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;padding:16px 12px}');
+  w.document.write('.sidebar h3{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:10px}');
+  w.document.write('.map-area{flex:1;min-height:600px}');
+  w.document.write('.map-area img{width:100%;height:100%;object-fit:cover;display:block}');
+  w.document.write('.dist-box{background:#1a1a2e;border-radius:8px;padding:12px;margin-top:12px;color:#fff}');
+  w.document.write('.dist-box h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#f5a623;margin-bottom:8px}');
+  w.document.write('.dist-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.1)}');
+  w.document.write('.dist-row:last-child{border:none;font-weight:700;color:#f5a623;margin-top:4px;font-size:13px}');
+  w.document.write('.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}');
+  w.document.write('@media print{body{background:#fff}.page{box-shadow:none;margin:0;border-radius:0;width:100%}button{display:none}}');
+  w.document.write('</style></head><body>');
+  w.document.write('<div style="text-align:center;padding:12px"><button onclick="window.print()" style="background:#e94560;color:#fff;border:none;padding:8px 24px;border-radius:6px;font-size:13px;cursor:pointer;margin-right:8px">🖨️ Salvar PDF / Imprimir</button><button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer">✕ Fechar</button></div>');
+  w.document.write('<div class="page">');
+  w.document.write('<div class="header"><div class="logo">Map<span>Roots</span> — Roteiro da Viagem</div>');
+  w.document.write('<div class="stats"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div></div>');
+  w.document.write('<div class="body">');
+  // Sidebar
+  w.document.write('<div class="sidebar">');
+  w.document.write('<h3>Roteiro</h3>');
+  w.document.write('<table style="width:100%;border-collapse:collapse">'+listHtml+'</table>');
+  w.document.write('<div class="dist-box">');
+  w.document.write('<h4>Distâncias</h4>');
+  segs.forEach(function(s,i){
+    if(!s)return;
+    const from=waypoints[i].name.replace(/,.*$/,'').substring(0,14);
+    const to=waypoints[i+1]?waypoints[i+1].name.replace(/,.*$/,'').substring(0,14):'';
+    w.document.write('<div class="dist-row"><span>'+from+' → '+to+'</span><span style="color:#f5a623">'+s+'</span></div>');
+  });
+  w.document.write('<div class="dist-row"><span>TOTAL</span><span>'+totalKm+'</span></div>');
+  w.document.write('</div></div>');
+  // Map
+  w.document.write('<div class="map-area"><img src="'+staticUrl+'" /></div>');
+  w.document.write('</div>');
+  w.document.write('<div class="footer">Gerado por MapRoots — maproots.vercel.app</div>');
+  w.document.write('</div></body></html>');
   w.document.close();
-  setTimeout(function(){w.print();},1000);
 }
 
 function initMap(){window._mapReady=true;if(window._mapInitCb)window._mapInitCb();}
