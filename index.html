@@ -1061,8 +1061,16 @@ function _loadParsedRoute(raw,fmt,save){
     });
   }
   if(fmt==='int'){
+    const stayDecode=['passagem','pernoite','dias'];
     const pts=raw.split(';').map(function(pair,i){
-      const p=pair.split(',');return{lat:parseInt(p[0])/10000,lng:parseInt(p[1])/10000,name:'Ponto '+(i+1)};
+      const p=pair.split(',');
+      return{
+        lat:parseInt(p[0])/10000,
+        lng:parseInt(p[1])/10000,
+        name:'Ponto '+(i+1),
+        stay:stayDecode[parseInt(p[2])||0]||'passagem',
+        days:parseInt(p[3])||1
+      };
     });
     revGeo(pts,_addAllPoints);
   }else if(fmt==='compact'){
@@ -1076,7 +1084,7 @@ function _loadParsedRoute(raw,fmt,save){
 function _addAllPoints(pts){
   pts.forEach(function(p){
     const idx=waypoints.length,color=COLORS[idx%COLORS.length];
-    waypoints.push({name:p.name,lat:p.lat,lng:p.lng,color:color});
+    waypoints.push({name:p.name,lat:p.lat,lng:p.lng,color:color,stay:p.stay||'passagem',days:p.days||1});
     markers.push(new google.maps.Marker({
       position:{lat:p.lat,lng:p.lng},map,zIndex:10+idx,
       label:{text:String(idx+1),color:'#0f0f1a',fontSize:'11px',fontWeight:'700'},
@@ -1090,7 +1098,13 @@ function _addAllPoints(pts){
 }
 
 function encodeRoute(wps){
-  const raw=wps.map(function(p){return Math.round(p.lat*10000)+','+Math.round(p.lng*10000);}).join(';');
+  // Formato: lat,lng,stay,days por ponto (stay: 0=passagem,1=pernoite,2=dias)
+  const stayCode={'passagem':0,'pernoite':1,'dias':2};
+  const raw=wps.map(function(p){
+    const s=stayCode[p.stay||'passagem']||0;
+    const d=(p.stay==='dias'&&p.days>1)?p.days:1;
+    return Math.round(p.lat*10000)+','+Math.round(p.lng*10000)+','+s+','+d;
+  }).join(';');
   try{
     const compressed=pako.deflate(raw,{level:9});
     return btoa(String.fromCharCode.apply(null,compressed)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
