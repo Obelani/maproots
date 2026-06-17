@@ -1126,10 +1126,9 @@ async function gerarRoteiroPDF(){
   const w=window.open('','_blank');
   if(!w){alert('Permita pop-ups para abrir o roteiro.');return;}
 
-  // Mostra loading na nova aba imediatamente
   w.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>MapRoots - Gerando roteiro...</title>'
-    +'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#1a1a2e;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:24px}.logo{font-size:22px;font-weight:700}.logo span{color:#e94560}.spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.1);border-top-color:#e94560;border-radius:50%;animation:spin 0.9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.msg{font-size:16px;font-weight:600;color:#fff}.sub{font-size:13px;color:#8a9bb5;margin-top:6px}.dots::after{content:"";animation:dots 1.5s steps(4,end) infinite}@keyframes dots{0%,100%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}</style>'
-    +'</head><body><div class="logo">MapRoots</div><div class="spinner"></div>'
+    +'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#1a1a2e;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:24px}.logo{font-family:Arial,sans-serif;font-size:22px;font-weight:700}.logo span{color:#e94560}.spinner{width:52px;height:52px;border:4px solid rgba(255,255,255,0.1);border-top-color:#e94560;border-radius:50%;animation:spin 0.9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.msg{font-size:16px;font-weight:600;color:#fff}.sub{font-size:13px;color:#8a9bb5;margin-top:6px}.dots::after{content:"";animation:dots 1.5s steps(4,end) infinite}@keyframes dots{0%,100%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}</style>'
+    +'</head><body><div class="logo">Map<span>Roots</span></div><div class="spinner"></div>'
     +'<div><div class="msg">Gerando seu roteiro personalizado<span class="dots"></span></div>'
     +'<div class="sub">Isso pode levar ate 30 segundos</div></div></body></html>');
   w.document.close();
@@ -1165,13 +1164,12 @@ async function gerarRoteiroPDF(){
         +'body{font-family:Arial,sans-serif;background:#1a1a2e;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:16px;text-align:center;padding:24px}'
         +'.logo{font-size:20px;font-weight:700}.logo span{color:#e94560}'
         +'.err{background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.4);border-radius:10px;padding:24px 32px;max-width:420px}'
-        +'h2{color:#e94560;margin-bottom:10px;font-size:18px}p{font-size:13px;color:#ccc;line-height:1.6}'
+        +'h2{color:#e94560;margin-bottom:10px}p{font-size:13px;color:#ccc;line-height:1.6}'
         +'button{margin-top:16px;background:#e94560;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}'
         +'</style></head><body>'
-        +'<div class="logo">MapRoots</div>'
+        +'<div class="logo">Map<span>Roots</span></div>'
         +'<div class="err"><h2>Erro ao gerar roteiro</h2>'
         +'<p>'+msg+'</p>'
-        +'<p style="margin-top:10px;font-size:12px;color:#8a9bb5">Feche esta aba e tente novamente.</p>'
         +'<button onclick="window.close()">Fechar</button></div></body></html>');
       w.document.close();
     }
@@ -1191,102 +1189,246 @@ function abrirPDF(data,w){
   const segs=window._segs||[];
   const cidades=data.cidades||[];
 
-  // w is passed from gerarRoteiroPDF (already open); fallback if called standalone
   if(!w){w=window.open('','_blank');if(!w){alert('Permita pop-ups para abrir o roteiro.');return;}}
 
-  let html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
-<title>Roteiro de Viagem — MapRoots</title>
-<style>
+  const COLORS=['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
+  const origem=waypoints[0].name.replace(/,.*/,'');
+  const destino=waypoints[waypoints.length-1].name.replace(/,.*/,'');
+  const totalParadas=cidades.filter(c=>c.tipo!=='passagem').length;
+
+  const SERVICO_MAP={
+    farmacia:       {icon:'&#128138;', label:'Farm&aacute;cia'},
+    supermercado:   {icon:'&#128717;', label:'Supermercado'},
+    hospital:       {icon:'&#127973;', label:'Hospital'},
+    restaurante:    {icon:'&#127869;', label:'Restaurante'},
+    parque:         {icon:'&#127795;', label:'Parque'},
+    posto_combustivel:{icon:'&#9981;', label:'Posto'},
+    bar:            {icon:'&#127866;', label:'Bar'},
+    hotel:          {icon:'&#127953;', label:'Hotel'},
+    banco:          {icon:'&#127981;', label:'Banco/ATM'},
+    mecanica:       {icon:'&#128295;', label:'Mec&acirc;nica'},
+    shopping:       {icon:'&#127978;', label:'Shopping'},
+    praia:          {icon:'&#127958;', label:'Praia'},
+    museu:          {icon:'&#127963;', label:'Museu'},
+    aeroporto:      {icon:'&#9992;',  label:'Aeroporto'}
+  };
+
+  const css=`
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Georgia',serif;background:#f8f6f0;color:#2c2c2c;font-size:14px;line-height:1.6}
-.cover{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:60px 40px;text-align:center;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.cover-logo{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#e94560;margin-bottom:16px}
-.cover-title{font-size:32px;font-weight:700;margin-bottom:8px;letter-spacing:-0.5px}
-.cover-sub{font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:24px}
-.cover-stats{display:flex;gap:32px;justify-content:center}
-.cover-stat{text-align:center}
-.cover-stat-val{font-size:22px;font-weight:700;color:#f5a623}
-.cover-stat-lbl{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px}
-.content{max-width:800px;margin:0 auto;padding:32px 24px}
-.city-card{background:#fff;border-radius:12px;margin-bottom:24px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
-.city-header{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0ece4}
-.city-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
-.city-name{font-size:18px;font-weight:700;flex:1}
-.city-country{font-size:12px;color:#888;margin-top:1px}
-.city-badge{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:500;white-space:nowrap}
-.badge-passagem{background:#ede9fe;color:#7c3aed}
+body{font-family:'Inter',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;font-size:14px;line-height:1.6;min-height:100vh}
+
+/* TOP ACTION BAR */
+.action-bar{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(22,33,62,0.97);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.08);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.action-bar .logo{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;letter-spacing:-0.5px}.action-bar .logo span{color:#e94560}
+.action-btns{display:flex;gap:8px}
+.btn-pdf{background:#e94560;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 12px rgba(233,69,96,0.4)}
+.btn-pdf:hover{background:#ff6b81}
+.btn-close{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer}
+.btn-close:hover{background:rgba(255,255,255,0.14)}
+
+/* COVER */
+.cover{background:linear-gradient(135deg,#0f1628 0%,#1a1a2e 50%,#16213e 100%);color:#fff;padding:80px 40px 56px;text-align:center;position:relative;overflow:hidden;margin-top:53px}
+.cover::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(233,69,96,0.15),transparent 70%);pointer-events:none}
+.cover::after{content:'';position:absolute;bottom:-40px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(55,138,221,0.12),transparent 70%);pointer-events:none}
+.cover-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#e94560;font-weight:600;margin-bottom:20px}
+.cover-route{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,5vw,42px);font-weight:700;letter-spacing:-1px;margin-bottom:8px;line-height:1.1}
+.cover-route .arrow{color:#e94560;margin:0 12px}
+.cover-sub{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:36px;letter-spacing:0.5px}
+.cover-cards{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.cover-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px 24px;min-width:110px;text-align:center;backdrop-filter:blur(4px)}
+.cover-card-val{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#f5a623;line-height:1}
+.cover-card-lbl{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.2px;margin-top:4px}
+
+/* CONTENT */
+.content{max-width:820px;margin:0 auto;padding:36px 20px 60px}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:48px}
+.timeline::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#e94560,#378ADD,#1D9E75);opacity:0.3}
+
+/* CITY CARD */
+.city-wrap{position:relative;margin-bottom:8px}
+.city-dot{position:absolute;left:-48px;top:22px;width:20px;height:20px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px rgba(0,0,0,0.1);z-index:1}
+.city-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.06);transition:box-shadow 0.2s}
+.city-card:hover{box-shadow:0 8px 32px rgba(0,0,0,0.11)}
+
+/* CITY HEADER */
+.city-header{padding:0;display:flex;flex-direction:column}
+.city-header-top{display:flex;align-items:center;gap:14px;padding:18px 20px 14px}
+.city-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.city-info{flex:1;min-width:0}
+.city-name{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.3px;line-height:1.1}
+.city-region{font-size:11px;color:#999;margin-top:2px}
+.city-badge{font-size:11px;padding:5px 12px;border-radius:20px;font-weight:600;white-space:nowrap;letter-spacing:0.2px}
+.badge-passagem{background:#ede9fe;color:#6d28d9}
 .badge-pernoite{background:#dbeafe;color:#1d4ed8}
-.badge-dias{background:#fef3c7;color:#b45309}
+.badge-dias{background:#fef3c7;color:#92400e}
+
+/* SERVICOS BAR */
+.servicos-bar{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 16px;border-bottom:1px solid #f3f4f6}
+.servico-pill{display:inline-flex;align-items:center;gap:5px;background:#f8f9fb;border:1px solid #e8eaed;border-radius:20px;padding:4px 10px;font-size:11px;color:#444;font-weight:500}
+.servico-pill span{font-size:14px}
+
+/* CITY BODY */
 .city-body{padding:20px}
-.city-transit{color:#888;font-style:italic;font-size:13px}
-.section{margin-bottom:16px}
-.section-title{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#e94560;font-weight:700;margin-bottom:8px;font-family:Arial,sans-serif}
-.atracao{margin-bottom:8px;padding-left:12px;border-left:2px solid #f0ece4}
-.atracao-nome{font-weight:700;font-size:13px}
-.atracao-desc{font-size:12px;color:#666;margin-top:1px}
-.gastro-list{display:flex;flex-wrap:wrap;gap:6px}
-.gastro-item{background:#f8f6f0;border:1px solid #e8e4dc;border-radius:6px;padding:4px 10px;font-size:12px}
-.dica{background:#fff8e7;border-left:3px solid #f5a623;padding:10px 14px;border-radius:0 6px 6px 0;font-size:13px;color:#6b4c00}
-.trecho{text-align:center;padding:10px 0;color:#aaa;font-size:12px;font-family:Arial,sans-serif}
-.footer{text-align:center;padding:24px;font-size:11px;color:#aaa;font-family:Arial,sans-serif;border-top:1px solid #e8e4dc;margin-top:8px}
-.print-btn{position:fixed;top:16px;right:16px;background:#e94560;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(233,69,96,0.4);z-index:999}
-@media print{.print-btn{display:none}body{background:#fff}.city-card{box-shadow:none;border:1px solid #e8e4dc}.cover{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
-</style></head><body>
-<button class="print-btn" onclick="window.print()">🖨️ Salvar PDF</button>
-<div class="cover">
-  <div class="cover-logo">🗺️ MapRoots — Roteiro de Viagem</div>
-  <div class="cover-title">${waypoints[0].name.replace(/,.*/,'')} → ${waypoints[waypoints.length-1].name.replace(/,.*/,'')}</div>
-  <div class="cover-sub">${waypoints.length} destinos planejados</div>
-  <div class="cover-stats">
-    <div class="cover-stat"><div class="cover-stat-val">${totalKm}</div><div class="cover-stat-lbl">Distância</div></div>
-    <div class="cover-stat"><div class="cover-stat-val">${totalTime}</div><div class="cover-stat-lbl">Tempo est.</div></div>
-    <div class="cover-stat"><div class="cover-stat-val">${cidades.filter(c=>c.tipo!=='passagem').length}</div><div class="cover-stat-lbl">Paradas</div></div>
+.city-transit{color:#999;font-style:italic;font-size:13px;padding:4px 0}
+
+/* SECTIONS */
+.section{margin-bottom:18px}
+.section:last-child{margin-bottom:0}
+.section-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.section-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.section-icon.atracoes{background:#fef3c7}
+.section-icon.gastro{background:#fce7f3}
+.section-icon.dica{background:#fff8e7}
+.section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;color:#6b7280}
+
+/* ATRACOES */
+.atracoes-list{display:flex;flex-direction:column;gap:8px}
+.atracao{display:flex;gap:10px;padding:10px 12px;background:#f9fafb;border-radius:10px;border-left:3px solid #e94560}
+.atracao-num{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:#e94560;min-width:18px;margin-top:1px}
+.atracao-nome{font-weight:600;font-size:13px;color:#1a1a2e;margin-bottom:2px}
+.atracao-desc{font-size:12px;color:#6b7280;line-height:1.4}
+
+/* GASTRONOMIA */
+.gastro-grid{display:flex;flex-wrap:wrap;gap:6px}
+.gastro-item{background:linear-gradient(135deg,#fdf2f8,#fce7f3);border:1px solid #fbcfe8;border-radius:8px;padding:5px 12px;font-size:12px;color:#9d174d;font-weight:500}
+
+/* DICA */
+.dica-box{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;border-radius:10px;padding:12px 16px;display:flex;gap:10px}
+.dica-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.dica-text{font-size:13px;color:#78350f;line-height:1.5}
+
+/* TRECHO CONNECTOR */
+.trecho-connector{display:flex;align-items:center;gap:0;margin:0 0 8px;padding-left:0}
+.trecho-line{flex:1;height:1px;background:linear-gradient(to right,transparent,#e2e8f0,transparent)}
+.trecho-badge{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:5px 14px;font-size:11px;color:#94a3b8;font-weight:500;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+
+/* FOOTER */
+.footer{text-align:center;padding:32px 24px;font-size:11px;color:#9ca3af;border-top:1px solid #e5e7eb;margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.footer-logo{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#1a1a2e}.footer-logo span{color:#e94560}
+
+@media print{
+  .action-bar{display:none!important}
+  body{background:#fff;margin-top:0}
+  .cover{margin-top:0;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .city-card{box-shadow:none;border:1px solid #e5e7eb;break-inside:avoid}
+  .trecho-connector{break-inside:avoid}
+}
+@media(max-width:600px){
+  .cover{padding:70px 20px 40px}
+  .cover-route{font-size:22px}
+  .content{padding:24px 12px 40px}
+  .timeline{padding-left:0}.timeline::before{display:none}.city-dot{display:none}
+  .action-bar{padding:10px 14px}
+}`;
+
+  let html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roteiro — ${origem} → ${destino}</title>
+<style>${css}</style></head><body>
+
+<div class="action-bar">
+  <div class="logo">&#128506; Map<span>Roots</span></div>
+  <div class="action-btns">
+    <button class="btn-pdf" onclick="window.print()">&#128438; Salvar PDF</button>
+    <button class="btn-close" onclick="window.close()">&#10005; Fechar</button>
   </div>
 </div>
-<div class="content">`;
 
-  const COLORS=['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
+<div class="cover">
+  <div class="cover-eyebrow">&#128506; MapRoots &mdash; Roteiro de Viagem</div>
+  <div class="cover-route">${origem}<span class="arrow">&rarr;</span>${destino}</div>
+  <div class="cover-sub">${waypoints.length} destinos planejados</div>
+  <div class="cover-cards">
+    <div class="cover-card"><div class="cover-card-val">${totalKm}</div><div class="cover-card-lbl">Dist&acirc;ncia</div></div>
+    <div class="cover-card"><div class="cover-card-val">${totalTime}</div><div class="cover-card-lbl">Tempo est.</div></div>
+    <div class="cover-card"><div class="cover-card-val">${totalParadas}</div><div class="cover-card-lbl">Paradas</div></div>
+    <div class="cover-card"><div class="cover-card-val">${waypoints.length}</div><div class="cover-card-lbl">Cidades</div></div>
+  </div>
+</div>
+
+<div class="content"><div class="timeline">`;
 
   cidades.forEach(function(c,i){
+    const color=COLORS[i%10];
     const badgeClass=c.tipo==='passagem'?'badge-passagem':c.tipo==='pernoite'?'badge-pernoite':'badge-dias';
-    const badgeLabel=c.tipo==='passagem'?'🚗 Passagem':c.tipo==='pernoite'?'🌙 Pernoite':'📅 '+c.dias+' dia'+(c.dias>1?'s':'');
-    const seg=segs[i]?'<div class="trecho">↓ '+segs[i]+'</div>':'';
+    const badgeLabel=c.tipo==='passagem'?'&#128663; Passagem':c.tipo==='pernoite'?'&#127769; Pernoite':'&#128197; '+c.dias+' dia'+(c.dias>1?'s':'');
+    const regiao=waypoints[i]?waypoints[i].name.split(',').slice(1).join(',').trim():'';
 
-    html+=`<div class="city-card">
-  <div class="city-header">
-    <div class="city-num" style="background:${COLORS[i%10]}">${i+1}</div>
-    <div style="flex:1">
-      <div class="city-name">${c.nome}</div>
+    // Servicos bar
+    const servicos=c.servicos||[];
+    let servicosHtml='';
+    if(servicos.length){
+      servicosHtml='<div class="servicos-bar">';
+      servicos.forEach(function(s){
+        const sv=SERVICO_MAP[s];
+        if(sv) servicosHtml+='<span class="servico-pill"><span>'+sv.icon+'</span>'+sv.label+'</span>';
+      });
+      servicosHtml+='</div>';
+    }
+
+    // Segment connector
+    const seg=segs[i]?`<div class="trecho-connector"><div class="trecho-line"></div><div class="trecho-badge">&#8595; ${segs[i].toLocaleString('pt-BR')} km at&eacute; pr&oacute;xima parada</div><div class="trecho-line"></div></div>`:'';
+
+    html+=`<div class="city-wrap">
+  <div class="city-dot" style="background:${color}"></div>
+  <div class="city-card">
+    <div class="city-header">
+      <div class="city-header-top">
+        <div class="city-num" style="background:${color}">${i+1}</div>
+        <div class="city-info">
+          <div class="city-name">${c.nome}</div>
+          ${regiao?`<div class="city-region">${regiao}</div>`:''}
+        </div>
+        <span class="city-badge ${badgeClass}">${badgeLabel}</span>
+      </div>
+      ${servicosHtml}
     </div>
-    <span class="city-badge ${badgeClass}">${badgeLabel}</span>
-  </div>
-  <div class="city-body">`;
+    <div class="city-body">`;
 
     if(c.tipo==='passagem'){
-      html+=`<div class="city-transit">Ponto de passagem — continue viagem.</div>`;
+      html+=`<div class="city-transit">&#128663; Ponto de passagem &mdash; continue a viagem.</div>`;
     } else {
       if(c.atracoes&&c.atracoes.length){
-        html+=`<div class="section"><div class="section-title">🏛️ O que visitar</div>`;
-        c.atracoes.forEach(a=>{html+=`<div class="atracao"><div class="atracao-nome">${a.nome}</div><div class="atracao-desc">${a.desc}</div></div>`;});
-        html+=`</div>`;
+        html+=`<div class="section">
+          <div class="section-header"><div class="section-icon atracoes">&#127963;</div><div class="section-title">O que visitar</div></div>
+          <div class="atracoes-list">`;
+        c.atracoes.forEach(function(a,ai){
+          html+=`<div class="atracao"><div class="atracao-num">${ai+1}</div><div><div class="atracao-nome">${a.nome}</div><div class="atracao-desc">${a.desc}</div></div></div>`;
+        });
+        html+=`</div></div>`;
       }
       if(c.gastronomia&&c.gastronomia.length){
-        html+=`<div class="section"><div class="section-title">🍽️ Gastronomia</div><div class="gastro-list">`;
-        c.gastronomia.forEach(g=>{html+=`<span class="gastro-item">${g}</span>`;});
+        html+=`<div class="section">
+          <div class="section-header"><div class="section-icon gastro">&#127869;</div><div class="section-title">Gastronomia</div></div>
+          <div class="gastro-grid">`;
+        c.gastronomia.forEach(function(g){html+=`<span class="gastro-item">&#127860; ${g}</span>`;});
         html+=`</div></div>`;
       }
       if(c.dica){
-        html+=`<div class="section"><div class="section-title">💡 Dica local</div><div class="dica">${c.dica}</div></div>`;
+        html+=`<div class="section">
+          <div class="section-header"><div class="section-icon dica">&#128161;</div><div class="section-title">Dica local</div></div>
+          <div class="dica-box"><div class="dica-icon">&#128161;</div><div class="dica-text">${c.dica}</div></div>
+        </div>`;
       }
     }
-    html+=`</div></div>${i<cidades.length-1?seg:''}`;
+    html+=`</div></div></div>${i<cidades.length-1?seg:''}`;
   });
 
-  html+=`</div><div class="footer">Roteiro gerado por MapRoots — maproots.com · ${new Date().toLocaleDateString('pt-BR')}</div></body></html>`;
+  html+=`</div></div>
+<div class="footer">
+  <div class="footer-logo">&#128506; Map<span>Roots</span></div>
+  <div>Roteiro gerado em ${new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div>
+  <div>maproots.com</div>
+</div>
+</body></html>`;
 
+  w.document.open();
   w.document.write(html);
   w.document.close();
 }
+
 
 function initMap(){
   window._mapReady=true;
