@@ -240,16 +240,12 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
         <div class="stat-box"><div class="stat-lbl">Distância total</div><div class="stat-val" id="stat-km">— km</div></div>
         <div class="stat-box"><div class="stat-lbl">Tempo est.</div><div class="stat-val" id="stat-time">—</div></div>
         <div class="stat-box"><div class="stat-lbl">Pontos</div><div class="stat-val" id="stat-pts">0</div></div>
-        <div class="stat-box"><div class="stat-lbl">Limite</div><div class="stat-val" id="stat-limit" style="color:var(--gold)">3 pts</div></div>
+        <div class="stat-box"><div class="stat-lbl">Pontos</div><div class="stat-val" id="stat-pts2">0</div></div>
       </div>
       <div class="points-area" id="points-area">
         <div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>
       </div>
       <div class="sidebar-footer">
-        <div class="limit-banner" id="limit-banner">
-          <p id="limit-banner-text">Crie uma conta grátis para adicionar até <strong>30 pontos</strong>.</p>
-          <button class="btn" style="width:100%;padding:8px;font-size:12px;background:var(--gold);color:var(--road)" id="limit-banner-btn" onclick="openLoginModal()">Criar conta grátis</button>
-        </div>
         <button class="btn btn-primary" style="width:100%;padding:11px;font-size:14px;font-weight:600" onclick="exportImage()">📸 Exportar roteiro</button>
         <button class="clear-link" onclick="clearAll()">🗑 Limpar rota</button>
       </div>
@@ -263,21 +259,22 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   </div>
 
   <!-- MOBILE BOTTOM PANEL -->
-  <div class="mobile-bottom-panel" style="display:none">
-    <div class="mobile-bottom-header" onclick="toggleMobileList()">
-      <span>📍 Pontos da rota (<span id="m-pts-count">0</span>)</span>
-      <span id="mobile-toggle-icon">▲</span>
+  <div class="mobile-bottom-panel" id="mobile-bottom-panel" style="display:none">
+    <div onclick="toggleMobilePanel()" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:linear-gradient(135deg,rgba(233,69,96,0.2),rgba(55,138,221,0.2));border-top:2px solid var(--accent)">
+      <span style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:10px">
+        <span style="background:var(--accent);width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">📍</span>
+        Pontos da rota (<span id="m-pts-count">0</span>)
+      </span>
+      <span id="mobile-panel-arrow" style="font-size:20px;color:var(--accent);transition:transform 0.3s">▼</span>
     </div>
-    <div class="mobile-points-list" id="mobile-points-list" style="display:none">
-      <div class="empty-state" style="padding:16px"><span class="empty-icon" style="font-size:20px">📍</span>Nenhum ponto adicionado ainda.</div>
-    </div>
-    <div class="limit-banner" id="limit-banner-mobile" style="margin:8px 12px">
-      <p id="limit-banner-text-mobile">Crie uma conta para adicionar até <strong>30 pontos</strong>.</p>
-      <button class="btn" style="width:100%;padding:7px;font-size:12px;background:var(--gold);color:var(--road)" onclick="openLoginModal()">Criar conta grátis</button>
-    </div>
-    <div class="mobile-bottom-footer">
-      <button class="btn btn-primary" style="padding:11px;font-size:14px;font-weight:600" onclick="exportImage()">📸 Exportar rota</button>
-      <button class="btn btn-ghost" onclick="clearAll()">🗑 Limpar</button>
+    <div id="mobile-panel-body" style="display:none;flex-direction:column">
+      <div class="mobile-points-list" id="mobile-points-list">
+        <div class="empty-state" style="padding:16px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto adicionado ainda.</div>
+      </div>
+      <div style="padding:10px 12px 16px;display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;font-weight:700" onclick="exportImage()">📸 Exportar roteiro</button>
+        <button class="btn btn-ghost" style="width:100%;padding:9px;font-size:13px" onclick="clearAll()">🗑 Limpar rota</button>
+      </div>
     </div>
   </div>
 </div>
@@ -402,16 +399,13 @@ function setUserUI(){
   updateLimitBanner();
 }
 
-function updateLimitBanner(){
-  const over=waypoints.length>=getLimit();
-  document.getElementById('limit-banner').classList.toggle('visible',over&&!user);
-  const mob=document.getElementById('limit-banner-mobile');
-  if(mob)mob.style.display=(over&&!user)?'block':'none';
-}
+function updateLimitBanner(){}
 
 function openApp(){
   document.getElementById('landing').style.display='none';
   document.getElementById('app-view').style.display='block';
+  const mob=document.getElementById('mobile-bottom-panel');
+  if(mob&&window.innerWidth<=900)mob.style.display='block';
   if(window._mapReady)startMap();else window._mapInitCb=startMap;
 }
 
@@ -479,12 +473,12 @@ function logout(){
   clearAll();
 }
 
-function toggleMobileList(){
-  const list=document.getElementById('mobile-points-list');
-  const icon=document.getElementById('mobile-toggle-icon');
-  const open=list.style.display==='none';
-  list.style.display=open?'flex':'none';
-  icon.textContent=open?'▼':'▲';
+function toggleMobilePanel(){
+  const body=document.getElementById('mobile-panel-body');
+  const arrow=document.getElementById('mobile-panel-arrow');
+  const isOpen=body.style.display==='flex';
+  body.style.display=isOpen?'none':'flex';
+  arrow.style.transform=isOpen?'':'rotate(180deg)';
 }
 
 function startMap(){
@@ -507,14 +501,7 @@ function startMap(){
   });
 }
 
-function canAdd(){
-  if(waypoints.length>=getLimit()){
-    updateLimitBanner();
-    if(!user)openModal('modal-signup-prompt');
-    return false;
-  }
-  return true;
-}
+function canAdd(){return true;}
 
 function addPoint(name,lat,lng){
   if(!canAdd())return;
@@ -600,13 +587,12 @@ function renderList(segs){
   });
   a.innerHTML=h;
   b.innerHTML=h;
-  // Auto-open panel when points added
-  if(b&&b.style.display==='none'){
-    b.style.display='flex';
-    const footer=document.getElementById('mobile-panel-footer');
-    if(footer)footer.style.display='block';
-    const arrow=document.getElementById('mobile-panel-arrow');
-    if(arrow)arrow.style.transform='rotate(180deg)';
+  // Auto-open mobile panel when points exist
+  const panelBody=document.getElementById('mobile-panel-body');
+  const panelArrow=document.getElementById('mobile-panel-arrow');
+  if(panelBody&&panelBody.style.display!=='flex'){
+    panelBody.style.display='flex';
+    if(panelArrow)panelArrow.style.transform='rotate(180deg)';
   }
 }
 
