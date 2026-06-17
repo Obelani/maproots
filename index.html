@@ -569,6 +569,7 @@ function clearAll(){
   waypoints=[];markers.forEach(m=>m.setMap(null));markers=[];
   if(dirRender)dirRender.setDirections({routes:[]});
   localStorage.removeItem('maproots_route');
+  window._segs=[];
   updateLimitBanner();renderList([],null);updateStats(0,0);
 }
 
@@ -590,7 +591,7 @@ function recalc(){
       const legs=res.routes[0].legs;
       let td=0,tt=0;
       const segs=legs.map(l=>{td+=l.distance.value;tt+=l.duration.value;return Math.round(l.distance.value/1000);});
-      updateStats(td,tt);renderList(segs,null);saveRoute();
+      updateStats(td,tt);window._segs=segs;renderList(segs,null);saveRoute();
     } else {
       // Route failed — still show all points in list with error
       dirRender.setDirections({routes:[]});
@@ -602,16 +603,14 @@ function recalc(){
 
 function toggleStay(idx){
   waypoints[idx].stayOpen=!waypoints[idx].stayOpen;
-  const segs=Array.from(document.querySelectorAll('#points-area .seg-arrow span')).map(s=>s.textContent);
-  renderList(segs,null);
+  renderList(window._segs||[],null);
 }
 
 function setStay(idx,val){
   waypoints[idx].stay=val;
   if(val!=='dias')waypoints[idx].days=1;
   saveRoute();
-  const segs=Array.from(document.querySelectorAll('#points-area .seg-arrow span')).map(s=>s.textContent);
-  renderList(segs,null);
+  renderList(window._segs||[],null);
 }
 
 function setDays(idx,val){
@@ -810,9 +809,8 @@ function exportImage(){
   const totalTime=document.getElementById('stat-time').textContent;
   const pts=waypoints.length;
   const twoCol=pts>8;
-  // Get segments only from the sidebar (not mobile duplicate)
-  const segSpans=document.querySelectorAll('#points-area .seg-arrow span');
-  const segs=Array.from(segSpans).map(s=>s.textContent);
+  // Get segments from stored state (avoids DOM duplication issues)
+  const segs=window._segs||[];
 
   // Build list HTML — 2 columns when >8 points
   const itemStyle='display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid #f0f0f0';
