@@ -406,7 +406,8 @@ function updateLimitBanner(){}
 function openApp(){
   document.getElementById('landing').style.display='none';
   document.getElementById('app-view').style.display='flex';
-  if(window._mapReady)startMap();else window._mapInitCb=startMap;
+  if(window._mapReady && !map)startMap();
+  else if(!window._mapReady)window._mapInitCb=startMap;
 }
 
 function openLoginModal(){authMode='login';renderAuth();openModal('modal-auth');}
@@ -863,17 +864,20 @@ function initMap(){
   window._mapReady=true;
   setupSearch('search-input','autocomplete-list');
   setupSearch('search-input-mobile','autocomplete-list-mobile');
-  if(window._mapInitCb)window._mapInitCb();
-  setTimeout(loadSavedRoute,400);
+  if(window._mapInitCb){window._mapInitCb();window._mapInitCb=null;}
 }
 
 // Auto-open ONLY if URL has ?r= param (shared link)
 (function(){
   try{
     const r=new URLSearchParams(window.location.search).get('r');
-    if(r&&JSON.parse(atob(r)).length){
-      document.getElementById('landing').style.display='none';
-      document.getElementById('app-view').style.display='flex';
+    if(r){
+      const pts=JSON.parse(atob(r));
+      if(pts&&pts.length){
+        document.getElementById('landing').style.display='none';
+        document.getElementById('app-view').style.display='flex';
+        window._mapInitCb=function(){startMap();setTimeout(loadSavedRoute,300);};
+      }
     }
   }catch(e){}
 })();
