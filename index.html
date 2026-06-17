@@ -815,7 +815,7 @@ function exportImage(){
     w.document.write('    if(!wps||!wps.length){alert("Abra esta página a partir do MapRoots.");return;}');
     w.document.write('    var data=wps.map(function(p){return[Math.round(p.lat*100000)/100000,Math.round(p.lng*100000)/100000];});');
     w.document.write('    var longUrl=window.opener.location.origin+window.opener.location.pathname+"?r="+btoa(JSON.stringify(data));');
-    w.document.write('    fetch("https://tinyurl.com/api-create.php?url="+encodeURIComponent(longUrl)).then(function(r){return r.text();}).then(function(s){');
+    w.document.write('    fetch("https://is.gd/create.php?format=simple&url="+encodeURIComponent(longUrl)).then(function(r){return r.text();}).then(function(s){');
     w.document.write('      var url=s.startsWith("https://")?s:longUrl;');
     w.document.write('      navigator.clipboard.writeText(url).then(function(){');
     w.document.write('        var t=document.createElement("div");t.textContent="🔗 Link copiado! "+url;');
@@ -922,7 +922,7 @@ function shareRoute(){
   document.body.appendChild(toast);
 
   // Shorten via TinyURL API
-  fetch('https://tinyurl.com/api-create.php?url='+encodeURIComponent(longUrl))
+  fetch('https://is.gd/create.php?format=simple&url='+encodeURIComponent(longUrl))
     .then(function(r){return r.text();})
     .then(function(shortUrl){
       document.body.removeChild(toast);
