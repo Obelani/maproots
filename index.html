@@ -463,14 +463,17 @@ function updateDDI(){
 
 function setUserUI(){
   const li=!!user;
-  document.getElementById('btn-login').style.display=li?'none':'';
-  document.getElementById('btn-logout').style.display=li?'':'none';
-  const badge=document.getElementById('plan-badge');
-  if(li){badge.textContent=user.user.email.split('@')[0];badge.style.color='var(--gold)';}
-  else{badge.textContent='Visitante';badge.style.color='';}
+  const el=id=>document.getElementById(id);
+  if(el('btn-login'))el('btn-login').style.display=li?'none':'';
+  if(el('btn-logout'))el('btn-logout').style.display=li?'':'none';
+  const badge=el('plan-badge');
+  if(badge){
+    if(li){badge.textContent=user.user.email.split('@')[0];badge.style.color='var(--gold)';}
+    else{badge.textContent='Visitante';badge.style.color='';}
+  }
   const lim=getLimit();
-  document.getElementById('stat-limit').textContent=lim+' pts';
-  document.getElementById('m-stat-limit').textContent='/'+lim;
+  if(el('stat-limit'))el('stat-limit').textContent=lim+' pts';
+  if(el('m-stat-limit'))el('m-stat-limit').textContent='/'+lim;
   updateLimitBanner();
 }
 
