@@ -808,7 +808,7 @@ function exportImage(){
     w.document.write('<div class="preview-footer">Gerado por MapRoots — maproots.vercel.app</div></div>');
     w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
     w.document.write('<sc'+'ript>');
-    w.document.write('function shareRoute(){var wps=window.opener&&window.opener.waypoints;if(!wps||!wps.length){alert("Abra a partir do MapRoots.");return;}var enc=wps.map(function(p){return Math.round(p.lat*10000)+","+Math.round(p.lng*10000);}).join(";");var longUrl=window.opener.location.origin+window.opener.location.pathname+"?r="+enc;fetch("https://cleanuri.com/api/v1/shorten",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"url="+encodeURIComponent(longUrl)}).then(function(r){return r.json();}).then(function(d){var url=d&&d.result_url?d.result_url:longUrl;navigator.clipboard.writeText(url).then(function(){var t=document.createElement("div");t.textContent="🔗 Link copiado! "+url;t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;max-width:90vw;text-align:center";document.body.appendChild(t);setTimeout(function(){document.body.removeChild(t);},3000);}).catch(function(){prompt("Copie:",url);});}).catch(function(){navigator.clipboard.writeText(longUrl).catch(function(){prompt("Copie:",longUrl);});});}');
+    w.document.write('function shareRoute(){var wps=window.opener&&window.opener.waypoints;if(!wps||!wps.length){alert("Abra a partir do MapRoots.");return;}var url=window.opener.location.origin+window.opener.location.pathname+"?r="+window.opener.encodeRoute(wps);navigator.clipboard.writeText(url).then(function(){var t=document.createElement("div");t.textContent="🔗 Link copiado!";t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999";document.body.appendChild(t);setTimeout(function(){document.body.removeChild(t);},2500);}).catch(function(){prompt("Copie:",url);});}');
     w.document.write('document.getElementById("dlbtn").onclick=function(){');
     w.document.write('  var bar=document.querySelector(".btn-row");');
     w.document.write('  var logo=document.querySelector(".logo-area");');
@@ -849,7 +849,8 @@ function loadSavedRoute(){
   try{
     const r=new URLSearchParams(window.location.search).get('r');
     if(r){
-      if(r.indexOf(';')!==-1){fmt='int';raw=r;}
+      const decoded=decodeRoute(r);
+      if(decoded.indexOf(';')!==-1||/^-?\d+,-?\d+$/.test(decoded)){fmt='int';raw=decoded;}
       else{const p=JSON.parse(atob(r));fmt=Array.isArray(p[0])?'compact':'full';raw=p;}
     }
   }catch(e){}
@@ -896,39 +897,36 @@ function _addAllPoints(pts){
 }
 
 function encodeRoute(wps){
-  return wps.map(function(p){return Math.round(p.lat*10000)+','+Math.round(p.lng*10000);}).join(';');
+  const raw=wps.map(function(p){return Math.round(p.lat*10000)+','+Math.round(p.lng*10000);}).join(';');
+  try{
+    const compressed=pako.deflate(raw,{level:9});
+    return btoa(String.fromCharCode.apply(null,compressed)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+  }catch(e){return btoa(raw).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+}
+
+function decodeRoute(r){
+  // Try pako decompress first
+  try{
+    const bin=atob(r.replace(/-/g,'+').replace(/_/g,'/'));
+    const bytes=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    return pako.inflate(bytes,{to:'string'});
+  }catch(e){
+    // Fallback: plain base64 or int format
+    try{return atob(r.replace(/-/g,'+').replace(/_/g,'/'));}catch(e2){return r;}
+  }
 }
 
 function shareRoute(){
   if(!waypoints.length){alert('Adicione pontos na rota antes de compartilhar!');return;}
-  const longUrl=window.location.origin+window.location.pathname+'?r='+encodeRoute(waypoints);
-  const toast=document.createElement('div');
-  toast.textContent='⏳ Gerando link...';
-  toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#378ADD;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999';
-  document.body.appendChild(toast);
-  fetch('https://cleanuri.com/api/v1/shorten',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'url='+encodeURIComponent(longUrl)})
-  .then(function(r){return r.json();})
-  .then(function(d){
-    try{document.body.removeChild(toast);}catch(e){}
-    const url=(d&&d.result_url)?d.result_url:longUrl;
-    navigator.clipboard.writeText(url).then(function(){
-      const t=document.createElement('div');
-      t.innerHTML='🔗 Link copiado!<br><small style="opacity:0.8;font-size:12px">'+url+'</small>';
-      t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;text-align:center;max-width:90vw';
-      document.body.appendChild(t);
-      setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},3000);
-    }).catch(function(){prompt('Copie o link:',url);});
-  })
-  .catch(function(){
-    try{document.body.removeChild(toast);}catch(e){}
-    navigator.clipboard.writeText(longUrl).then(function(){
-      const t=document.createElement('div');
-      t.textContent='🔗 Link copiado!';
-      t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999';
-      document.body.appendChild(t);
-      setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},2500);
-    }).catch(function(){prompt('Copie o link:',longUrl);});
-  });
+  const url=window.location.origin+window.location.pathname+'?r='+encodeRoute(waypoints);
+  navigator.clipboard.writeText(url).then(function(){
+    const t=document.createElement('div');
+    t.innerHTML='🔗 Link copiado!<br><small style="opacity:0.8;font-size:11px">'+url.substring(0,60)+'...</small>';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;text-align:center;max-width:90vw;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
+    document.body.appendChild(t);
+    setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},3000);
+  }).catch(function(){prompt('Copie o link da sua rota:',url);});
 }
 
 
@@ -956,6 +954,7 @@ function initMap(){
 setUserUI();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAr1Q-jwFyMH5Qwc8XPlzcvH_HJCmh1hwM&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
