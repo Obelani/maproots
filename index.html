@@ -516,6 +516,7 @@ function addPoint(name,lat,lng){
   }));
   map.panTo({lat,lng});
   if(waypoints.length===1)map.setZoom(10);
+  saveRoute();
   recalc();
 }
 
@@ -527,7 +528,7 @@ function removePoint(idx){
     m.setIcon({path:google.maps.SymbolPath.CIRCLE,scale:14,fillColor:c,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5});
     waypoints[i].color=c;
   });
-  updateLimitBanner();recalc();
+  updateLimitBanner();saveRoute();recalc();
 }
 
 function clearAll(){
@@ -773,15 +774,20 @@ function exportImage(){
     w.document.write('<div class="preview-footer">Gerado por MapRoots — maproots.vercel.app</div></div>');
     w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
     w.document.write('<sc'+'ript>');
-    // Share function for export page
+    // Share function — URL generated at click time from opener waypoints
     w.document.write('function shareRoute(){');
-    w.document.write('  var url="'+window.location.origin+window.location.pathname+'?r='+btoa(JSON.stringify(waypoints.map(function(p){return {name:p.name,lat:p.lat,lng:p.lng};})))+'";');
-    w.document.write('  navigator.clipboard.writeText(url).then(function(){');
-    w.document.write('    var t=document.createElement("div");');
-    w.document.write('    t.textContent="🔗 Link copiado!";');
-    w.document.write('    t.style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999";');
-    w.document.write('    document.body.appendChild(t);setTimeout(function(){document.body.removeChild(t);},2500);');
-    w.document.write('  }).catch(function(){prompt("Copie o link:",url);});');
+    w.document.write('  try{');
+    w.document.write('    var wps=window.opener&&window.opener.waypoints;');
+    w.document.write('    if(!wps||!wps.length){alert("Abra esta página a partir do MapRoots para compartilhar.");return;}');
+    w.document.write('    var data=wps.map(function(p){return{name:p.name,lat:p.lat,lng:p.lng};});');
+    w.document.write('    var url=window.opener.location.origin+window.opener.location.pathname+"?r="+btoa(JSON.stringify(data));');
+    w.document.write('    navigator.clipboard.writeText(url).then(function(){');
+    w.document.write('      var t=document.createElement("div");');
+    w.document.write('      t.textContent="🔗 Link copiado!";');
+    w.document.write('      t.style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999";');
+    w.document.write('      document.body.appendChild(t);setTimeout(function(){document.body.removeChild(t);},2500);');
+    w.document.write('    }).catch(function(){prompt("Copie o link:",url);});');
+    w.document.write('  }catch(e){alert("Erro ao gerar link.");}');
     w.document.write('}');
     w.document.write('document.getElementById("dlbtn").onclick=function(){');
     w.document.write('  var bar=document.querySelector(".btn-row");');
