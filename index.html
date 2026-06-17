@@ -67,18 +67,25 @@ h1 em{font-style:normal;color:var(--accent)}
 .preview-stat-lbl{font-size:10px;color:var(--muted);margin-top:1px}
 
 /* STAY INFO DROPDOWN */
-.stay-dropdown{display:none;background:rgba(0,0,0,0.2);border-top:1px solid var(--border);padding:10px 12px;gap:8px;flex-direction:column}
+.stay-dropdown{display:none;background:#0f1628;border-top:1px solid var(--border);padding:10px 12px;gap:8px;flex-direction:column}
 .stay-dropdown.open{display:flex}
 .stay-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .stay-label{font-size:11px;color:var(--muted);min-width:80px}
-.stay-select{background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:12px;padding:4px 8px;cursor:pointer;outline:none;flex:1}
+.stay-select{background:#1a2540;border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:12px;padding:5px 8px;cursor:pointer;outline:none;flex:1}
+.stay-select option{background:#1a2540;color:var(--white)}
 .stay-select:focus{border-color:rgba(255,255,255,0.3)}
-.stay-days{background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:12px;padding:4px 8px;width:60px;outline:none;text-align:center}
+.stay-days{background:#1a2540;border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:12px;padding:5px 8px;width:64px;outline:none;text-align:center}
 .stay-days:focus{border-color:rgba(255,255,255,0.3)}
-.stay-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;white-space:nowrap}
-.stay-badge.passagem{background:rgba(139,92,246,0.2);color:#a78bfa;border:1px solid rgba(139,92,246,0.3)}
-.stay-badge.pernoite{background:rgba(55,138,221,0.2);color:#60a5fa;border:1px solid rgba(55,138,221,0.3)}
-.stay-badge.dias{background:rgba(245,166,35,0.2);color:#fbbf24;border:1px solid rgba(245,166,35,0.3)}
+.stay-edit-input{background:#1a2540;border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:12px;padding:5px 8px;outline:none;flex:1}
+.stay-edit-input::placeholder{color:var(--muted)}
+.stay-edit-input:focus{border-color:rgba(255,255,255,0.3)}
+.stay-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;white-space:nowrap;cursor:pointer}
+.stay-badge.passagem{background:rgba(139,92,246,0.25);color:#c4b5fd;border:1px solid rgba(139,92,246,0.4)}
+.stay-badge.pernoite{background:rgba(55,138,221,0.25);color:#93c5fd;border:1px solid rgba(55,138,221,0.4)}
+.stay-badge.dias{background:rgba(245,166,35,0.25);color:#fcd34d;border:1px solid rgba(245,166,35,0.4)}
+.stay-toggle-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:2px 6px;font-size:14px;line-height:1;border-radius:4px;transition:color 0.15s,transform 0.2s}
+.stay-toggle-btn:hover{color:var(--white)}
+.stay-toggle-btn.open{transform:rotate(180deg)}
 
 /* APP */
 #app-view{display:none;flex-direction:column;height:calc(100vh - 53px)}
@@ -613,6 +620,20 @@ function setDays(idx,val){
   saveRoute();
 }
 
+function editPointInline(idx,newName){
+  if(!newName||!newName.trim())return;
+  showLoading(true);
+  geocoder.geocode({address:newName.trim()},(res,st)=>{
+    showLoading(false);
+    if(st==='OK'&&res[0]){
+      const l=res[0].geometry.location;
+      waypoints[idx]={...waypoints[idx],name:res[0].formatted_address,lat:l.lat(),lng:l.lng()};
+      markers[idx].setPosition({lat:l.lat(),lng:l.lng()});
+      saveRoute();recalc();
+    }else{alert('Destino não encontrado. Tente outro nome.');}
+  });
+}
+
 function editPoint(idx){
   const current=waypoints[idx].name.replace(/,.*$/,'');
   const newName=prompt('Editar destino '+(idx+1)+':',current);
@@ -671,15 +692,20 @@ function renderList(segs,routeError){
       // Main row
       +'<div style="display:flex;align-items:center;gap:8px;padding:8px 10px">'
         +'<div class="point-dot" style="background:'+pt.color+';flex-shrink:0">'+(i+1)+'</div>'
-        +'<div class="point-info" onclick="editPoint('+i+')" style="cursor:pointer;flex:1;min-width:0" title="Clique para editar">'
+        +'<div class="point-info" style="flex:1;min-width:0">'
           +'<div class="point-name" style="color:'+(hasError?'#ff6b81':'inherit')+'">'+pt.name+'</div>'
-          +'<div style="font-size:10px;color:var(--muted)">✏️ clique para editar</div>'
+          +'<span class="stay-badge '+badgeClass+'">'+badgeLabel+'</span>'
         +'</div>'
-        +'<span class="stay-badge '+badgeClass+'" onclick="toggleStay('+i+')" style="cursor:pointer" title="Clique para definir estadia">'+badgeLabel+'</span>'
+        +'<button class="stay-toggle-btn '+(pt.stayOpen?'open':'')+'" onclick="toggleStay('+i+')" title="Detalhes da parada">▼</button>'
         +'<button class="point-del" onclick="removePoint('+i+')">✕</button>'
       +'</div>'
-      // Stay dropdown
-      +'<div class="stay-dropdown '+isOpen+'" id="stay-'+i+'">'
+      // Dropdown
+      +'<div class="stay-dropdown '+(pt.stayOpen?'open':'')+'" id="stay-'+i+'">'
+        +'<div class="stay-row">'
+          +'<span class="stay-label">✏️ Destino</span>'
+          +'<input class="stay-edit-input" type="text" placeholder="Novo nome para este ponto..." onkeydown="if(event.key===\'Enter\')editPointInline('+i+',this.value)"/>'
+          +'<button onclick="editPointInline('+i+',this.previousElementSibling.value)" style="background:var(--accent);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap">OK</button>'
+        +'</div>'
         +'<div class="stay-row">'
           +'<span class="stay-label">Tipo de parada</span>'
           +'<select class="stay-select" onchange="setStay('+i+',this.value)">'
@@ -688,8 +714,7 @@ function renderList(segs,routeError){
             +'<option value="dias"'+(stay==='dias'?' selected':'')+'>📅 Ficar alguns dias</option>'
           +'</select>'
         +'</div>'
-        +(stay==='dias'?'<div class="stay-row"><span class="stay-label">Quantos dias</span><input type="number" class="stay-days" min="1" max="365" value="'+days+'" onchange="setDays('+i+',this.value)" /><span style="font-size:11px;color:var(--muted)">dia(s) na cidade</span></div>':'')
-        +'<div style="font-size:10px;color:var(--muted);margin-top:2px">💡 Essas informações serão usadas para gerar seu roteiro em PDF</div>'
+        +(stay==='dias'?'<div class="stay-row"><span class="stay-label">Quantos dias</span><input type="number" class="stay-days" min="1" max="365" value="'+days+'" onchange="setDays('+i+',this.value)"/><span style="font-size:11px;color:var(--muted)">dia(s) na cidade</span></div>':'')
       +'</div>'
     +'</div>';
 
