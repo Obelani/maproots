@@ -138,26 +138,26 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 
 /* MOBILE */
 @media(max-width:900px){
-  .app-layout{display:flex;flex-direction:column;height:calc(100vh - 53px)}
-  .sidebar{display:none}
-  .map-area{flex:1;position:relative}
+  /* App view scrolls vertically */
+  #app-view{overflow-y:auto!important;height:auto!important;min-height:calc(100vh - 53px)}
+  .app-layout{display:flex;flex-direction:column;height:auto}
+  .sidebar{display:none!important}
+
+  /* Map fixed height — never changes */
+  .map-area{height:56vw;min-height:260px;max-height:380px;flex-shrink:0;position:relative}
   #map-canvas{width:100%;height:100%}
 
   /* Mobile top bar */
-  .mobile-top-bar{display:flex!important;flex-direction:column;background:var(--road-mid);border-bottom:1px solid var(--border);padding:10px 12px;gap:8px;position:relative;z-index:50}
+  .mobile-top-bar{display:flex!important;flex-direction:column;background:var(--road-mid);border-bottom:1px solid var(--border);padding:10px 12px;gap:8px;position:relative;z-index:50;flex-shrink:0}
   .mobile-search-row{display:flex;gap:8px;align-items:center}
   .mobile-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .mobile-stat{background:var(--card);border-radius:8px;padding:6px 8px;text-align:center}
   .mobile-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase}
   .mobile-stat-val{font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif}
 
-  /* Mobile bottom panel */
-  .mobile-bottom-panel{display:flex!important;flex-direction:column;background:var(--road-mid);border-top:1px solid var(--border);max-height:35vh;overflow:hidden}
-  .mobile-bottom-header{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-  .mobile-bottom-header span{font-size:13px;font-weight:600}
-  .mobile-points-list{overflow-y:auto;padding:8px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
-  .mobile-bottom-footer{padding:8px 12px;border-top:1px solid var(--border);display:flex;gap:8px}
-  .mobile-bottom-footer .btn{flex:1;padding:9px;font-size:13px}
+  /* Mobile bottom panel — expands below map, page scrolls */
+  .mobile-bottom-panel{display:block!important;background:var(--road-mid);border-top:none;flex-shrink:0}
+  .mobile-points-list{overflow-y:visible;padding:8px 12px;display:flex;flex-direction:column;gap:4px}
 }
 @media(min-width:901px){
   .mobile-top-bar,.mobile-bottom-panel{display:none!important}
