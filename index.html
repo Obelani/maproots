@@ -8,8 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--road:#1a1a2e;--road-mid:#16213e;--accent:#e94560;--accent-light:#ff6b81;--gold:#f5a623;--white:#fff;--off-white:#f0f0f0;--muted:#8a9bb5;--border:rgba(255,255,255,0.1);--card:rgba(255,255,255,0.05);--card-hover:rgba(255,255,255,0.09);--radius:10px;--radius-lg:16px}
+:root{
+  --road:#1a1a2e;--road-mid:#16213e;--accent:#e94560;--accent-light:#ff6b81;--gold:#f5a623;
+  --white:#fff;--off-white:#f0f0f0;--muted:#8a9bb5;
+  --border:rgba(255,255,255,0.1);--card:rgba(255,255,255,0.05);--card-hover:rgba(255,255,255,0.09);
+  --radius:10px;--radius-lg:16px;
+}
 body{font-family:'Inter',sans-serif;background:var(--road);color:var(--white);min-height:100vh;overflow-x:hidden}
+
+/* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--road-mid);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
 .logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.5px;display:flex;align-items:center;gap:6px}
 .logo span{color:var(--accent)}
@@ -22,25 +29,42 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 .btn-primary:hover{background:var(--accent-light)}
 
 /* LANDING */
-#landing{display:flex;flex-direction:column;align-items:center;min-height:calc(100vh - 53px);padding:60px 24px 40px;text-align:center}
+#landing{display:flex;flex-direction:column;align-items:center;min-height:calc(100vh - 53px);padding:0;overflow:hidden}
+.hero-section{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px 40px;position:relative;width:100%}
 .hero-tag{font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
 h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,5vw,58px);font-weight:700;line-height:1.1;letter-spacing:-1px;max-width:680px;margin:0 auto 18px}
 h1 em{font-style:normal;color:var(--accent)}
 .hero-sub{font-size:16px;color:var(--muted);max-width:460px;line-height:1.6;margin:0 auto 28px}
-.hero-cta{margin-bottom:48px}
+.hero-cta{margin-bottom:40px}
 .hero-cta .btn{padding:14px 36px;font-size:16px;border-radius:12px;box-shadow:0 4px 20px rgba(233,69,96,0.35)}
-.feature-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:900px;width:100%;margin:0 auto}
+.hero-features{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:48px}
+.feature-pill{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;color:var(--off-white)}
+.feature-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:900px;width:100%;margin:0 auto 48px}
 .feature-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 14px;text-align:center;transition:border-color 0.2s,transform 0.2s}
 .feature-card:hover{border-color:var(--accent);transform:translateY(-3px)}
 .fc-icon{font-size:28px;margin-bottom:10px}
-.fc-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;margin-bottom:6px}
+.fc-title{font-family:"Space Grotesk",sans-serif;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--white)}
 .fc-desc{font-size:11px;color:var(--muted);line-height:1.4}
+@media(max-width:700px){.feature-cards{grid-template-columns:repeat(2,1fr)}.feature-cards .feature-card:last-child{grid-column:span 2}}
 
-/* APP — hidden by default */
-#app-view{display:none;flex-direction:column;height:calc(100vh - 53px)}
+/* MAP PREVIEW */
+.map-preview{width:100%;max-width:1000px;margin:0 auto;padding:0 24px 60px;position:relative}
+.map-preview-inner{border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);box-shadow:0 24px 60px rgba(0,0,0,0.5);position:relative}
+.map-preview-inner svg{width:100%;display:block}
+.map-overlay-top{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,var(--road),transparent);pointer-events:none}
+.map-overlay-bottom{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,var(--road),transparent);pointer-events:none}
+.preview-badge{position:absolute;top:16px;left:16px;background:var(--road-mid);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:12px}
+.preview-badge strong{display:block;font-size:18px;font-weight:700;color:var(--gold);font-family:'Space Grotesk',sans-serif}
+.preview-stats{position:absolute;bottom:20px;right:16px;display:flex;gap:8px}
+.preview-stat{background:rgba(22,33,62,0.92);border:1px solid var(--border);border-radius:8px;padding:8px 12px;text-align:center}
+.preview-stat-val{font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:var(--gold)}
+.preview-stat-lbl{font-size:10px;color:var(--muted);margin-top:1px}
 
-/* DESKTOP layout */
-.app-layout{display:grid;grid-template-columns:320px 1fr;flex:1;overflow:hidden}
+/* APP */
+#app-view{display:none}
+.app-layout{display:grid;grid-template-columns:320px 1fr;height:calc(100vh - 53px)}
+
+/* SIDEBAR */
 .sidebar{background:var(--road-mid);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .sidebar-header{padding:14px;border-bottom:1px solid var(--border)}
 .sidebar-header h2{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px}
@@ -49,7 +73,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .search-input::placeholder{color:var(--muted)}
 .search-input:focus{border-color:rgba(255,255,255,0.3)}
 .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:14px}
-#autocomplete-list,#autocomplete-list-mobile{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--road);border:1px solid var(--border);border-radius:var(--radius);z-index:300;max-height:200px;overflow-y:auto;display:none}
+#autocomplete-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--road);border:1px solid var(--border);border-radius:var(--radius);z-index:300;max-height:200px;overflow-y:auto;display:none}
 .ac-item{padding:9px 12px;font-size:13px;cursor:pointer;color:var(--off-white);border-bottom:1px solid var(--border)}
 .ac-item:last-child{border-bottom:none}
 .ac-item:hover{background:var(--card-hover)}
@@ -75,16 +99,14 @@ h1 em{font-style:normal;color:var(--accent)}
 .limit-banner.visible{display:block}
 .limit-banner p{font-size:12px;color:var(--off-white);margin-bottom:8px;line-height:1.5}
 .limit-banner strong{color:var(--gold)}
-.map-area{position:relative;overflow:hidden}
+
+/* MAP */
+.map-area{position:relative;height:100%}
 #map-canvas{width:100%;height:100%}
 .map-hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(15,52,96,0.9);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);pointer-events:none;white-space:nowrap;z-index:10}
 .loading-overlay{position:absolute;inset:0;background:rgba(26,26,46,0.6);display:none;align-items:center;justify-content:center;font-size:13px;color:var(--muted);gap:10px;z-index:20}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* MOBILE elements — hidden on desktop */
-.mobile-top-bar{display:none}
-.mobile-bottom-panel{display:none}
 
 /* MODALS */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
@@ -99,7 +121,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .modal-input:focus{border-color:rgba(255,255,255,0.3)}
 select.modal-input option{background:var(--road-mid);color:var(--white)}
 .phone-wrap{display:flex;gap:6px}
-.ddi-badge{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px;font-size:13px;color:var(--gold);font-weight:600;white-space:nowrap;min-width:52px;text-align:center}
+.ddi-badge{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 10px;font-size:13px;color:var(--gold);font-weight:600;white-space:nowrap;min-width:56px;text-align:center}
 .modal-error{font-size:12px;color:var(--accent);min-height:16px;margin-bottom:8px}
 .modal-btns{display:flex;gap:8px;margin-top:4px}
 .modal-btns .btn{flex:1;padding:11px;font-size:14px}
@@ -108,36 +130,39 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 .divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:12px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* RESPONSIVE */
+/* MOBILE */
 @media(max-width:900px){
-  /* Landing stays full screen, app-view takes full screen */
-  .app-layout{display:flex;flex-direction:column;flex:1;min-height:0}
-  .sidebar{display:none!important}
-
-  /* Map fills available space between top bar and bottom panel */
-  #app-view{height:calc(100vh - 53px);overflow:hidden;flex-direction:column}
-  .app-layout{flex:1;display:flex;flex-direction:column;min-height:0}
-  .map-area{flex:1;min-height:0;height:auto}
-  .mobile-bottom-panel{flex-shrink:0;max-height:50vh;overflow-y:auto}
+  .app-layout{display:flex;flex-direction:column;height:calc(100vh - 53px)}
+  .sidebar{display:none}
+  .map-area{flex:1;position:relative}
+  #map-canvas{width:100%;height:100%}
 
   /* Mobile top bar */
-  .mobile-top-bar{display:flex;flex-direction:column;background:var(--road-mid);border-bottom:1px solid var(--border);padding:10px 12px;gap:8px;position:relative;z-index:50;flex-shrink:0}
+  .mobile-top-bar{display:flex!important;flex-direction:column;background:var(--road-mid);border-bottom:1px solid var(--border);padding:10px 12px;gap:8px;position:relative;z-index:50}
+  .mobile-search-row{display:flex;gap:8px;align-items:center}
   .mobile-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-  .mobile-stat{background:var(--card);border-radius:8px;padding:7px 8px;text-align:center}
+  .mobile-stat{background:var(--card);border-radius:8px;padding:6px 8px;text-align:center}
   .mobile-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase}
-  .mobile-stat-val{font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif}
+  .mobile-stat-val{font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif}
 
   /* Mobile bottom panel */
-  .mobile-bottom-panel{display:flex;flex-direction:column;background:var(--road-mid);border-top:1px solid var(--border);flex-shrink:0}
-  .mobile-points-list{padding:8px 12px;display:flex;flex-direction:column;gap:5px}
+  .mobile-bottom-panel{display:flex!important;flex-direction:column;background:var(--road-mid);border-top:1px solid var(--border);max-height:35vh;overflow:hidden}
+  .mobile-bottom-header{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+  .mobile-bottom-header span{font-size:13px;font-weight:600}
+  .mobile-points-list{overflow-y:auto;padding:8px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
+  .mobile-bottom-footer{padding:8px 12px;border-top:1px solid var(--border);display:flex;gap:8px}
+  .mobile-bottom-footer .btn{flex:1;padding:9px;font-size:13px}
+}
+@media(min-width:901px){
+  .mobile-top-bar,.mobile-bottom-panel{display:none!important}
 }
 @media(max-width:600px){
   nav{padding:10px 14px}
   .logo{font-size:17px}
   h1{font-size:26px}
   .hero-sub{font-size:14px}
-  .feature-cards{grid-template-columns:repeat(2,1fr)}
-  .feature-cards .feature-card:last-child{grid-column:span 2}
+  .hero-features{gap:8px}
+  .feature-pill{font-size:11px;padding:6px 11px}
   .modal{padding:18px}
   .form-row{grid-template-columns:1fr}
 }
@@ -154,41 +179,48 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   </div>
 </nav>
 
-<!-- LANDING — always shown initially -->
+<!-- LANDING -->
 <div id="landing">
-  <p class="hero-tag">Planejador de viagens</p>
-  <h1>Planeje sua rota,<br/><em>conquiste o destino</em></h1>
-  <p class="hero-sub">Adicione cidades, veja distâncias reais e tempos de viagem. Do Brasil até a Patagônia.</p>
-  <div class="hero-cta">
-    <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
+  <div class="hero-section">
+    <p class="hero-tag">Planejador de viagens</p>
+    <h1>Planeje sua rota,<br/><em>conquiste o destino</em></h1>
+    <p class="hero-sub">Adicione cidades, veja distâncias reais e tempos de viagem. Do Brasil até a Patagônia.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
+    </div>
+    <div class="feature-cards">
+      <div class="feature-card"><div class="fc-icon">📍</div><div class="fc-title">Busca por cidade</div><div class="fc-desc">Digite o nome e adicione instantaneamente</div></div>
+      <div class="feature-card"><div class="fc-icon">🗺️</div><div class="fc-title">Clique no mapa</div><div class="fc-desc">Toque em qualquer ponto do mapa</div></div>
+      <div class="feature-card"><div class="fc-icon">📏</div><div class="fc-title">Distâncias reais</div><div class="fc-desc">Calculado pelas rotas reais de estrada</div></div>
+      <div class="feature-card"><div class="fc-icon">⏱</div><div class="fc-title">Tempo estimado</div><div class="fc-desc">Saiba quanto tempo vai levar cada trecho</div></div>
+      <div class="feature-card"><div class="fc-icon">📸</div><div class="fc-title">Exportar roteiro</div><div class="fc-desc">Baixe sua rota completa em imagem</div></div>
+    </div>
   </div>
-  <div class="feature-cards">
-    <div class="feature-card"><div class="fc-icon">📍</div><div class="fc-title">Busca por cidade</div><div class="fc-desc">Digite o nome e adicione instantaneamente</div></div>
-    <div class="feature-card"><div class="fc-icon">🗺️</div><div class="fc-title">Clique no mapa</div><div class="fc-desc">Toque em qualquer ponto do mapa</div></div>
-    <div class="feature-card"><div class="fc-icon">📏</div><div class="fc-title">Distâncias reais</div><div class="fc-desc">Calculado pelas rotas reais de estrada</div></div>
-    <div class="feature-card"><div class="fc-icon">⏱</div><div class="fc-title">Tempo estimado</div><div class="fc-desc">Saiba quanto tempo vai levar cada trecho</div></div>
-    <div class="feature-card"><div class="fc-icon">📸</div><div class="fc-title">Exportar roteiro</div><div class="fc-desc">Baixe sua rota completa em imagem</div></div>
-  </div>
+
+
 </div>
 
-<!-- APP VIEW — hidden until openApp() -->
+<!-- APP -->
 <div id="app-view">
+
   <!-- MOBILE TOP BAR -->
-  <div class="mobile-top-bar">
-    <div class="search-wrap" style="position:relative">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search-input-mobile" class="search-input" placeholder="Buscar cidade..." autocomplete="off"/>
-      <div id="autocomplete-list-mobile"></div>
+  <div class="mobile-top-bar" style="display:none">
+    <div class="mobile-search-row">
+      <div class="search-wrap" style="flex:1">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input-mobile" class="search-input" placeholder="Buscar cidade..." autocomplete="off"/>
+        <div id="autocomplete-list-mobile"></div>
+      </div>
     </div>
     <div class="mobile-stats-row">
       <div class="mobile-stat"><div class="mobile-stat-lbl">Distância</div><div class="mobile-stat-val" id="m-stat-km">—</div></div>
       <div class="mobile-stat"><div class="mobile-stat-lbl">Tempo</div><div class="mobile-stat-val" id="m-stat-time">—</div></div>
-      <div class="mobile-stat"><div class="mobile-stat-lbl">Pontos</div><div class="mobile-stat-val" id="m-stat-pts">0<span style="font-size:10px;color:var(--gold)" id="m-stat-limit">/3</span></div></div>
+      <div class="mobile-stat"><div class="mobile-stat-lbl">Pontos</div><div class="mobile-stat-val" id="m-stat-pts">0 <span style="font-size:10px;color:var(--gold)" id="m-stat-limit">/3</span></div></div>
     </div>
   </div>
 
-  <!-- DESKTOP + MAP -->
   <div class="app-layout">
+    <!-- DESKTOP SIDEBAR -->
     <div class="sidebar">
       <div class="sidebar-header">
         <h2>Pontos da rota</h2>
@@ -209,13 +241,14 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
       </div>
       <div class="sidebar-footer">
         <div class="limit-banner" id="limit-banner">
-          <p>Crie uma conta grátis para adicionar até <strong>30 pontos</strong>.</p>
-          <button class="btn" style="width:100%;padding:8px;font-size:12px;background:var(--gold);color:var(--road)" onclick="openLoginModal()">Criar conta grátis</button>
+          <p id="limit-banner-text">Crie uma conta grátis para adicionar até <strong>30 pontos</strong>.</p>
+          <button class="btn" style="width:100%;padding:8px;font-size:12px;background:var(--gold);color:var(--road)" id="limit-banner-btn" onclick="openLoginModal()">Criar conta grátis</button>
         </div>
         <button class="btn btn-primary" style="width:100%;padding:11px;font-size:14px;font-weight:600" onclick="exportImage()">📸 Exportar roteiro</button>
         <button class="clear-link" onclick="clearAll()">🗑 Limpar rota</button>
       </div>
     </div>
+
     <div class="map-area">
       <div id="map-canvas"></div>
       <div class="loading-overlay" id="loading"><div class="spinner"></div> Calculando...</div>
@@ -224,31 +257,32 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   </div>
 
   <!-- MOBILE BOTTOM PANEL -->
-  <div class="mobile-bottom-panel" id="mobile-bottom-panel">
-    <div style="padding:10px 14px 6px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
-      <span style="font-size:13px;font-weight:600">📍 Pontos da rota (<span id="m-pts-count">0</span>)</span>
-      <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="clearAll()">🗑 Limpar</button>
+  <div class="mobile-bottom-panel" style="display:none">
+    <div class="mobile-bottom-header" onclick="toggleMobileList()">
+      <span>📍 Pontos da rota (<span id="m-pts-count">0</span>)</span>
+      <span id="mobile-toggle-icon">▲</span>
     </div>
-    <div class="mobile-points-list" id="mobile-points-list">
-      <div class="empty-state" style="padding:14px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto adicionado ainda.</div>
+    <div class="mobile-points-list" id="mobile-points-list" style="display:none">
+      <div class="empty-state" style="padding:16px"><span class="empty-icon" style="font-size:20px">📍</span>Nenhum ponto adicionado ainda.</div>
     </div>
-    <div id="limit-banner-mobile" style="display:none;margin:6px 12px;background:linear-gradient(135deg,rgba(245,166,35,0.12),rgba(233,69,96,0.12));border:1px solid rgba(245,166,35,0.3);border-radius:var(--radius);padding:10px 12px">
-      <p style="font-size:12px;color:var(--off-white);margin-bottom:8px">Crie uma conta para adicionar até <strong style="color:var(--gold)">30 pontos</strong>.</p>
+    <div class="limit-banner" id="limit-banner-mobile" style="margin:8px 12px">
+      <p id="limit-banner-text-mobile">Crie uma conta para adicionar até <strong>30 pontos</strong>.</p>
       <button class="btn" style="width:100%;padding:7px;font-size:12px;background:var(--gold);color:var(--road)" onclick="openLoginModal()">Criar conta grátis</button>
     </div>
-    <div style="padding:10px 12px 16px">
-      <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;font-weight:700" onclick="exportImage()">📸 Exportar roteiro</button>
+    <div class="mobile-bottom-footer">
+      <button class="btn btn-primary" style="padding:11px;font-size:14px;font-weight:600" onclick="exportImage()">📸 Exportar rota</button>
+      <button class="btn btn-ghost" onclick="clearAll()">🗑 Limpar</button>
     </div>
   </div>
 </div>
 
 <!-- MODAL SIGNUP PROMPT -->
 <div class="modal-backdrop" id="modal-signup-prompt">
-  <div class="modal" style="text-align:center;max-width:380px">
-    <div style="font-size:48px;margin-bottom:12px">🗺️</div>
+  <div class="modal" style="text-align:center;max-width:400px">
+    <div style="font-size:52px;margin-bottom:12px">🗺️</div>
     <h3 style="margin-bottom:8px">Você está quase lá!</h3>
-    <p class="modal-sub">Você usou os <strong style="color:var(--gold)">3 pontos gratuitos</strong>. Crie uma conta grátis e desbloqueie até <strong style="color:var(--accent)">30 pontos</strong>.</p>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:20px;text-align:left">
+    <p class="modal-sub">Você usou os <strong style="color:var(--gold)">3 pontos gratuitos</strong>. Crie uma conta grátis e desbloqueie até <strong style="color:var(--accent)">30 pontos</strong> na sua rota.</p>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:20px">
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="color:var(--gold)">✓</span> Adicione até 30 pontos por rota</div>
         <div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="color:var(--gold)">✓</span> Exporte seu roteiro em imagem</div>
@@ -266,13 +300,23 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
     <h3 id="auth-title">Entrar</h3>
     <p class="modal-sub" id="auth-desc">Acesse sua conta para adicionar até 30 pontos.</p>
     <div id="login-fields">
-      <div class="form-group"><label class="form-label">E-mail</label><input class="modal-input" type="email" id="auth-email" placeholder="seu@email.com"/></div>
-      <div class="form-group"><label class="form-label">Senha</label><input class="modal-input" type="password" id="auth-pass" placeholder="Sua senha"/></div>
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input class="modal-input" type="email" id="auth-email" placeholder="seu@email.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input class="modal-input" type="password" id="auth-pass" placeholder="Sua senha"/>
+      </div>
     </div>
     <div id="register-fields" style="display:none">
-      <div class="form-group"><label class="form-label">E-mail</label><input class="modal-input" type="email" id="reg-email" placeholder="seu@email.com"/></div>
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input class="modal-input" type="email" id="reg-email" placeholder="seu@email.com"/>
+      </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">País</label>
+        <div class="form-group">
+          <label class="form-label">País</label>
           <select class="modal-input" id="reg-country" onchange="updateDDI()">
             <option value="">Selecione...</option>
             <option value="BR" data-ddi="+55">🇧🇷 Brasil</option>
@@ -288,12 +332,22 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
             <option value="OTHER" data-ddi="">🌍 Outro</option>
           </select>
         </div>
-        <div class="form-group"><label class="form-label">WhatsApp</label>
-          <div class="phone-wrap"><span class="ddi-badge" id="ddi-badge">DDI</span><input class="modal-input" type="tel" id="reg-whatsapp" placeholder="(11) 99999-9999"/></div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <div class="phone-wrap">
+            <span class="ddi-badge" id="ddi-badge">DDI</span>
+            <input class="modal-input" type="tel" id="reg-whatsapp" placeholder="(11) 99999-9999"/>
+          </div>
         </div>
       </div>
-      <div class="form-group"><label class="form-label">Senha</label><input class="modal-input" type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"/></div>
-      <div class="form-group"><label class="form-label">Confirmar senha</label><input class="modal-input" type="password" id="reg-pass2" placeholder="Repita a senha"/></div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input class="modal-input" type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar senha</label>
+        <input class="modal-input" type="password" id="reg-pass2" placeholder="Repita a senha"/>
+      </div>
     </div>
     <p class="modal-error" id="auth-error"></p>
     <div class="modal-btns">
@@ -308,7 +362,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 <script>
 const SUPABASE_URL='https://rzovdzhllmzgdmtaxqij.supabase.co';
 const SUPABASE_KEY='sb_publishable_eVYOnLpwqhJc63u2DKHO-w_MrSM9F3u';
-const LIMIT_GUEST=9999,LIMIT_USER=9999;
+const LIMIT_GUEST=3, LIMIT_USER=30;
 const COLORS=['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
 
 let map,geocoder,dirSvc,dirRender;
@@ -316,7 +370,6 @@ let waypoints=[],markers=[];
 let user=null,authMode='login',acTimeout=null;
 
 function getLimit(){return user?LIMIT_USER:LIMIT_GUEST;}
-function el(id){return document.getElementById(id);}
 
 async function sbFetch(path,opts={}){
   const r=await fetch(SUPABASE_URL+path,{...opts,headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(user?.access_token||SUPABASE_KEY),'Content-Type':'application/json',...opts.headers}});
@@ -324,30 +377,37 @@ async function sbFetch(path,opts={}){
 }
 async function sbLogin(email,pass){
   const d=await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password:pass})});
-  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'E-mail ou senha incorretos.');
+  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'Erro ao entrar. Verifique e-mail e senha.');
   return {access_token:d.access_token,user:d.user};
 }
 async function sbRegister(email,pass,meta){
   const d=await sbFetch('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password:pass,data:meta})});
-  if(d.error)throw new Error(d.error_description||d.msg||'Erro ao cadastrar. Tente novamente.');
+  if(d.error==='invalid_request'||d.code===422)throw new Error('Dados inválidos. Verifique o e-mail e senha (mín. 6 caracteres).');
+  if(d.error)throw new Error(d.error_description||d.msg||'Erro ao cadastrar.');
   return d;
 }
 
-function openModal(id){el(id).classList.add('open');}
-function closeModal(id){el(id).classList.remove('open');}
-function showLoading(v){el('loading').style.display=v?'flex':'none';}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showLoading(v){document.getElementById('loading').style.display=v?'flex':'none';}
 
 function updateDDI(){
-  const sel=el('reg-country');
-  el('ddi-badge').textContent=sel.options[sel.selectedIndex].getAttribute('data-ddi')||'DDI';
+  const sel=document.getElementById('reg-country');
+  const opt=sel.options[sel.selectedIndex];
+  const ddi=opt.getAttribute('data-ddi')||'';
+  document.getElementById('ddi-badge').textContent=ddi||'DDI';
 }
 
 function setUserUI(){
   const li=!!user;
+  const el=id=>document.getElementById(id);
   if(el('btn-login'))el('btn-login').style.display=li?'none':'';
   if(el('btn-logout'))el('btn-logout').style.display=li?'':'none';
   const badge=el('plan-badge');
-  if(badge){badge.textContent=li?user.user.email.split('@')[0]:'Visitante';badge.style.color=li?'var(--gold)':'';}
+  if(badge){
+    if(li){badge.textContent=user.user.email.split('@')[0];badge.style.color='var(--gold)';}
+    else{badge.textContent='Visitante';badge.style.color='';}
+  }
   const lim=getLimit();
   if(el('stat-limit'))el('stat-limit').textContent=lim+' pts';
   if(el('m-stat-limit'))el('m-stat-limit').textContent='/'+lim;
@@ -355,14 +415,15 @@ function setUserUI(){
 }
 
 function updateLimitBanner(){
-  const over=waypoints.length>=getLimit()&&!user;
-  if(el('limit-banner'))el('limit-banner').classList.toggle('visible',over);
-  if(el('limit-banner-mobile'))el('limit-banner-mobile').style.display=over?'block':'none';
+  const over=waypoints.length>=getLimit();
+  document.getElementById('limit-banner').classList.toggle('visible',over&&!user);
+  const mob=document.getElementById('limit-banner-mobile');
+  if(mob)mob.style.display=(over&&!user)?'block':'none';
 }
 
 function openApp(){
-  el('landing').style.display='none';
-  el('app-view').style.display='flex';
+  document.getElementById('landing').style.display='none';
+  document.getElementById('app-view').style.display='block';
   if(window._mapReady)startMap();else window._mapInitCb=startMap;
 }
 
@@ -370,49 +431,78 @@ function openLoginModal(){authMode='login';renderAuth();openModal('modal-auth');
 
 function renderAuth(){
   const isL=authMode==='login';
-  el('auth-title').textContent=isL?'Entrar':'Criar conta grátis';
-  el('auth-desc').textContent=isL?'Acesse sua conta para adicionar até 30 pontos.':'Cadastre-se e planeje rotas com até 30 pontos.';
-  el('auth-submit-btn').textContent=isL?'Entrar':'Criar conta';
-  el('login-fields').style.display=isL?'block':'none';
-  el('register-fields').style.display=isL?'none':'block';
-  el('auth-switch').innerHTML=isL?'Não tem conta? <a onclick="toggleAuthMode()">Criar conta grátis</a>':'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
-  el('auth-error').textContent='';
+  document.getElementById('auth-title').textContent=isL?'Entrar':'Criar conta grátis';
+  document.getElementById('auth-desc').textContent=isL?'Acesse sua conta para adicionar até 30 pontos.':'Cadastre-se e planeje rotas com até 30 pontos.';
+  document.getElementById('auth-submit-btn').textContent=isL?'Entrar':'Criar conta';
+  document.getElementById('login-fields').style.display=isL?'block':'none';
+  document.getElementById('register-fields').style.display=isL?'none':'block';
+  document.getElementById('auth-switch').innerHTML=isL?'Não tem conta? <a onclick="toggleAuthMode()">Criar conta grátis</a>':'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+  document.getElementById('auth-error').textContent='';
 }
 function toggleAuthMode(){authMode=authMode==='login'?'register':'login';renderAuth();}
 
 async function submitAuth(){
-  const err=el('auth-error');err.textContent='';
+  const err=document.getElementById('auth-error');err.textContent='';
   if(authMode==='login'){
-    const email=el('auth-email').value.trim(),pass=el('auth-pass').value;
+    const email=document.getElementById('auth-email').value.trim();
+    const pass=document.getElementById('auth-pass').value;
     if(!email||!pass){err.textContent='Preencha e-mail e senha.';return;}
-    try{const d=await sbLogin(email,pass);user=d;setUserUI();closeModal('modal-auth');if(el('app-view').style.display==='none'||el('app-view').style.display==='')openApp();}
-    catch(e){err.textContent=e.message;}
+    try{
+      const d=await sbLogin(email,pass);user=d;setUserUI();closeModal('modal-auth');
+      if(document.getElementById('app-view').style.display==='none')openApp();
+    }catch(e){err.textContent=e.message;}
   }else{
-    const email=el('reg-email').value.trim(),country=el('reg-country').value;
-    const ddi=el('ddi-badge').textContent,phone=el('reg-whatsapp').value.trim();
-    const pass=el('reg-pass').value,pass2=el('reg-pass2').value;
+    const email=document.getElementById('reg-email').value.trim();
+    const country=document.getElementById('reg-country').value;
+    const ddi=document.getElementById('ddi-badge').textContent;
+    const phone=document.getElementById('reg-whatsapp').value.trim();
+    const pass=document.getElementById('reg-pass').value;
+    const pass2=document.getElementById('reg-pass2').value;
     if(!email||!country||!phone||!pass){err.textContent='Preencha todos os campos.';return;}
     if(pass.length<6){err.textContent='Senha deve ter pelo menos 6 caracteres.';return;}
     if(pass!==pass2){err.textContent='As senhas não coincidem.';return;}
     try{
-      await sbRegister(email,pass,{country,whatsapp:ddi+' '+phone});
-      const d=await sbLogin(email,pass);
-      user=d;setUserUI();closeModal('modal-auth');
-      if(el('app-view').style.display==='none'||el('app-view').style.display==='')openApp();
-    }catch(e){err.textContent=e.message;}
+      const d=await sbRegister(email,pass,{country,whatsapp:ddi+' '+phone});
+      if(d.user){
+        // Auto login after register
+        try{
+          const login=await sbLogin(email,pass);
+          user=login;setUserUI();closeModal('modal-auth');
+          if(document.getElementById('app-view').style.display==='none')openApp();
+        }catch(le){
+          // Login failed but register ok - just close and ask to login
+          closeModal('modal-auth');
+          document.getElementById('auth-error').textContent='';
+          openLoginModal();
+        }
+      } else if(d.error_code==='user_already_exists'||d.msg==='User already registered'){
+        err.textContent='Este e-mail já está cadastrado. Faça login.';
+      } else {
+        err.textContent='Erro ao cadastrar. Tente novamente.';
+      }
+    }catch(e){err.textContent=e.message||'Erro ao cadastrar.';}
   }
 }
 
 function logout(){
   user=null;setUserUI();
-  el('landing').style.display='flex';
-  el('app-view').style.display='none';
+  document.getElementById('landing').style.display='flex';
+  document.getElementById('app-view').style.display='none';
   clearAll();
 }
 
+function toggleMobileList(){
+  const list=document.getElementById('mobile-points-list');
+  const icon=document.getElementById('mobile-toggle-icon');
+  const open=list.style.display==='none';
+  list.style.display=open?'flex':'none';
+  icon.textContent=open?'▼':'▲';
+}
+
 function startMap(){
-  map=new google.maps.Map(el('map-canvas'),{
-    center:{lat:-25,lng:-52},zoom:4,mapTypeId:'roadmap',disableDefaultUI:true,zoomControl:true,
+  map=new google.maps.Map(document.getElementById('map-canvas'),{
+    center:{lat:-25,lng:-52},zoom:4,mapTypeId:'roadmap',
+    disableDefaultUI:true,zoomControl:true,
     styles:[{featureType:'poi',stylers:[{visibility:'off'}]},{featureType:'transit',stylers:[{visibility:'off'}]}]
   });
   geocoder=new google.maps.Geocoder();
@@ -427,12 +517,14 @@ function startMap(){
       if(st==='OK'&&res[0])addPoint(res[0].formatted_address,e.latLng.lat(),e.latLng.lng());
     });
   });
-  setupSearch('search-input','autocomplete-list');
-  setupSearch('search-input-mobile','autocomplete-list-mobile');
 }
 
 function canAdd(){
-  if(waypoints.length>=getLimit()){updateLimitBanner();if(!user)openModal('modal-signup-prompt');return false;}
+  if(waypoints.length>=getLimit()){
+    updateLimitBanner();
+    if(!user)openModal('modal-signup-prompt');
+    return false;
+  }
   return true;
 }
 
@@ -477,7 +569,11 @@ function recalc(){
     showLoading(false);
     if(st==='OK'){
       dirRender.setDirections(res);
-      window._routePts=(function(){var pts=[];res.routes[0].legs.forEach(function(leg){leg.steps.forEach(function(step){step.path.forEach(function(p){pts.push(p.lat()+','+p.lng());});});});return pts;})();
+      window._lastDirectionsResult=(function(){
+        var pts=[];
+        res.routes[0].legs.forEach(function(leg){leg.steps.forEach(function(step){step.path.forEach(function(p){pts.push(p.lat()+','+p.lng());});});});
+        return pts;
+      })();
       const legs=res.routes[0].legs;
       let td=0,tt=0;
       const segs=legs.map(l=>{td+=l.distance.value;tt+=l.duration.value;return Math.round(l.distance.value/1000);});
@@ -487,26 +583,26 @@ function recalc(){
 }
 
 function updateStats(dm,ts){
-  const km=dm>0?Math.round(dm/1000).toLocaleString('pt-BR')+' km':'—';
+  const km=dm>0?Math.round(dm/1000).toLocaleString('pt-BR')+' km':'— km';
   const pts=waypoints.length;
   let time='—';
   if(ts>0){const h=Math.floor(ts/3600),m=Math.round((ts%3600)/60);time=h>0?h+'h '+m+'min':m+'min';}
-  ['stat-km','m-stat-km'].forEach(id=>{if(el(id))el(id).textContent=km+(id==='stat-km'?' km':'');});
-  if(el('stat-km'))el('stat-km').textContent=dm>0?Math.round(dm/1000).toLocaleString('pt-BR')+' km':'— km';
-  if(el('m-stat-km'))el('m-stat-km').textContent=km;
-  if(el('stat-pts'))el('stat-pts').textContent=pts;
-  if(el('stat-time'))el('stat-time').textContent=time;
-  if(el('m-stat-pts'))el('m-stat-pts').textContent=pts;
-  if(el('m-stat-time'))el('m-stat-time').textContent=time;
-  if(el('m-pts-count'))el('m-pts-count').textContent=pts;
+  document.getElementById('stat-km').textContent=km;
+  document.getElementById('stat-pts').textContent=pts;
+  document.getElementById('stat-time').textContent=time;
+  document.getElementById('m-stat-km').textContent=km;
+  document.getElementById('m-stat-pts').textContent=pts;
+  document.getElementById('m-stat-time').textContent=time;
+  document.getElementById('m-pts-count').textContent=pts;
 }
 
 function renderList(segs){
-  const empty1='<div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>';
-  const empty2='<div class="empty-state" style="padding:14px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto ainda.</div>';
+  const a=document.getElementById('points-area');
+  const b=document.getElementById('mobile-points-list');
   if(!waypoints.length){
-    if(el('points-area'))el('points-area').innerHTML=empty1;
-    if(el('mobile-points-list'))el('mobile-points-list').innerHTML=empty2;
+    const empty='<div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>';
+    a.innerHTML=empty;
+    b.innerHTML='<div class="empty-state" style="padding:12px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto ainda.</div>';
     return;
   }
   let h='';
@@ -514,13 +610,15 @@ function renderList(segs){
     h+='<div class="point-row"><div class="point-dot" style="background:'+pt.color+'">'+(i+1)+'</div><div class="point-info"><div class="point-name">'+pt.name+'</div></div><button class="point-del" onclick="removePoint('+i+')">✕</button></div>';
     if(i<segs.length)h+='<div class="seg-arrow"><div class="seg-line"></div><span>↓ '+segs[i].toLocaleString('pt-BR')+' km</span><div class="seg-line"></div></div>';
   });
-  if(el('points-area'))el('points-area').innerHTML=h;
-  if(el('mobile-points-list'))el('mobile-points-list').innerHTML=h;
+  a.innerHTML=h;
+  b.innerHTML=h;
 }
 
-function setupSearch(inputId,listId){
-  const input=el(inputId),list=el(listId);
-  if(!input||!list)return;
+// Search setup for both desktop and mobile
+function setupSearch(inputId, listId){
+  const input=document.getElementById(inputId);
+  const list=document.getElementById(listId);
+  if(!input)return;
   input.addEventListener('input',e=>{
     clearTimeout(acTimeout);
     const val=e.target.value.trim();
@@ -542,9 +640,11 @@ function setupSearch(inputId,listId){
     if(e.key==='Enter'){const v=input.value.trim();if(v){list.style.display='none';geoAdd(v);input.value='';}}
   });
 }
+
 document.addEventListener('click',e=>{
-  if(!e.target.closest('.search-wrap'))
+  if(!e.target.closest('.search-wrap')){
     document.querySelectorAll('#autocomplete-list,#autocomplete-list-mobile').forEach(l=>l.style.display='none');
+  }
 });
 
 function geoAdd(q){
@@ -556,209 +656,108 @@ function geoAdd(q){
   });
 }
 
-function addWatermark(canvas){
-  const wc=document.createElement('canvas');
-  wc.width=canvas.width;wc.height=canvas.height;
-  const ctx=wc.getContext('2d');
-  ctx.drawImage(canvas,0,0);
-  ctx.save();
-  ctx.globalAlpha=0.13;
-  ctx.fillStyle='#ffffff';
-  const fs=Math.floor(wc.width/5);
-  ctx.font='bold '+fs+'px Arial';
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  ctx.translate(wc.width/2,wc.height/2);
-  ctx.rotate(-20*Math.PI/180);
-  ctx.fillText('MAPROOTS',0,0);
-  ctx.restore();
-  return wc;
-}
-
+// EXPORT
 function exportImage(){
-  if(!waypoints.length){alert('Adicione pontos na rota antes de exportar!');return;}
-
-  const MAPS_KEY='AIzaSyAr1Q-jwFyMH5Qwc8XPlzcvH_HJCmh1hwM';
-  const COLORS_HEX=['e94560','f5a623','1D9E75','378ADD','a855f7','0ea5e9','f59e0b','10b981','ef4444','8b5cf6'];
-  const totalKm=el('stat-km')?el('stat-km').textContent:'—';
-  const totalTime=el('stat-time')?el('stat-time').textContent:'—';
+  if(waypoints.length===0){alert('Adicione pontos na rota antes de exportar!');return;}
+  const totalKm=document.getElementById('stat-km').textContent;
+  const totalTime=document.getElementById('stat-time').textContent;
   const pts=waypoints.length;
-  const segs=Array.from(document.querySelectorAll('#points-area .seg-arrow span')).map(s=>s.textContent);
-
-  // Show loading
-  document.querySelectorAll('[onclick="exportImage()"]').forEach(b=>{b.textContent='⏳ Gerando...';b.disabled=true;});
-
-  // Build Static Maps URL with real road path
-  const bounds=new google.maps.LatLngBounds();
-  waypoints.forEach(p=>bounds.extend({lat:p.lat,lng:p.lng}));
-  const center=bounds.getCenter();
-
-  // Markers
-  const markersParam=waypoints.map((p,i)=>
-    'markers=size:mid%7Ccolor:0x'+COLORS_HEX[i%10]+'ff%7Clabel:'+(i+1)+'%7C'+p.lat+','+p.lng
-  ).join('&');
-
-  // Path from route points
-  let pathParam='';
-  if(window._routePts&&window._routePts.length>1){
-    const step=Math.max(1,Math.floor(window._routePts.length/100));
-    const sampled=window._routePts.filter((_,i)=>i%step===0);
-    sampled.push(window._routePts[window._routePts.length-1]);
-    pathParam='path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(sampled.join('|'));
-  } else {
-    pathParam='path=color:0xe94560ff%7Cweight:4%7C'+encodeURIComponent(waypoints.map(p=>p.lat+','+p.lng).join('|'));
-  }
-
-  const staticUrl='https://maps.googleapis.com/maps/api/staticmap'
-    +'?size=860x500'
-    +'&maptype=roadmap'
-    +'&'+pathParam
-    +'&'+markersParam
-    +'&key='+MAPS_KEY;
-
-  // Build card canvas
-  const CARD_W=1100,SB_W=240;
-  const MAP_W=CARD_W-SB_W;
-
-  // Load static map image
-  const mapImg=new Image();
-  mapImg.crossOrigin='anonymous';
-  mapImg.onload=function(){
-    const MAP_H=mapImg.naturalHeight*(MAP_W/mapImg.naturalWidth);
-    const CARD_H=Math.max(MAP_H+60+28, 500);
-
-    const canvas=document.createElement('canvas');
-    canvas.width=CARD_W*2; // 2x for retina
-    canvas.height=CARD_H*2;
-    const ctx=canvas.getContext('2d');
-    ctx.scale(2,2);
-
-    // Header
-    ctx.fillStyle='#1a1a2e';
-    ctx.fillRect(0,0,CARD_W,52);
-    ctx.font='bold 16px Arial';
-    ctx.fillStyle='#ffffff';
-    ctx.fillText('Map',16,32);
-    ctx.fillStyle='#e94560';
-    ctx.fillText('Roots',16+ctx.measureText('Map').width,32);
-    ctx.fillStyle='#ffffff';
-    ctx.fillText(' — Roteiro da Viagem',16+ctx.measureText('Map').width+ctx.measureText('Roots').width,32);
-    ctx.font='12px Arial';
-    ctx.fillStyle='#f5a623';
-    ctx.textAlign='right';
-    ctx.fillText('📍 '+pts+' pontos   📏 '+totalKm+'   ⏱ '+totalTime,CARD_W-16,32);
-    ctx.textAlign='left';
-
-    // Sidebar background
-    ctx.fillStyle='#f7f9fc';
-    ctx.fillRect(0,52,SB_W,CARD_H-52-28);
-
-    // Sidebar border
-    ctx.fillStyle='#e0e6ef';
-    ctx.fillRect(SB_W-1,52,1,CARD_H-52-28);
-
-    // Sidebar dark top section
-    ctx.fillStyle='#1a1a2e';
-    ctx.fillRect(0,52,SB_W,120);
-    ctx.font='9px Arial';
-    ctx.fillStyle='#8a9bb5';
-    ctx.fillText('RESUMO DA VIAGEM',14,72);
-
-    // Stats boxes
-    [[14,80,'DISTÂNCIA',totalKm,'#f5a623'],[130,80,'TEMPO EST.',totalTime,'#f5a623']].forEach(([x,y,lbl,val,clr])=>{
-      ctx.fillStyle='rgba(255,255,255,0.07)';
-      roundRect(ctx,x,y,102,36,6);ctx.fill();
-      ctx.font='8px Arial';ctx.fillStyle='#8a9bb5';ctx.fillText(lbl,x+6,y+12);
-      ctx.font='bold 13px Arial';ctx.fillStyle=clr;ctx.fillText(val,x+6,y+28);
-    });
-    ctx.fillStyle='rgba(255,255,255,0.07)';
-    roundRect(ctx,14,122,218,30,6);ctx.fill();
-    ctx.font='8px Arial';ctx.fillStyle='#8a9bb5';ctx.fillText('PONTOS NA ROTA',20,134);
-    ctx.font='bold 13px Arial';ctx.fillStyle='#e94560';ctx.fillText(pts+' destinos',20,148);
-
-    // Points list
-    ctx.font='8px Arial';ctx.fillStyle='#999';
-    ctx.fillText('ROTEIRO',14,192);
-    let ry=204;
-    waypoints.forEach((p,i)=>{
-      if(ry>CARD_H-60)return;
-      // Dot
-      ctx.beginPath();
-      ctx.arc(24,ry+7,9,0,Math.PI*2);
-      ctx.fillStyle=COLORS[i%10];
-      ctx.fill();
-      ctx.font='bold 9px Arial';
-      ctx.fillStyle='#0a0a1a';
-      ctx.textAlign='center';
-      ctx.fillText(i+1,24,ry+11);
-      ctx.textAlign='left';
-      // Name
-      const name=p.name.replace(/,.*$/,'').substring(0,18);
-      const country=p.name.split(',').slice(-1)[0].trim().substring(0,8);
-      ctx.font='bold 10px Arial';ctx.fillStyle='#1a1a2e';
-      ctx.fillText(name,38,ry+8);
-      ctx.font='9px Arial';ctx.fillStyle='#888';
-      ctx.fillText(country,38,ry+18);
-      // Distance
-      if(segs[i]){
-        ctx.font='9px Arial';ctx.fillStyle='#e94560';ctx.textAlign='right';
-        ctx.fillText('↓ '+segs[i],SB_W-8,ry+13);ctx.textAlign='left';
-      }
-      ry+=32;
-    });
-
-    // Map image
-    ctx.drawImage(mapImg,SB_W,52,MAP_W,MAP_H);
-
-    // Watermark on map area
-    ctx.save();
-    ctx.globalAlpha=0.12;
-    ctx.fillStyle='#ffffff';
-    const fs=Math.floor(MAP_W/5);
-    ctx.font='bold '+fs+'px Arial';
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
-    ctx.translate(SB_W+MAP_W/2,52+MAP_H/2);
-    ctx.rotate(-20*Math.PI/180);
-    ctx.fillText('MAPROOTS',0,0);
-    ctx.restore();
-    ctx.textAlign='left';
-    ctx.textBaseline='alphabetic';
-
-    // Footer
-    ctx.fillStyle='#16213e';
-    ctx.fillRect(0,CARD_H-28,CARD_W,28);
-    ctx.font='10px Arial';
-    ctx.fillStyle='#8a9bb5';
-    ctx.textAlign='center';
-    ctx.fillText('Gerado por MapRoots — maproots.vercel.app',CARD_W/2,CARD_H-10);
-    ctx.textAlign='left';
-
-    // Download
-    document.querySelectorAll('[onclick="exportImage()"]').forEach(b=>{b.textContent='📸 Exportar roteiro';b.disabled=false;});
-    const a=document.createElement('a');
-    a.download='maproots-rota.png';
-    a.href=canvas.toDataURL('image/png');
-    a.click();
-  };
-
-  mapImg.onerror=function(){
-    document.querySelectorAll('[onclick="exportImage()"]').forEach(b=>{b.textContent='📸 Exportar roteiro';b.disabled=false;});
-    alert('Erro ao carregar o mapa. Verifique sua conexão.');
-  };
-
-  mapImg.src=staticUrl;
+  const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(s=>s.textContent).filter((_,i)=>i%1===0).slice(0,waypoints.length);
+  let listHtml='';
+  waypoints.forEach(function(p,i){
+    const name=p.name.replace(/,.*$/,'').substring(0,22);
+    const country=p.name.split(',').slice(-1)[0].trim().substring(0,12);
+    const dist=segs[i]?'<span style="color:#e94560;font-size:10px;white-space:nowrap">↓ '+segs[i]+'</span>':'';
+    listHtml+='<tr><td style="padding:3px 5px 3px 0;vertical-align:middle"><span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:'+COLORS[i%10]+';align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0a0a1a">'+(i+1)+'</span></td><td style="padding:3px 4px;font-size:11px;color:#1a1a2e;line-height:1.3;width:100%"><b>'+name+'</b><span style="color:#888;font-size:9px"> — '+country+'</span></td><td style="padding:3px 0 3px 6px;text-align:right">'+dist+'</td></tr>';
+  });
+  html2canvas(document.getElementById('map-canvas'),{useCORS:true,allowTaint:true,scale:1.5,logging:false}).then(function(mapCanvas){
+    // Add MAPROOTS watermark to map
+    const wc=document.createElement('canvas');
+    wc.width=mapCanvas.width;wc.height=mapCanvas.height;
+    const wctx=wc.getContext('2d');
+    wctx.drawImage(mapCanvas,0,0);
+    wctx.save();
+    wctx.globalAlpha=0.13;
+    wctx.fillStyle='#ffffff';
+    const wfs=Math.floor(wc.width/5);
+    wctx.font='bold '+wfs+'px Arial';
+    wctx.textAlign='center';
+    wctx.textBaseline='middle';
+    wctx.translate(wc.width/2,wc.height/2);
+    wctx.rotate(-20*Math.PI/180);
+    wctx.fillText('MAPROOTS',0,0);
+    wctx.restore();
+    const mapDataUrl=wc.toDataURL('image/jpeg',0.92);
+    const w=window.open('','_blank');
+    if(!w){alert('Permita pop-ups para exportar.');return;}
+    const css=[
+      '*{box-sizing:border-box;margin:0;padding:0}',
+      'body{font-family:Arial,sans-serif;background:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px;gap:0}',
+      /* Logo area */
+      '.logo-area{text-align:center;margin-bottom:24px}',
+      '.logo-area .logo-text{font-size:28px;font-weight:700;color:#fff;font-family:Arial,sans-serif;letter-spacing:-0.5px}',
+      '.logo-area .logo-text span{color:#e94560}',
+      /* Buttons row */
+      '.btn-row{display:flex;gap:12px;justify-content:center;width:100%;max-width:600px;margin-bottom:20px}',
+      '#dlbtn{flex:1;background:#1D9E75;color:#fff;border:none;padding:16px 0;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(29,158,117,0.45)}',
+      '#dlbtn:hover{opacity:0.9}',
+      '.close-btn{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:16px 24px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;white-space:nowrap}',
+      /* Divider */
+      '.divider{width:100%;max-width:860px;height:1px;background:rgba(255,255,255,0.1);margin-bottom:24px}',
+      /* Preview */
+      '.preview{width:100%;max-width:860px;border-radius:14px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5)}',
+      '.preview-header{background:#1a1a2e;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08)}',
+      '.preview-header .title{font-size:15px;font-weight:700;color:#fff}',
+      '.preview-header .title span{color:#e94560}',
+      '.preview-header .stats{font-size:11px;color:#f5a623;display:flex;gap:12px}',
+      '.preview-body{display:flex}',
+      '.preview-sidebar{width:200px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}',
+      '.preview-map{flex:1}',
+      '.preview-map img{width:100%;display:block}',
+      '.preview-footer{background:#16213e;padding:7px 16px;text-align:center;font-size:10px;color:#8a9bb5}',
+      '@media(max-width:600px){.preview-body{flex-direction:column}.preview-sidebar{width:100%;border-right:none;border-bottom:1px solid #e0e6ef}}',
+      '@media print{body{background:#fff;padding:0}.btn-row,.divider,.logo-area{display:none}.preview{box-shadow:none;border-radius:0;max-width:100%}}'
+    ].join('');
+    w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MapRoots — Roteiro</title><style>'+css+'</style></head><body>');
+    /* Logo */
+    w.document.write('<div class="logo-area"><div class="logo-text">🗺️ Map<span>Roots</span></div><div style="font-size:12px;color:#8a9bb5;margin-top:4px">Seu roteiro de viagem</div></div>');
+    /* Buttons */
+    w.document.write('<div class="btn-row"><button id="dlbtn">⬇️ Baixar Imagem (.png)</button><button class="close-btn" onclick="window.close()">✕ Fechar</button></div>');
+    /* Divider */
+    w.document.write('<div class="divider"></div>');
+    /* Preview card */
+    w.document.write('<div class="preview" id="exportpage">');
+    w.document.write('<div class="preview-header"><div class="title">Map<span>Roots</span> — Roteiro da Viagem</div><div class="stats"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div></div>');
+    w.document.write('<div class="preview-body">');
+    w.document.write('<div class="preview-sidebar"><div style="background:#1a1a2e;padding:12px 14px"><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#8a9bb5;margin-bottom:8px">Resumo</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div style="background:rgba(255,255,255,0.07);border-radius:6px;padding:7px 8px"><div style="font-size:8px;color:#8a9bb5;margin-bottom:2px">DISTÂNCIA</div><div style="font-size:13px;font-weight:700;color:#f5a623">'+totalKm+'</div></div><div style="background:rgba(255,255,255,0.07);border-radius:6px;padding:7px 8px"><div style="font-size:8px;color:#8a9bb5;margin-bottom:2px">TEMPO</div><div style="font-size:13px;font-weight:700;color:#f5a623">'+totalTime+'</div></div><div style="background:rgba(255,255,255,0.07);border-radius:6px;padding:7px 8px;grid-column:span 2"><div style="font-size:8px;color:#8a9bb5;margin-bottom:2px">PONTOS</div><div style="font-size:13px;font-weight:700;color:#e94560">'+pts+' destinos</div></div></div></div>');
+    w.document.write('<div style="padding:10px 12px"><div style="font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:6px">Roteiro</div><table style="width:100%;border-collapse:collapse">'+listHtml+'</table></div></div>');
+    w.document.write('<div class="preview-map"><img src="'+mapDataUrl+'" /></div></div>');
+    w.document.write('<div class="preview-footer">Gerado por MapRoots — maproots.vercel.app</div></div>');
+    /* Download script */
+    w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
+    w.document.write('<sc'+'ript>');
+    w.document.write('document.getElementById("dlbtn").onclick=function(){');
+    w.document.write('  var bar=document.querySelector(".btn-row");');
+    w.document.write('  var logo=document.querySelector(".logo-area");');
+    w.document.write('  var div=document.querySelector(".divider");');
+    w.document.write('  bar.style.display="none";logo.style.display="none";div.style.display="none";');
+    w.document.write('  html2canvas(document.getElementById("exportpage"),{scale:2,useCORS:true,allowTaint:true}).then(function(c){');
+    w.document.write('    bar.style.display="flex";logo.style.display="block";div.style.display="block";');
+    w.document.write('    var a=document.createElement("a");a.download="maproots-rota.png";a.href=c.toDataURL("image/png");a.click();');
+    w.document.write('  }).catch(function(){bar.style.display="flex";logo.style.display="block";div.style.display="block";});');
+    w.document.write('};');
+    w.document.write('</sc'+'ript>');
+    w.document.write('</body></html>');
+    w.document.close();
+  }).catch(function(){alert('Erro ao capturar o mapa.');});
 }
 
-function roundRect(ctx,x,y,w,h,r){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);
-  ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
-  ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);
-  ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
+function initMap(){
+  window._mapReady=true;
+  setupSearch('search-input','autocomplete-list');
+  setupSearch('search-input-mobile','autocomplete-list-mobile');
+  if(window._mapInitCb)window._mapInitCb();
 }
-
-function initMap(){window._mapReady=true;if(window._mapInitCb)window._mapInitCb();}
 setUserUI();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
