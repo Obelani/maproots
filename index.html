@@ -281,6 +281,19 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   </div>
 </div>
 
+<!-- MODAL SHARED ROUTE -->
+<div class="modal-backdrop" id="modal-shared-route">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:44px;margin-bottom:12px">🔗</div>
+    <h3 style="margin-bottom:8px">Rota compartilhada!</h3>
+    <p class="modal-sub" id="shared-route-desc">Alguém compartilhou uma rota com você. O que deseja fazer?</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <button class="btn btn-primary" style="padding:13px;font-size:14px" onclick="loadSharedRoute()">🗺️ Abrir rota compartilhada</button>
+      <button class="btn btn-ghost" style="padding:12px;font-size:14px" onclick="loadMyRoute()">📍 Continuar com minha rota</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL AUTH -->
 <div class="modal-backdrop" id="modal-auth">
   <div class="modal">
@@ -843,27 +856,65 @@ function saveRoute(){
   localStorage.setItem('maproots_route',JSON.stringify(waypoints));
 }
 
+// Pending shared route data (used when user chooses via modal)
+let _pendingSharedPts=null;
+
 function loadSavedRoute(){
   if(waypoints.length>0)return;
-  let raw=null,fmt='full';
+  if(!map){setTimeout(loadSavedRoute,200);return;}
+
+  let urlRaw=null,urlFmt='full';
+  let localRaw=null;
+
+  // Parse URL ?r=
   try{
     const r=new URLSearchParams(window.location.search).get('r');
     if(r){
       const decoded=decodeRoute(r);
-      if(decoded.indexOf(';')!==-1||/^-?\d+,-?\d+$/.test(decoded)){fmt='int';raw=decoded;}
-      else{const p=JSON.parse(atob(r));fmt=Array.isArray(p[0])?'compact':'full';raw=p;}
+      if(decoded.indexOf(';')!==-1||/^-?\d+,-?\d+$/.test(decoded)){urlFmt='int';urlRaw=decoded;}
+      else{const p=JSON.parse(atob(r));urlFmt=Array.isArray(p[0])?'compact':'full';urlRaw=p;}
     }
   }catch(e){}
-  if(!raw){try{const s=localStorage.getItem('maproots_route');if(s){raw=JSON.parse(s);fmt='full';}}catch(e){}}
-  if(!raw||(typeof raw==='string'&&!raw.length)||(Array.isArray(raw)&&!raw.length))return;
-  if(!map){setTimeout(loadSavedRoute,200);return;}
 
+  // Parse localStorage
+  try{const s=localStorage.getItem('maproots_route');if(s)localRaw=JSON.parse(s);}catch(e){}
+
+  // If URL has shared route AND user has their own saved route → show modal
+  if(urlRaw&&localRaw&&localRaw.length){
+    // Parse shared points first for preview
+    _pendingSharedPts={raw:urlRaw,fmt:urlFmt};
+    const sharedCount=urlFmt==='int'?urlRaw.split(';').length:urlRaw.length;
+    const myCount=localRaw.length;
+    const desc=document.getElementById('shared-route-desc');
+    if(desc)desc.innerHTML='Alguém compartilhou uma rota com <b>'+sharedCount+' pontos</b> com você.<br><span style="color:var(--muted);font-size:12px">Você tem uma rota salva com '+myCount+' pontos.</span>';
+    openModal('modal-shared-route');
+    return;
+  }
+
+  // No conflict — load whatever exists
+  if(urlRaw) _loadParsedRoute(urlRaw,urlFmt,false);
+  else if(localRaw&&localRaw.length) _addAllPoints(localRaw);
+}
+
+function loadSharedRoute(){
+  closeModal('modal-shared-route');
+  if(!_pendingSharedPts)return;
+  _loadParsedRoute(_pendingSharedPts.raw,_pendingSharedPts.fmt,false);
+  _pendingSharedPts=null;
+}
+
+function loadMyRoute(){
+  closeModal('modal-shared-route');
+  _pendingSharedPts=null;
+  try{const s=localStorage.getItem('maproots_route');if(s)_addAllPoints(JSON.parse(s));}catch(e){}
+}
+
+function _loadParsedRoute(raw,fmt,save){
   function revGeo(pts,cb){
     let done=0;showLoading(true);
     pts.forEach(function(p,i){
       geocoder.geocode({location:{lat:p.lat,lng:p.lng}},function(res,st){
         if(st==='OK'&&res[0]){
-          // Extract city name from address components
           const comps=res[0].address_components;
           let city='',state='',country='';
           comps.forEach(function(c){
@@ -873,9 +924,7 @@ function loadSavedRoute(){
             else if(c.types.indexOf('country')!==-1)country=c.long_name;
           });
           pts[i].name=city?(city+(state?', '+state:'')+(country?', '+country:'')):res[0].formatted_address;
-        } else {
-          pts[i].name='Ponto '+(i+1);
-        }
+        }else{pts[i].name='Ponto '+(i+1);}
         if(++done===pts.length){showLoading(false);cb(pts);}
       });
     });
@@ -885,10 +934,10 @@ function loadSavedRoute(){
       const p=pair.split(',');return{lat:parseInt(p[0])/10000,lng:parseInt(p[1])/10000,name:'Ponto '+(i+1)};
     });
     revGeo(pts,_addAllPoints);
-  } else if(fmt==='compact'){
+  }else if(fmt==='compact'){
     const pts=raw.map(function(p,i){return{lat:p[0],lng:p[1],name:'Ponto '+(i+1)};});
     revGeo(pts,_addAllPoints);
-  } else {
+  }else{
     _addAllPoints(raw);
   }
 }
