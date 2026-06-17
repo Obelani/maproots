@@ -39,6 +39,13 @@ h1 em{font-style:normal;color:var(--accent)}
 .hero-cta .btn{padding:14px 36px;font-size:16px;border-radius:12px;box-shadow:0 4px 20px rgba(233,69,96,0.35)}
 .hero-features{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:48px}
 .feature-pill{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;color:var(--off-white)}
+.feature-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:900px;width:100%;margin:0 auto 48px}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 14px;text-align:center;transition:border-color 0.2s,transform 0.2s}
+.feature-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.fc-icon{font-size:28px;margin-bottom:10px}
+.fc-title{font-family:"Space Grotesk",sans-serif;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--white)}
+.fc-desc{font-size:11px;color:var(--muted);line-height:1.4}
+@media(max-width:700px){.feature-cards{grid-template-columns:repeat(2,1fr)}.feature-cards .feature-card:last-child{grid-column:span 2}}
 
 /* MAP PREVIEW */
 .map-preview{width:100%;max-width:1000px;margin:0 auto;padding:0 24px 60px;position:relative}
@@ -181,105 +188,16 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
     <div class="hero-cta">
       <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
     </div>
-    <div class="hero-features">
-      <div class="feature-pill">📍 Busca por cidade</div>
-      <div class="feature-pill">🗺️ Clique no mapa</div>
-      <div class="feature-pill">📏 Distâncias reais</div>
-      <div class="feature-pill">⏱ Tempo estimado</div>
-      <div class="feature-pill">📸 Exportar roteiro</div>
+    <div class="feature-cards">
+      <div class="feature-card"><div class="fc-icon">📍</div><div class="fc-title">Busca por cidade</div><div class="fc-desc">Digite o nome e adicione instantaneamente</div></div>
+      <div class="feature-card"><div class="fc-icon">🗺️</div><div class="fc-title">Clique no mapa</div><div class="fc-desc">Toque em qualquer ponto do mapa</div></div>
+      <div class="feature-card"><div class="fc-icon">📏</div><div class="fc-title">Distâncias reais</div><div class="fc-desc">Calculado pelas rotas reais de estrada</div></div>
+      <div class="feature-card"><div class="fc-icon">⏱</div><div class="fc-title">Tempo estimado</div><div class="fc-desc">Saiba quanto tempo vai levar cada trecho</div></div>
+      <div class="feature-card"><div class="fc-icon">📸</div><div class="fc-title">Exportar roteiro</div><div class="fc-desc">Baixe sua rota completa em imagem</div></div>
     </div>
   </div>
 
-  <!-- MAP PREVIEW -->
-  <div class="map-preview">
-    <div class="map-preview-inner">
-      <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#0f3460"/>
-            <stop offset="100%" stop-color="#1a4a7a"/>
-          </linearGradient>
-          <linearGradient id="land" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#2d5a27"/>
-            <stop offset="100%" stop-color="#1e3d1a"/>
-          </linearGradient>
-          <linearGradient id="land2" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#3a6b34"/>
-            <stop offset="100%" stop-color="#2a4f25"/>
-          </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <!-- Ocean background -->
-        <rect width="900" height="420" fill="url(#sea)"/>
-        <!-- Grid lines subtle -->
-        <line x1="0" y1="105" x2="900" y2="105" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="0" y1="210" x2="900" y2="210" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="0" y1="315" x2="900" y2="315" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="225" y1="0" x2="225" y2="420" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="450" y1="0" x2="450" y2="420" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="675" y1="0" x2="675" y2="420" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <!-- South America simplified shape -->
-        <path d="M320,10 L480,10 L540,40 L580,80 L600,130 L610,180 L590,240 L570,300 L540,360 L500,400 L460,420 L420,415 L390,400 L360,370 L340,330 L310,280 L290,220 L280,160 L290,100 L300,50 Z" fill="url(#land)" opacity="0.9"/>
-        <!-- Brazil interior -->
-        <path d="M370,30 L500,25 L550,60 L570,110 L560,170 L530,210 L490,230 L450,220 L410,200 L380,170 L360,130 L355,80 Z" fill="url(#land2)" opacity="0.7"/>
-        <!-- Argentina -->
-        <path d="M340,230 L420,220 L470,240 L480,290 L460,350 L430,395 L400,410 L370,390 L345,340 L320,280 Z" fill="url(#land2)" opacity="0.6"/>
-        <!-- Country borders subtle -->
-        <path d="M360,130 L490,130 L530,210 L360,200 Z" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-        <!-- Route line with glow -->
-        <path d="M490,60 L480,100 L450,140 L420,175 L400,220 L390,265 L395,310 L390,355 L380,390" fill="none" stroke="#e94560" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" opacity="0.9"/>
-        <path d="M490,60 L480,100 L450,140 L420,175 L400,220 L390,265 L395,310 L390,355 L380,390" fill="none" stroke="#ff6b81" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 3" opacity="0.5"/>
-        <!-- City dots -->
-        <circle cx="490" cy="60" r="10" fill="#e94560" stroke="#fff" stroke-width="2"/>
-        <text x="490" y="64" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">1</text>
-        <text x="510" y="58" fill="white" font-size="10" font-family="Arial" opacity="0.9">Pouso Alegre</text>
-        <circle cx="450" cy="140" r="10" fill="#f5a623" stroke="#fff" stroke-width="2"/>
-        <text x="450" y="144" text-anchor="middle" fill="#0f0f1a" font-size="10" font-weight="700" font-family="Arial">2</text>
-        <text x="468" y="138" fill="white" font-size="10" font-family="Arial" opacity="0.9">Curitiba</text>
-        <circle cx="420" cy="175" r="10" fill="#1D9E75" stroke="#fff" stroke-width="2"/>
-        <text x="420" y="179" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">3</text>
-        <circle cx="400" cy="220" r="10" fill="#378ADD" stroke="#fff" stroke-width="2"/>
-        <text x="400" y="224" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">4</text>
-        <text x="340" y="218" fill="white" font-size="10" font-family="Arial" opacity="0.9">Buenos Aires</text>
-        <circle cx="390" cy="265" r="10" fill="#a855f7" stroke="#fff" stroke-width="2"/>
-        <text x="390" y="269" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">5</text>
-        <circle cx="395" cy="310" r="10" fill="#0ea5e9" stroke="#fff" stroke-width="2"/>
-        <text x="395" y="314" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">6</text>
-        <circle cx="380" cy="390" r="10" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
-        <text x="380" y="394" text-anchor="middle" fill="#0f0f1a" font-size="10" font-weight="700" font-family="Arial">7</text>
-        <text x="398" y="388" fill="white" font-size="10" font-family="Arial" opacity="0.9">Ushuaia</text>
-        <!-- Distance labels -->
-        <text x="500" y="85" fill="#f5a623" font-size="10" font-family="Arial" opacity="0.8">↓ 619 km</text>
-        <text x="455" y="162" fill="#f5a623" font-size="10" font-family="Arial" opacity="0.8">↓ 462 km</text>
-        <text x="408" y="200" fill="#f5a623" font-size="10" font-family="Arial" opacity="0.8">↓ 1.100 km</text>
-        <!-- Label Brasil / Argentina -->
-        <text x="460" y="120" fill="rgba(255,255,255,0.3)" font-size="18" font-family="Arial" font-weight="700">BRASIL</text>
-        <text x="340" y="280" fill="rgba(255,255,255,0.25)" font-size="16" font-family="Arial" font-weight="700">ARGENTINA</text>
-        <!-- Compass rose -->
-        <g transform="translate(820,40)">
-          <circle cx="0" cy="0" r="22" fill="rgba(22,33,62,0.8)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          <text x="0" y="-8" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Arial">N</text>
-          <polygon points="0,-16 3,-6 0,-10 -3,-6" fill="white" opacity="0.8"/>
-          <polygon points="0,16 3,6 0,10 -3,6" fill="rgba(255,255,255,0.3)" opacity="0.8"/>
-        </g>
-      </svg>
-      <div class="map-overlay-top"></div>
-      <div class="map-overlay-bottom"></div>
-      <div class="preview-badge">
-        <span style="font-size:10px;color:var(--muted)">Exemplo de rota</span>
-        <strong>5.769 km</strong>
-        <span style="font-size:10px;color:var(--muted)">Pouso Alegre → Ushuaia</span>
-      </div>
-      <div class="preview-stats">
-        <div class="preview-stat"><div class="preview-stat-val">7</div><div class="preview-stat-lbl">pontos</div></div>
-        <div class="preview-stat"><div class="preview-stat-val">74h</div><div class="preview-stat-lbl">est.</div></div>
-        <div class="preview-stat"><div class="preview-stat-val">5.769</div><div class="preview-stat-lbl">km total</div></div>
-      </div>
-    </div>
-  </div>
+
 </div>
 
 <!-- APP -->
@@ -326,7 +244,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
           <p id="limit-banner-text">Crie uma conta grátis para adicionar até <strong>30 pontos</strong>.</p>
           <button class="btn" style="width:100%;padding:8px;font-size:12px;background:var(--gold);color:var(--road)" id="limit-banner-btn" onclick="openLoginModal()">Criar conta grátis</button>
         </div>
-        <button class="btn btn-primary" style="width:100%;padding:8px;font-size:13px" onclick="exportImage()">📸 Exportar roteiro</button>
+        <button class="btn btn-primary" style="width:100%;padding:11px;font-size:14px;font-weight:600" onclick="exportImage()">📸 Exportar roteiro</button>
         <button class="clear-link" onclick="clearAll()">🗑 Limpar rota</button>
       </div>
     </div>
@@ -352,9 +270,27 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
       <button class="btn" style="width:100%;padding:7px;font-size:12px;background:var(--gold);color:var(--road)" onclick="openLoginModal()">Criar conta grátis</button>
     </div>
     <div class="mobile-bottom-footer">
-      <button class="btn btn-primary" onclick="exportImage()">📸 Exportar rota</button>
+      <button class="btn btn-primary" style="padding:11px;font-size:14px;font-weight:600" onclick="exportImage()">📸 Exportar rota</button>
       <button class="btn btn-ghost" onclick="clearAll()">🗑 Limpar</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL SIGNUP PROMPT -->
+<div class="modal-backdrop" id="modal-signup-prompt">
+  <div class="modal" style="text-align:center;max-width:400px">
+    <div style="font-size:52px;margin-bottom:12px">🗺️</div>
+    <h3 style="margin-bottom:8px">Você está quase lá!</h3>
+    <p class="modal-sub">Você usou os <strong style="color:var(--gold)">3 pontos gratuitos</strong>. Crie uma conta grátis e desbloqueie até <strong style="color:var(--accent)">30 pontos</strong> na sua rota.</p>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:20px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="color:var(--gold)">✓</span> Adicione até 30 pontos por rota</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="color:var(--gold)">✓</span> Exporte seu roteiro em imagem</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="color:var(--gold)">✓</span> Acesso gratuito, para sempre</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;margin-bottom:10px" onclick="closeModal('modal-signup-prompt');authMode='register';renderAuth();openModal('modal-auth')">Criar conta grátis →</button>
+    <button class="btn btn-ghost" style="width:100%;padding:10px;font-size:13px" onclick="closeModal('modal-signup-prompt')">Continuar sem conta</button>
   </div>
 </div>
 
@@ -400,7 +336,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
           <label class="form-label">WhatsApp</label>
           <div class="phone-wrap">
             <span class="ddi-badge" id="ddi-badge">DDI</span>
-            <input class="modal-input" type="tel" id="reg-whatsapp" placeholder="99999-9999"/>
+            <input class="modal-input" type="tel" id="reg-whatsapp" placeholder="(11) 99999-9999"/>
           </div>
         </div>
       </div>
@@ -446,7 +382,8 @@ async function sbLogin(email,pass){
 }
 async function sbRegister(email,pass,meta){
   const d=await sbFetch('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password:pass,data:meta})});
-  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'Erro ao cadastrar.');
+  if(d.error==='invalid_request'||d.code===422)throw new Error('Dados inválidos. Verifique o e-mail e senha (mín. 6 caracteres).');
+  if(d.error)throw new Error(d.error_description||d.msg||'Erro ao cadastrar.');
   return d;
 }
 
@@ -526,11 +463,24 @@ async function submitAuth(){
     if(pass!==pass2){err.textContent='As senhas não coincidem.';return;}
     try{
       const d=await sbRegister(email,pass,{country,whatsapp:ddi+' '+phone});
-      // Auto login after register (email confirm disabled)
-      const login=await sbLogin(email,pass);
-      user=login;setUserUI();closeModal('modal-auth');
-      if(document.getElementById('app-view').style.display==='none')openApp();
-    }catch(e){err.textContent=e.message;}
+      if(d.user){
+        // Auto login after register
+        try{
+          const login=await sbLogin(email,pass);
+          user=login;setUserUI();closeModal('modal-auth');
+          if(document.getElementById('app-view').style.display==='none')openApp();
+        }catch(le){
+          // Login failed but register ok - just close and ask to login
+          closeModal('modal-auth');
+          document.getElementById('auth-error').textContent='';
+          openLoginModal();
+        }
+      } else if(d.error_code==='user_already_exists'||d.msg==='User already registered'){
+        err.textContent='Este e-mail já está cadastrado. Faça login.';
+      } else {
+        err.textContent='Erro ao cadastrar. Tente novamente.';
+      }
+    }catch(e){err.textContent=e.message||'Erro ao cadastrar.';}
   }
 }
 
@@ -570,7 +520,11 @@ function startMap(){
 }
 
 function canAdd(){
-  if(waypoints.length>=getLimit()){updateLimitBanner();return false;}
+  if(waypoints.length>=getLimit()){
+    updateLimitBanner();
+    if(!user)openModal('modal-signup-prompt');
+    return false;
+  }
   return true;
 }
 
@@ -723,7 +677,7 @@ function exportImage(){
     w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px}.page{width:1100px;max-width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.4)}.body{display:flex}.sidebar{width:230px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;height:100%;object-fit:cover;display:block;min-height:520px}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media print{body{background:#fff;padding:0}.page{box-shadow:none;border-radius:0;width:100%}#btnbar{display:none}}</style>');
     w.document.write('</head><body>');
     w.document.write('<div id="btnbar" style="width:1100px;max-width:100%;text-align:center;padding:0 0 16px;display:flex;gap:10px;justify-content:center">');
-    w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4)">⬇️ Baixar Imagem (.png)</button>');
+    w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:16px 48px;border-radius:10px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(29,158,117,0.5);letter-spacing:0.3px">⬇️ Baixar Imagem (.png)</button>');
     w.document.write('<button onclick="window.close()" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:12px 20px;border-radius:8px;font-size:14px;cursor:pointer">✕ Fechar</button>');
     w.document.write('</div>');
     w.document.write('<div class="page" id="exportpage">');
