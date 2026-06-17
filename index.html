@@ -88,11 +88,11 @@ h1 em{font-style:normal;color:var(--accent)}
 .stay-toggle-btn.open{transform:rotate(180deg)}
 
 /* APP */
-#app-view{display:none;flex-direction:column;height:calc(100vh - 53px);min-height:0}
-.app-layout{display:grid;grid-template-columns:320px 1fr;flex:1;min-height:0;height:100%;overflow:hidden}
+#app-view{display:none;flex-direction:column;height:calc(100vh - 53px);min-height:0;overflow:hidden}
+.app-layout{display:grid;grid-template-columns:320px 1fr;flex:1;min-height:0;height:100%;overflow:hidden;align-items:start}
 
 /* SIDEBAR */
-.sidebar{background:var(--road-mid);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;height:100%;min-height:0}
+.sidebar{background:var(--road-mid);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;height:100%;max-height:calc(100vh - 53px);min-height:0}
 .sidebar-header{padding:14px;border-bottom:1px solid var(--border)}
 .sidebar-header h2{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px}
 .search-wrap{position:relative}
@@ -128,7 +128,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .limit-banner strong{color:var(--gold)}
 
 /* MAP */
-.map-area{position:relative;height:100%;min-height:0}
+.map-area{position:relative;height:100%;max-height:calc(100vh - 53px);min-height:0;overflow:hidden}
 #map-canvas{width:100%;height:100%;min-height:300px}
 .map-hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(15,52,96,0.9);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);pointer-events:none;white-space:nowrap;z-index:10}
 .loading-overlay{position:absolute;inset:0;background:rgba(26,26,46,0.6);display:none;align-items:center;justify-content:center;font-size:13px;color:var(--muted);gap:10px;z-index:20}
@@ -441,7 +441,11 @@ function updateLimitBanner(){}
 
 function openApp(){
   document.getElementById('landing').style.display='none';
-  document.getElementById('app-view').style.display='flex';
+  const appView=document.getElementById('app-view');
+  appView.style.display='flex';
+  // Garantir altura correta para o scroll da sidebar funcionar
+  appView.style.height='calc(100vh - '+document.querySelector('nav').offsetHeight+'px)';
+  appView.style.overflow='hidden';
   wakeBackend(); // wake up backend early
   if(window._mapReady && !map)startMap();
   else if(!window._mapReady)window._mapInitCb=startMap;
