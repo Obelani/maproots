@@ -66,6 +66,20 @@ h1 em{font-style:normal;color:var(--accent)}
 .preview-stat-val{font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:var(--gold)}
 .preview-stat-lbl{font-size:10px;color:var(--muted);margin-top:1px}
 
+/* STAY INFO DROPDOWN */
+.stay-dropdown{display:none;background:rgba(0,0,0,0.2);border-top:1px solid var(--border);padding:10px 12px;gap:8px;flex-direction:column}
+.stay-dropdown.open{display:flex}
+.stay-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.stay-label{font-size:11px;color:var(--muted);min-width:80px}
+.stay-select{background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:12px;padding:4px 8px;cursor:pointer;outline:none;flex:1}
+.stay-select:focus{border-color:rgba(255,255,255,0.3)}
+.stay-days{background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--white);font-size:12px;padding:4px 8px;width:60px;outline:none;text-align:center}
+.stay-days:focus{border-color:rgba(255,255,255,0.3)}
+.stay-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;white-space:nowrap}
+.stay-badge.passagem{background:rgba(139,92,246,0.2);color:#a78bfa;border:1px solid rgba(139,92,246,0.3)}
+.stay-badge.pernoite{background:rgba(55,138,221,0.2);color:#60a5fa;border:1px solid rgba(55,138,221,0.3)}
+.stay-badge.dias{background:rgba(245,166,35,0.2);color:#fbbf24;border:1px solid rgba(245,166,35,0.3)}
+
 /* APP */
 #app-view{display:none;flex-direction:column;height:calc(100vh - 53px)}
 .app-layout{display:grid;grid-template-columns:320px 1fr;flex:1;min-height:0}
@@ -579,6 +593,26 @@ function recalc(){
   });
 }
 
+function toggleStay(idx){
+  waypoints[idx].stayOpen=!waypoints[idx].stayOpen;
+  // Re-render keeping current segs
+  const segs=Array.from(document.querySelectorAll('#points-area .seg-arrow span')).map(s=>s.textContent);
+  renderList(segs,null);
+}
+
+function setStay(idx,val){
+  waypoints[idx].stay=val;
+  if(val!=='dias')waypoints[idx].days=1;
+  saveRoute();
+  const segs=Array.from(document.querySelectorAll('#points-area .seg-arrow span')).map(s=>s.textContent);
+  renderList(segs,null);
+}
+
+function setDays(idx,val){
+  waypoints[idx].days=Math.max(1,parseInt(val)||1);
+  saveRoute();
+}
+
 function editPoint(idx){
   const current=waypoints[idx].name.replace(/,.*$/,'');
   const newName=prompt('Editar destino '+(idx+1)+':',current);
@@ -620,25 +654,49 @@ function renderList(segs,routeError){
     b.innerHTML='<div class="empty-state" style="padding:12px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto ainda.</div>';
     return;
   }
-  // Error banner
   const errBanner=routeError?'<div style="background:rgba(233,69,96,0.12);border:1px solid rgba(233,69,96,0.4);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#ff6b81">⚠️ <b>Rota impossível</b> — um ou mais pontos não têm conexão viária entre si. Clique no nome para editar ou remova o ponto problemático.</div>':'';
   let h=errBanner;
   waypoints.forEach((pt,i)=>{
     const hasError=routeError&&i>0;
     const rowStyle=hasError?'border-color:rgba(233,69,96,0.5);':'';
-    h+='<div class="point-row" style="'+rowStyle+'">'
-      +'<div class="point-dot" style="background:'+pt.color+'">'+(i+1)+'</div>'
-      +'<div class="point-info" onclick="editPoint('+i+')" style="cursor:pointer" title="Clique para editar">'
-        +'<div class="point-name" style="color:'+(hasError?'#ff6b81':'inherit')+'">'+pt.name+'</div>'
-        +'<div style="font-size:10px;color:var(--muted)">✏️ clique para editar</div>'
+    const stay=pt.stay||'passagem';
+    const days=pt.days||1;
+    const isOpen=pt.stayOpen?'open':'';
+
+    // Stay badge shown on point row
+    const badgeLabel=stay==='passagem'?'🚗 Passagem':stay==='pernoite'?'🌙 Pernoite':'📅 '+days+' dia'+(days>1?'s':'');
+    const badgeClass=stay==='passagem'?'passagem':stay==='pernoite'?'pernoite':'dias';
+
+    h+='<div class="point-row" style="flex-direction:column;align-items:stretch;padding:0;overflow:hidden;'+rowStyle+'">'
+      // Main row
+      +'<div style="display:flex;align-items:center;gap:8px;padding:8px 10px">'
+        +'<div class="point-dot" style="background:'+pt.color+';flex-shrink:0">'+(i+1)+'</div>'
+        +'<div class="point-info" onclick="editPoint('+i+')" style="cursor:pointer;flex:1;min-width:0" title="Clique para editar">'
+          +'<div class="point-name" style="color:'+(hasError?'#ff6b81':'inherit')+'">'+pt.name+'</div>'
+          +'<div style="font-size:10px;color:var(--muted)">✏️ clique para editar</div>'
+        +'</div>'
+        +'<span class="stay-badge '+badgeClass+'" onclick="toggleStay('+i+')" style="cursor:pointer" title="Clique para definir estadia">'+badgeLabel+'</span>'
+        +'<button class="point-del" onclick="removePoint('+i+')">✕</button>'
       +'</div>'
-      +'<button class="point-del" onclick="removePoint('+i+')">✕</button>'
-      +'</div>';
+      // Stay dropdown
+      +'<div class="stay-dropdown '+isOpen+'" id="stay-'+i+'">'
+        +'<div class="stay-row">'
+          +'<span class="stay-label">Tipo de parada</span>'
+          +'<select class="stay-select" onchange="setStay('+i+',this.value)">'
+            +'<option value="passagem"'+(stay==='passagem'?' selected':'')+'>🚗 Apenas passagem</option>'
+            +'<option value="pernoite"'+(stay==='pernoite'?' selected':'')+'>🌙 Pernoite (descanso)</option>'
+            +'<option value="dias"'+(stay==='dias'?' selected':'')+'>📅 Ficar alguns dias</option>'
+          +'</select>'
+        +'</div>'
+        +(stay==='dias'?'<div class="stay-row"><span class="stay-label">Quantos dias</span><input type="number" class="stay-days" min="1" max="365" value="'+days+'" onchange="setDays('+i+',this.value)" /><span style="font-size:11px;color:var(--muted)">dia(s) na cidade</span></div>':'')
+        +'<div style="font-size:10px;color:var(--muted);margin-top:2px">💡 Essas informações serão usadas para gerar seu roteiro em PDF</div>'
+      +'</div>'
+    +'</div>';
+
     if(i<segs.length)h+='<div class="seg-arrow"><div class="seg-line"></div><span>↓ '+segs[i].toLocaleString('pt-BR')+' km</span><div class="seg-line"></div></div>';
   });
   a.innerHTML=h;
   b.innerHTML=h;
-  // Auto-open mobile panel when points exist
   const panelBody=document.getElementById('mobile-panel-body');
   const panelArrow=document.getElementById('mobile-panel-arrow');
   if(panelBody&&panelBody.style.display!=='flex'){
