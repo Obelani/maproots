@@ -620,6 +620,33 @@ function setDays(idx,val){
   saveRoute();
 }
 
+let _acInlineTimer=null;
+function acInline(idx,val){
+  const list=document.getElementById('ac-inline-'+idx);
+  if(!list)return;
+  clearTimeout(_acInlineTimer);
+  if(!val||val.length<2){list.style.display='none';return;}
+  _acInlineTimer=setTimeout(function(){
+    new google.maps.places.AutocompleteService().getPlacePredictions({input:val,language:'pt'},function(preds,st){
+      list.innerHTML='';
+      if(st!=='OK'||!preds){list.style.display='none';return;}
+      preds.slice(0,5).forEach(function(p){
+        const div=document.createElement('div');
+        div.className='ac-item';
+        div.textContent=p.description;
+        div.onclick=function(){
+          const inp=document.getElementById('edit-input-'+idx);
+          if(inp)inp.value=p.description;
+          list.style.display='none';
+          editPointInline(idx,p.description);
+        };
+        list.appendChild(div);
+      });
+      list.style.display='block';
+    });
+  },280);
+}
+
 function editPointInline(idx,newName){
   if(!newName||!newName.trim())return;
   showLoading(true);
@@ -701,10 +728,13 @@ function renderList(segs,routeError){
       +'</div>'
       // Dropdown
       +'<div class="stay-dropdown '+(pt.stayOpen?'open':'')+'" id="stay-'+i+'">'
-        +'<div class="stay-row">'
+        +'<div class="stay-row" style="position:relative">'
           +'<span class="stay-label">✏️ Destino</span>'
-          +'<input class="stay-edit-input" type="text" placeholder="Novo nome para este ponto..." onkeydown="if(event.key===\'Enter\')editPointInline('+i+',this.value)"/>'
-          +'<button onclick="editPointInline('+i+',this.previousElementSibling.value)" style="background:var(--accent);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap">OK</button>'
+          +'<div style="flex:1;position:relative">'
+            +'<input class="stay-edit-input" id="edit-input-'+i+'" type="text" placeholder="Nova cidade..." autocomplete="off" oninput="acInline('+i+',this.value)" onkeydown="if(event.key===\'Enter\'){editPointInline('+i+',this.value);document.getElementById(\'ac-inline-'+i+'\').style.display=\'none\';}"/>'
+            +'<div id="ac-inline-'+i+'" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--road);border:1px solid var(--border);border-radius:var(--radius);z-index:400;max-height:160px;overflow-y:auto;margin-top:2px"></div>'
+          +'</div>'
+          +'<button onclick="editPointInline('+i+',document.getElementById(\'edit-input-'+i+'\').value);document.getElementById(\'ac-inline-'+i+'\').style.display=\'none\'" style="background:var(--accent);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap">OK</button>'
         +'</div>'
         +'<div class="stay-row">'
           +'<span class="stay-label">Tipo de parada</span>'
