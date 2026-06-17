@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MapRoots — Planejador de Rotas</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -27,18 +27,31 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 .btn-ghost:hover{background:var(--card)}
 .btn-primary{background:var(--accent);color:var(--white)}
 .btn-primary:hover{background:var(--accent-light)}
-.btn-gold{background:var(--gold);color:var(--road)}
-.btn-gold:hover{opacity:0.9}
 
 /* LANDING */
-#landing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 53px);padding:40px 24px;text-align:center}
-.hero-tag{font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
-h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(32px,6vw,64px);font-weight:700;line-height:1.1;letter-spacing:-1px;max-width:700px;margin:0 auto 20px}
+#landing{display:flex;flex-direction:column;align-items:center;min-height:calc(100vh - 53px);padding:0;overflow:hidden}
+.hero-section{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px 40px;position:relative;width:100%}
+.hero-tag{font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,5vw,58px);font-weight:700;line-height:1.1;letter-spacing:-1px;max-width:680px;margin:0 auto 18px}
 h1 em{font-style:normal;color:var(--accent)}
-.hero-sub{font-size:17px;color:var(--muted);max-width:480px;line-height:1.6;margin:0 auto 36px}
-.hero-features{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
-.feature-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--off-white)}
-.hero-cta .btn{padding:14px 36px;font-size:16px;border-radius:12px}
+.hero-sub{font-size:16px;color:var(--muted);max-width:460px;line-height:1.6;margin:0 auto 28px}
+.hero-cta{margin-bottom:40px}
+.hero-cta .btn{padding:14px 36px;font-size:16px;border-radius:12px;box-shadow:0 4px 20px rgba(233,69,96,0.35)}
+.hero-features{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:48px}
+.feature-pill{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;color:var(--off-white)}
+
+/* MAP PREVIEW */
+.map-preview{width:100%;max-width:1000px;margin:0 auto;padding:0 24px 60px;position:relative}
+.map-preview-inner{border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);box-shadow:0 24px 60px rgba(0,0,0,0.5);position:relative}
+.map-preview-inner svg{width:100%;display:block}
+.map-overlay-top{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,var(--road),transparent);pointer-events:none}
+.map-overlay-bottom{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,var(--road),transparent);pointer-events:none}
+.preview-badge{position:absolute;top:16px;left:16px;background:var(--road-mid);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:12px}
+.preview-badge strong{display:block;font-size:18px;font-weight:700;color:var(--gold);font-family:'Space Grotesk',sans-serif}
+.preview-stats{position:absolute;bottom:20px;right:16px;display:flex;gap:8px}
+.preview-stat{background:rgba(22,33,62,0.92);border:1px solid var(--border);border-radius:8px;padding:8px 12px;text-align:center}
+.preview-stat-val{font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:var(--gold)}
+.preview-stat-lbl{font-size:10px;color:var(--muted);margin-top:1px}
 
 /* APP */
 #app-view{display:none}
@@ -53,7 +66,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .search-input::placeholder{color:var(--muted)}
 .search-input:focus{border-color:rgba(255,255,255,0.3)}
 .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:14px}
-#autocomplete-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--road);border:1px solid var(--border);border-radius:var(--radius);z-index:300;max-height:180px;overflow-y:auto;display:none}
+#autocomplete-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--road);border:1px solid var(--border);border-radius:var(--radius);z-index:300;max-height:200px;overflow-y:auto;display:none}
 .ac-item{padding:9px 12px;font-size:13px;cursor:pointer;color:var(--off-white);border-bottom:1px solid var(--border)}
 .ac-item:last-child{border-bottom:none}
 .ac-item:hover{background:var(--card-hover)}
@@ -75,8 +88,6 @@ h1 em{font-style:normal;color:var(--accent)}
 .sidebar-footer{padding:10px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
 .clear-link{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-align:left;padding:0}
 .clear-link:hover{color:var(--accent)}
-
-/* LIMIT BANNER */
 .limit-banner{background:linear-gradient(135deg,rgba(245,166,35,0.12),rgba(233,69,96,0.12));border:1px solid rgba(245,166,35,0.3);border-radius:var(--radius);padding:10px 12px;display:none}
 .limit-banner.visible{display:block}
 .limit-banner p{font-size:12px;color:var(--off-white);margin-bottom:8px;line-height:1.5}
@@ -102,8 +113,9 @@ h1 em{font-style:normal;color:var(--accent)}
 .modal-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;color:var(--white);font-size:13px;outline:none}
 .modal-input:focus{border-color:rgba(255,255,255,0.3)}
 select.modal-input option{background:var(--road-mid);color:var(--white)}
+.phone-wrap{display:flex;gap:6px}
+.ddi-badge{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 10px;font-size:13px;color:var(--gold);font-weight:600;white-space:nowrap;min-width:56px;text-align:center}
 .modal-error{font-size:12px;color:var(--accent);min-height:16px;margin-bottom:8px}
-.modal-success{font-size:13px;color:#1D9E75;background:rgba(29,158,117,0.1);border:1px solid rgba(29,158,117,0.3);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;display:none}
 .modal-btns{display:flex;gap:8px;margin-top:4px}
 .modal-btns .btn{flex:1;padding:11px;font-size:14px}
 .modal-switch{font-size:13px;color:var(--muted);text-align:center;margin-top:14px}
@@ -111,26 +123,40 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 .divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:12px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* MOBILE TOGGLE */
-.mobile-sidebar-toggle{display:none;position:fixed;bottom:20px;right:20px;z-index:150;background:var(--accent);color:var(--white);border:none;border-radius:50%;width:50px;height:50px;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(233,69,96,0.4)}
-
-/* RESPONSIVE */
+/* MOBILE */
 @media(max-width:900px){
-  .app-layout{grid-template-columns:1fr;grid-template-rows:1fr auto}
-  .sidebar{position:fixed;bottom:0;left:0;right:0;z-index:100;max-height:55vh;border-right:none;border-top:1px solid var(--border);border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform 0.3s ease}
-  .sidebar.open{transform:translateY(0)}
-  .map-area{height:calc(100vh - 53px)}
-  #map-canvas{height:100%}
-  .mobile-sidebar-toggle{display:flex;align-items:center;justify-content:center}
+  .app-layout{display:flex;flex-direction:column;height:calc(100vh - 53px)}
+  .sidebar{display:none}
+  .map-area{flex:1;position:relative}
+  #map-canvas{width:100%;height:100%}
+
+  /* Mobile top bar */
+  .mobile-top-bar{display:flex!important;flex-direction:column;background:var(--road-mid);border-bottom:1px solid var(--border);padding:10px 12px;gap:8px;position:relative;z-index:50}
+  .mobile-search-row{display:flex;gap:8px;align-items:center}
+  .mobile-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .mobile-stat{background:var(--card);border-radius:8px;padding:6px 8px;text-align:center}
+  .mobile-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase}
+  .mobile-stat-val{font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif}
+
+  /* Mobile bottom panel */
+  .mobile-bottom-panel{display:flex!important;flex-direction:column;background:var(--road-mid);border-top:1px solid var(--border);max-height:35vh;overflow:hidden}
+  .mobile-bottom-header{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+  .mobile-bottom-header span{font-size:13px;font-weight:600}
+  .mobile-points-list{overflow-y:auto;padding:8px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
+  .mobile-bottom-footer{padding:8px 12px;border-top:1px solid var(--border);display:flex;gap:8px}
+  .mobile-bottom-footer .btn{flex:1;padding:9px;font-size:13px}
+}
+@media(min-width:901px){
+  .mobile-top-bar,.mobile-bottom-panel{display:none!important}
 }
 @media(max-width:600px){
-  nav{padding:10px 16px}
+  nav{padding:10px 14px}
   .logo{font-size:17px}
-  h1{font-size:28px}
-  .hero-sub{font-size:15px}
-  .hero-features{gap:10px}
-  .feature-pill{font-size:12px;padding:6px 12px}
-  .modal{padding:20px}
+  h1{font-size:26px}
+  .hero-sub{font-size:14px}
+  .hero-features{gap:8px}
+  .feature-pill{font-size:11px;padding:6px 11px}
+  .modal{padding:18px}
   .form-row{grid-template-columns:1fr}
 }
 </style>
@@ -148,30 +174,141 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 
 <!-- LANDING -->
 <div id="landing">
-  <p class="hero-tag">Planejador de viagens</p>
-  <h1>Sua rota,<br/><em>do jeito que você quer</em></h1>
-  <p class="hero-sub">Adicione pontos no mapa, veja distâncias reais e tempos de viagem. Do Brasil até Ushuaia.</p>
-  <div class="hero-features">
-    <div class="feature-pill">📍 Busca por cidade</div>
-    <div class="feature-pill">🗺️ Clique no mapa</div>
-    <div class="feature-pill">📏 Distâncias reais</div>
-    <div class="feature-pill">⏱ Tempo estimado</div>
-    <div class="feature-pill">📸 Exportar roteiro</div>
+  <div class="hero-section">
+    <p class="hero-tag">Planejador de viagens</p>
+    <h1>Planeje sua rota,<br/><em>conquiste o destino</em></h1>
+    <p class="hero-sub">Adicione cidades, veja distâncias reais e tempos de viagem. Do Brasil até a Patagônia.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
+    </div>
+    <div class="hero-features">
+      <div class="feature-pill">📍 Busca por cidade</div>
+      <div class="feature-pill">🗺️ Clique no mapa</div>
+      <div class="feature-pill">📏 Distâncias reais</div>
+      <div class="feature-pill">⏱ Tempo estimado</div>
+      <div class="feature-pill">📸 Exportar roteiro</div>
+    </div>
   </div>
-  <div class="hero-cta">
-    <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
+
+  <!-- MAP PREVIEW -->
+  <div class="map-preview">
+    <div class="map-preview-inner">
+      <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0f3460"/>
+            <stop offset="100%" stop-color="#1a4a7a"/>
+          </linearGradient>
+          <linearGradient id="land" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#2d5a27"/>
+            <stop offset="100%" stop-color="#1e3d1a"/>
+          </linearGradient>
+          <linearGradient id="land2" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#3a6b34"/>
+            <stop offset="100%" stop-color="#2a4f25"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Ocean background -->
+        <rect width="900" height="420" fill="url(#sea)"/>
+        <!-- Grid lines subtle -->
+        <line x1="0" y1="105" x2="900" y2="105" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="0" y1="210" x2="900" y2="210" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="0" y1="315" x2="900" y2="315" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="225" y1="0" x2="225" y2="420" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="450" y1="0" x2="450" y2="420" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="675" y1="0" x2="675" y2="420" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <!-- South America simplified shape -->
+        <path d="M320,10 L480,10 L540,40 L580,80 L600,130 L610,180 L590,240 L570,300 L540,360 L500,400 L460,420 L420,415 L390,400 L360,370 L340,330 L310,280 L290,220 L280,160 L290,100 L300,50 Z" fill="url(#land)" opacity="0.9"/>
+        <!-- Brazil interior -->
+        <path d="M370,30 L500,25 L550,60 L570,110 L560,170 L530,210 L490,230 L450,220 L410,200 L380,170 L360,130 L355,80 Z" fill="url(#land2)" opacity="0.7"/>
+        <!-- Argentina -->
+        <path d="M340,230 L420,220 L470,240 L480,290 L460,350 L430,395 L400,410 L370,390 L345,340 L320,280 Z" fill="url(#land2)" opacity="0.6"/>
+        <!-- Country borders subtle -->
+        <path d="M360,130 L490,130 L530,210 L360,200 Z" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <!-- Route line with glow -->
+        <path d="M490,60 L480,100 L450,140 L420,175 L400,220 L390,265 L395,310 L390,355 L380,390" fill="none" stroke="#e94560" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" opacity="0.9"/>
+        <path d="M490,60 L480,100 L450,140 L420,175 L400,220 L390,265 L395,310 L390,355 L380,390" fill="none" stroke="#ff6b81" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 3" opacity="0.5"/>
+        <!-- City dots -->
+        <circle cx="490" cy="60" r="10" fill="#e94560" stroke="#fff" stroke-width="2"/>
+        <text x="490" y="64" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">1</text>
+        <text x="510" y="58" fill="white" font-size="10" font-family="Arial" opacity="0.9">Pouso Alegre</text>
+        <circle cx="450" cy="140" r="10" fill="#f5a623" stroke="#fff" stroke-width="2"/>
+        <text x="450" y="144" text-anchor="middle" fill="#0f0f1a" font-size="10" font-weight="700" font-family="Arial">2</text>
+        <text x="468" y="138" fill="white" font-size="10" font-family="Arial" opacity="0.9">Curitiba</text>
+        <circle cx="420" cy="175" r="10" fill="#1D9E75" stroke="#fff" stroke-width="2"/>
+        <text x="420" y="179" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">3</text>
+        <circle cx="400" cy="220" r="10" fill="#378ADD" stroke="#fff" stroke-width="2"/>
+        <text x="400" y="224" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">4</text>
+        <text x="340" y="218" fill="white" font-size="10" font-family="Arial" opacity="0.9">Buenos Aires</text>
+        <circle cx="390" cy="265" r="10" fill="#a855f7" stroke="#fff" stroke-width="2"/>
+        <text x="390" y="269" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">5</text>
+        <circle cx="395" cy="310" r="10" fill="#0ea5e9" stroke="#fff" stroke-width="2"/>
+        <text x="395" y="314" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">6</text>
+        <circle cx="380" cy="390" r="10" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+        <text x="380" y="394" text-anchor="middle" fill="#0f0f1a" font-size="10" font-weight="700" font-family="Arial">7</text>
+        <text x="398" y="388" fill="white" font-size="10" font-family="Arial" opacity="0.9">Ushuaia</text>
+        <!-- Distance labels -->
+        <text x="500" y="85" fill="#f5a623" font-size="10" font-family="Arial" opacity="0.8">↓ 619 km</text>
+        <text x="455" y="162" fill="#f5a623" font-size="10" font-family="Arial" opacity="0.8">↓ 462 km</text>
+        <text x="408" y="200" fill="#f5a623" font-size="10" font-family="Arial" opacity="0.8">↓ 1.100 km</text>
+        <!-- Label Brasil / Argentina -->
+        <text x="460" y="120" fill="rgba(255,255,255,0.3)" font-size="18" font-family="Arial" font-weight="700">BRASIL</text>
+        <text x="340" y="280" fill="rgba(255,255,255,0.25)" font-size="16" font-family="Arial" font-weight="700">ARGENTINA</text>
+        <!-- Compass rose -->
+        <g transform="translate(820,40)">
+          <circle cx="0" cy="0" r="22" fill="rgba(22,33,62,0.8)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          <text x="0" y="-8" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Arial">N</text>
+          <polygon points="0,-16 3,-6 0,-10 -3,-6" fill="white" opacity="0.8"/>
+          <polygon points="0,16 3,6 0,10 -3,6" fill="rgba(255,255,255,0.3)" opacity="0.8"/>
+        </g>
+      </svg>
+      <div class="map-overlay-top"></div>
+      <div class="map-overlay-bottom"></div>
+      <div class="preview-badge">
+        <span style="font-size:10px;color:var(--muted)">Exemplo de rota</span>
+        <strong>5.769 km</strong>
+        <span style="font-size:10px;color:var(--muted)">Pouso Alegre → Ushuaia</span>
+      </div>
+      <div class="preview-stats">
+        <div class="preview-stat"><div class="preview-stat-val">7</div><div class="preview-stat-lbl">pontos</div></div>
+        <div class="preview-stat"><div class="preview-stat-val">74h</div><div class="preview-stat-lbl">est.</div></div>
+        <div class="preview-stat"><div class="preview-stat-val">5.769</div><div class="preview-stat-lbl">km total</div></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app-view">
+
+  <!-- MOBILE TOP BAR -->
+  <div class="mobile-top-bar" style="display:none">
+    <div class="mobile-search-row">
+      <div class="search-wrap" style="flex:1">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input-mobile" class="search-input" placeholder="Buscar cidade..." autocomplete="off"/>
+        <div id="autocomplete-list-mobile"></div>
+      </div>
+    </div>
+    <div class="mobile-stats-row">
+      <div class="mobile-stat"><div class="mobile-stat-lbl">Distância</div><div class="mobile-stat-val" id="m-stat-km">—</div></div>
+      <div class="mobile-stat"><div class="mobile-stat-lbl">Tempo</div><div class="mobile-stat-val" id="m-stat-time">—</div></div>
+      <div class="mobile-stat"><div class="mobile-stat-lbl">Pontos</div><div class="mobile-stat-val" id="m-stat-pts">0 <span style="font-size:10px;color:var(--gold)" id="m-stat-limit">/3</span></div></div>
+    </div>
+  </div>
+
   <div class="app-layout">
-    <div class="sidebar" id="sidebar">
+    <!-- DESKTOP SIDEBAR -->
+    <div class="sidebar">
       <div class="sidebar-header">
         <h2>Pontos da rota</h2>
         <div class="search-wrap">
           <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" class="search-input" placeholder="Buscar cidade..." autocomplete="off" />
+          <input type="text" id="search-input" class="search-input" placeholder="Buscar cidade..." autocomplete="off"/>
           <div id="autocomplete-list"></div>
         </div>
       </div>
@@ -186,80 +323,96 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
       </div>
       <div class="sidebar-footer">
         <div class="limit-banner" id="limit-banner">
-          <p id="limit-banner-text">Crie uma conta grátis para adicionar até <strong>30 pontos</strong> na sua rota.</p>
-          <button class="btn btn-gold" style="width:100%;padding:8px;font-size:13px" id="limit-banner-btn" onclick="openLoginModal()">Criar conta grátis</button>
+          <p id="limit-banner-text">Crie uma conta grátis para adicionar até <strong>30 pontos</strong>.</p>
+          <button class="btn" style="width:100%;padding:8px;font-size:12px;background:var(--gold);color:var(--road)" id="limit-banner-btn" onclick="openLoginModal()">Criar conta grátis</button>
         </div>
         <button class="btn btn-primary" style="width:100%;padding:8px;font-size:13px" onclick="exportImage()">📸 Exportar roteiro</button>
         <button class="clear-link" onclick="clearAll()">🗑 Limpar rota</button>
       </div>
     </div>
+
     <div class="map-area">
       <div id="map-canvas"></div>
       <div class="loading-overlay" id="loading"><div class="spinner"></div> Calculando...</div>
-      <div class="map-hint" id="map-hint">Clique no mapa para adicionar pontos</div>
+      <div class="map-hint">Clique no mapa para adicionar pontos</div>
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM PANEL -->
+  <div class="mobile-bottom-panel" style="display:none">
+    <div class="mobile-bottom-header" onclick="toggleMobileList()">
+      <span>📍 Pontos da rota (<span id="m-pts-count">0</span>)</span>
+      <span id="mobile-toggle-icon">▲</span>
+    </div>
+    <div class="mobile-points-list" id="mobile-points-list" style="display:none">
+      <div class="empty-state" style="padding:16px"><span class="empty-icon" style="font-size:20px">📍</span>Nenhum ponto adicionado ainda.</div>
+    </div>
+    <div class="limit-banner" id="limit-banner-mobile" style="margin:8px 12px">
+      <p id="limit-banner-text-mobile">Crie uma conta para adicionar até <strong>30 pontos</strong>.</p>
+      <button class="btn" style="width:100%;padding:7px;font-size:12px;background:var(--gold);color:var(--road)" onclick="openLoginModal()">Criar conta grátis</button>
+    </div>
+    <div class="mobile-bottom-footer">
+      <button class="btn btn-primary" onclick="exportImage()">📸 Exportar rota</button>
+      <button class="btn btn-ghost" onclick="clearAll()">🗑 Limpar</button>
     </div>
   </div>
 </div>
-
-<button class="mobile-sidebar-toggle" id="mobile-toggle" onclick="toggleSidebar()" title="Ver pontos">📍</button>
 
 <!-- MODAL AUTH -->
 <div class="modal-backdrop" id="modal-auth">
   <div class="modal">
     <h3 id="auth-title">Entrar</h3>
-    <p class="modal-sub" id="auth-desc">Acesse sua conta para adicionar até 30 pontos na rota.</p>
-    <div class="modal-success" id="auth-success"></div>
-
-    <!-- Login fields -->
+    <p class="modal-sub" id="auth-desc">Acesse sua conta para adicionar até 30 pontos.</p>
     <div id="login-fields">
       <div class="form-group">
         <label class="form-label">E-mail</label>
-        <input class="modal-input" type="email" id="auth-email" placeholder="seu@email.com" />
+        <input class="modal-input" type="email" id="auth-email" placeholder="seu@email.com"/>
       </div>
       <div class="form-group">
         <label class="form-label">Senha</label>
-        <input class="modal-input" type="password" id="auth-pass" placeholder="Sua senha" />
+        <input class="modal-input" type="password" id="auth-pass" placeholder="Sua senha"/>
       </div>
     </div>
-
-    <!-- Register extra fields -->
     <div id="register-fields" style="display:none">
       <div class="form-group">
         <label class="form-label">E-mail</label>
-        <input class="modal-input" type="email" id="reg-email" placeholder="seu@email.com" />
+        <input class="modal-input" type="email" id="reg-email" placeholder="seu@email.com"/>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">País</label>
-          <select class="modal-input" id="reg-country">
+          <select class="modal-input" id="reg-country" onchange="updateDDI()">
             <option value="">Selecione...</option>
-            <option value="BR">🇧🇷 Brasil</option>
-            <option value="AR">🇦🇷 Argentina</option>
-            <option value="UY">🇺🇾 Uruguai</option>
-            <option value="PY">🇵🇾 Paraguai</option>
-            <option value="CL">🇨🇱 Chile</option>
-            <option value="BO">🇧🇴 Bolívia</option>
-            <option value="PE">🇵🇪 Peru</option>
-            <option value="CO">🇨🇴 Colômbia</option>
-            <option value="PT">🇵🇹 Portugal</option>
-            <option value="OTHER">🌍 Outro</option>
+            <option value="BR" data-ddi="+55">🇧🇷 Brasil</option>
+            <option value="AR" data-ddi="+54">🇦🇷 Argentina</option>
+            <option value="UY" data-ddi="+598">🇺🇾 Uruguai</option>
+            <option value="PY" data-ddi="+595">🇵🇾 Paraguai</option>
+            <option value="CL" data-ddi="+56">🇨🇱 Chile</option>
+            <option value="BO" data-ddi="+591">🇧🇴 Bolívia</option>
+            <option value="PE" data-ddi="+51">🇵🇪 Peru</option>
+            <option value="CO" data-ddi="+57">🇨🇴 Colômbia</option>
+            <option value="PT" data-ddi="+351">🇵🇹 Portugal</option>
+            <option value="US" data-ddi="+1">🇺🇸 EUA</option>
+            <option value="OTHER" data-ddi="">🌍 Outro</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">WhatsApp</label>
-          <input class="modal-input" type="tel" id="reg-whatsapp" placeholder="+55 11 99999-9999" />
+          <div class="phone-wrap">
+            <span class="ddi-badge" id="ddi-badge">DDI</span>
+            <input class="modal-input" type="tel" id="reg-whatsapp" placeholder="99999-9999"/>
+          </div>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Senha</label>
-        <input class="modal-input" type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" />
+        <input class="modal-input" type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"/>
       </div>
       <div class="form-group">
         <label class="form-label">Confirmar senha</label>
-        <input class="modal-input" type="password" id="reg-pass2" placeholder="Repita a senha" />
+        <input class="modal-input" type="password" id="reg-pass2" placeholder="Repita a senha"/>
       </div>
     </div>
-
     <p class="modal-error" id="auth-error"></p>
     <div class="modal-btns">
       <button class="btn btn-ghost" onclick="closeModal('modal-auth')">Cancelar</button>
@@ -270,24 +423,11 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   </div>
 </div>
 
-<!-- MODAL EMAIL CONFIRM -->
-<div class="modal-backdrop" id="modal-confirm">
-  <div class="modal" style="text-align:center">
-    <div style="font-size:48px;margin-bottom:16px">📧</div>
-    <h3>Confirme seu e-mail</h3>
-    <p class="modal-sub" style="margin-top:8px">Enviamos um link de confirmação para o seu e-mail. Clique no link para ativar sua conta e depois entre normalmente.</p>
-    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="closeModal('modal-confirm');openLoginModal()">Já confirmei, entrar</button>
-    <p style="font-size:12px;color:var(--muted);margin-top:12px">Não recebeu? Verifique a caixa de spam.</p>
-  </div>
-</div>
-
 <script>
 const SUPABASE_URL='https://rzovdzhllmzgdmtaxqij.supabase.co';
 const SUPABASE_KEY='sb_publishable_eVYOnLpwqhJc63u2DKHO-w_MrSM9F3u';
-const LIMIT_GUEST=3;
-const LIMIT_USER=30;
+const LIMIT_GUEST=3, LIMIT_USER=30;
 const COLORS=['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
-const COLORS_HEX=['e94560','f5a623','1D9E75','378ADD','a855f7','0ea5e9','f59e0b','10b981','ef4444','8b5cf6'];
 
 let map,geocoder,dirSvc,dirRender;
 let waypoints=[],markers=[];
@@ -301,18 +441,25 @@ async function sbFetch(path,opts={}){
 }
 async function sbLogin(email,pass){
   const d=await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password:pass})});
-  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'Erro ao entrar');
+  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'Erro ao entrar. Verifique e-mail e senha.');
   return {access_token:d.access_token,user:d.user};
 }
 async function sbRegister(email,pass,meta){
   const d=await sbFetch('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password:pass,data:meta})});
-  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'Erro ao cadastrar');
+  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'Erro ao cadastrar.');
   return d;
 }
 
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function showLoading(v){document.getElementById('loading').style.display=v?'flex':'none';}
+
+function updateDDI(){
+  const sel=document.getElementById('reg-country');
+  const opt=sel.options[sel.selectedIndex];
+  const ddi=opt.getAttribute('data-ddi')||'';
+  document.getElementById('ddi-badge').textContent=ddi||'DDI';
+}
 
 function setUserUI(){
   const li=!!user;
@@ -321,78 +468,65 @@ function setUserUI(){
   const badge=document.getElementById('plan-badge');
   if(li){badge.textContent=user.user.email.split('@')[0];badge.style.color='var(--gold)';}
   else{badge.textContent='Visitante';badge.style.color='';}
-  document.getElementById('stat-limit').textContent=getLimit()+' pts';
+  const lim=getLimit();
+  document.getElementById('stat-limit').textContent=lim+' pts';
+  document.getElementById('m-stat-limit').textContent='/'+lim;
   updateLimitBanner();
 }
 
 function updateLimitBanner(){
-  const banner=document.getElementById('limit-banner');
-  const limit=getLimit();
-  if(waypoints.length>=limit){
-    banner.classList.add('visible');
-    if(!user){
-      document.getElementById('limit-banner-text').innerHTML='Crie uma conta grátis para adicionar até <strong>30 pontos</strong>.';
-      document.getElementById('limit-banner-btn').textContent='Criar conta grátis';
-      document.getElementById('limit-banner-btn').onclick=openLoginModal;
-    } else {
-      document.getElementById('limit-banner-text').innerHTML='Você atingiu o limite de <strong>30 pontos</strong>.';
-      document.getElementById('limit-banner-btn').style.display='none';
-    }
-  } else {
-    banner.classList.remove('visible');
-  }
+  const over=waypoints.length>=getLimit();
+  document.getElementById('limit-banner').classList.toggle('visible',over&&!user);
+  const mob=document.getElementById('limit-banner-mobile');
+  if(mob)mob.style.display=(over&&!user)?'block':'none';
 }
 
 function openApp(){
   document.getElementById('landing').style.display='none';
   document.getElementById('app-view').style.display='block';
-  document.getElementById('mobile-toggle').style.display='flex';
   if(window._mapReady)startMap();else window._mapInitCb=startMap;
 }
 
 function openLoginModal(){authMode='login';renderAuth();openModal('modal-auth');}
 
 function renderAuth(){
-  const isLogin=authMode==='login';
-  document.getElementById('auth-title').textContent=isLogin?'Entrar':'Criar conta grátis';
-  document.getElementById('auth-desc').textContent=isLogin?'Acesse sua conta para adicionar até 30 pontos na rota.':'Cadastre-se gratuitamente e planeje rotas com até 30 pontos.';
-  document.getElementById('auth-submit-btn').textContent=isLogin?'Entrar':'Criar conta';
-  document.getElementById('login-fields').style.display=isLogin?'block':'none';
-  document.getElementById('register-fields').style.display=isLogin?'none':'block';
-  document.getElementById('auth-switch').innerHTML=isLogin
-    ?'Não tem conta? <a onclick="toggleAuthMode()">Criar conta grátis</a>'
-    :'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+  const isL=authMode==='login';
+  document.getElementById('auth-title').textContent=isL?'Entrar':'Criar conta grátis';
+  document.getElementById('auth-desc').textContent=isL?'Acesse sua conta para adicionar até 30 pontos.':'Cadastre-se e planeje rotas com até 30 pontos.';
+  document.getElementById('auth-submit-btn').textContent=isL?'Entrar':'Criar conta';
+  document.getElementById('login-fields').style.display=isL?'block':'none';
+  document.getElementById('register-fields').style.display=isL?'none':'block';
+  document.getElementById('auth-switch').innerHTML=isL?'Não tem conta? <a onclick="toggleAuthMode()">Criar conta grátis</a>':'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
   document.getElementById('auth-error').textContent='';
-  document.getElementById('auth-success').style.display='none';
 }
-
 function toggleAuthMode(){authMode=authMode==='login'?'register':'login';renderAuth();}
 
 async function submitAuth(){
-  const err=document.getElementById('auth-error');
-  err.textContent='';
+  const err=document.getElementById('auth-error');err.textContent='';
   if(authMode==='login'){
     const email=document.getElementById('auth-email').value.trim();
     const pass=document.getElementById('auth-pass').value;
     if(!email||!pass){err.textContent='Preencha e-mail e senha.';return;}
     try{
-      const d=await sbLogin(email,pass);
-      user=d;setUserUI();closeModal('modal-auth');
+      const d=await sbLogin(email,pass);user=d;setUserUI();closeModal('modal-auth');
       if(document.getElementById('app-view').style.display==='none')openApp();
     }catch(e){err.textContent=e.message;}
-  } else {
+  }else{
     const email=document.getElementById('reg-email').value.trim();
     const country=document.getElementById('reg-country').value;
-    const whatsapp=document.getElementById('reg-whatsapp').value.trim();
+    const ddi=document.getElementById('ddi-badge').textContent;
+    const phone=document.getElementById('reg-whatsapp').value.trim();
     const pass=document.getElementById('reg-pass').value;
     const pass2=document.getElementById('reg-pass2').value;
-    if(!email||!country||!whatsapp||!pass){err.textContent='Preencha todos os campos.';return;}
+    if(!email||!country||!phone||!pass){err.textContent='Preencha todos os campos.';return;}
     if(pass.length<6){err.textContent='Senha deve ter pelo menos 6 caracteres.';return;}
     if(pass!==pass2){err.textContent='As senhas não coincidem.';return;}
     try{
-      await sbRegister(email,pass,{country,whatsapp});
-      closeModal('modal-auth');
-      openModal('modal-confirm');
+      const d=await sbRegister(email,pass,{country,whatsapp:ddi+' '+phone});
+      // Auto login after register (email confirm disabled)
+      const login=await sbLogin(email,pass);
+      user=login;setUserUI();closeModal('modal-auth');
+      if(document.getElementById('app-view').style.display==='none')openApp();
     }catch(e){err.textContent=e.message;}
   }
 }
@@ -401,22 +535,22 @@ function logout(){
   user=null;setUserUI();
   document.getElementById('landing').style.display='flex';
   document.getElementById('app-view').style.display='none';
-  document.getElementById('mobile-toggle').style.display='none';
   clearAll();
 }
 
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
+function toggleMobileList(){
+  const list=document.getElementById('mobile-points-list');
+  const icon=document.getElementById('mobile-toggle-icon');
+  const open=list.style.display==='none';
+  list.style.display=open?'flex':'none';
+  icon.textContent=open?'▼':'▲';
 }
 
 function startMap(){
   map=new google.maps.Map(document.getElementById('map-canvas'),{
     center:{lat:-25,lng:-52},zoom:4,mapTypeId:'roadmap',
     disableDefaultUI:true,zoomControl:true,
-    styles:[
-      {featureType:'poi',stylers:[{visibility:'off'}]},
-      {featureType:'transit',stylers:[{visibility:'off'}]},
-    ]
+    styles:[{featureType:'poi',stylers:[{visibility:'off'}]},{featureType:'transit',stylers:[{visibility:'off'}]}]
   });
   geocoder=new google.maps.Geocoder();
   dirSvc=new google.maps.DirectionsService();
@@ -449,8 +583,6 @@ function addPoint(name,lat,lng){
   map.panTo({lat,lng});
   if(waypoints.length===1)map.setZoom(10);
   recalc();
-  // Auto-open sidebar on mobile
-  if(window.innerWidth<=900)document.getElementById('sidebar').classList.add('open');
 }
 
 function removePoint(idx){
@@ -494,45 +626,69 @@ function recalc(){
 }
 
 function updateStats(dm,ts){
-  document.getElementById('stat-km').textContent=dm>0?Math.round(dm/1000).toLocaleString('pt-BR')+' km':'— km';
-  document.getElementById('stat-pts').textContent=waypoints.length;
-  if(ts>0){const h=Math.floor(ts/3600),m=Math.round((ts%3600)/60);document.getElementById('stat-time').textContent=h>0?h+'h '+m+'min':m+'min';}
-  else document.getElementById('stat-time').textContent='—';
+  const km=dm>0?Math.round(dm/1000).toLocaleString('pt-BR')+' km':'— km';
+  const pts=waypoints.length;
+  let time='—';
+  if(ts>0){const h=Math.floor(ts/3600),m=Math.round((ts%3600)/60);time=h>0?h+'h '+m+'min':m+'min';}
+  document.getElementById('stat-km').textContent=km;
+  document.getElementById('stat-pts').textContent=pts;
+  document.getElementById('stat-time').textContent=time;
+  document.getElementById('m-stat-km').textContent=km;
+  document.getElementById('m-stat-pts').textContent=pts;
+  document.getElementById('m-stat-time').textContent=time;
+  document.getElementById('m-pts-count').textContent=pts;
 }
 
 function renderList(segs){
   const a=document.getElementById('points-area');
-  if(!waypoints.length){a.innerHTML='<div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>';return;}
+  const b=document.getElementById('mobile-points-list');
+  if(!waypoints.length){
+    const empty='<div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>';
+    a.innerHTML=empty;
+    b.innerHTML='<div class="empty-state" style="padding:12px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto ainda.</div>';
+    return;
+  }
   let h='';
   waypoints.forEach((pt,i)=>{
     h+='<div class="point-row"><div class="point-dot" style="background:'+pt.color+'">'+(i+1)+'</div><div class="point-info"><div class="point-name">'+pt.name+'</div></div><button class="point-del" onclick="removePoint('+i+')">✕</button></div>';
     if(i<segs.length)h+='<div class="seg-arrow"><div class="seg-line"></div><span>↓ '+segs[i].toLocaleString('pt-BR')+' km</span><div class="seg-line"></div></div>';
   });
   a.innerHTML=h;
+  b.innerHTML=h;
 }
 
-// SEARCH
-document.getElementById('search-input').addEventListener('input',e=>{
-  clearTimeout(acTimeout);
-  const val=e.target.value.trim(),list=document.getElementById('autocomplete-list');
-  if(!val||val.length<3||!window.google){list.style.display='none';return;}
-  acTimeout=setTimeout(()=>{
-    new google.maps.places.AutocompleteService().getPlacePredictions({input:val,language:'pt'},(preds,st)=>{
-      list.innerHTML='';
-      if(st!=='OK'||!preds){list.style.display='none';return;}
-      preds.slice(0,5).forEach(p=>{
-        const div=document.createElement('div');div.className='ac-item';div.textContent=p.description;
-        div.onclick=()=>{document.getElementById('search-input').value='';list.style.display='none';geoAdd(p.description);};
-        list.appendChild(div);
+// Search setup for both desktop and mobile
+function setupSearch(inputId, listId){
+  const input=document.getElementById(inputId);
+  const list=document.getElementById(listId);
+  if(!input)return;
+  input.addEventListener('input',e=>{
+    clearTimeout(acTimeout);
+    const val=e.target.value.trim();
+    if(!val||val.length<3||!window.google){list.style.display='none';return;}
+    acTimeout=setTimeout(()=>{
+      new google.maps.places.AutocompleteService().getPlacePredictions({input:val,language:'pt'},(preds,st)=>{
+        list.innerHTML='';
+        if(st!=='OK'||!preds){list.style.display='none';return;}
+        preds.slice(0,5).forEach(p=>{
+          const div=document.createElement('div');div.className='ac-item';div.textContent=p.description;
+          div.onclick=()=>{input.value='';list.style.display='none';geoAdd(p.description);};
+          list.appendChild(div);
+        });
+        list.style.display='block';
       });
-      list.style.display='block';
-    });
-  },280);
+    },280);
+  });
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){const v=input.value.trim();if(v){list.style.display='none';geoAdd(v);input.value='';}}
+  });
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-wrap')){
+    document.querySelectorAll('#autocomplete-list,#autocomplete-list-mobile').forEach(l=>l.style.display='none');
+  }
 });
-document.getElementById('search-input').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){const v=document.getElementById('search-input').value.trim();if(v){document.getElementById('autocomplete-list').style.display='none';geoAdd(v);document.getElementById('search-input').value='';}}
-});
-document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))document.getElementById('autocomplete-list').style.display='none';});
 
 function geoAdd(q){
   if(!canAdd())return;
@@ -549,7 +705,7 @@ function exportImage(){
   const totalKm=document.getElementById('stat-km').textContent;
   const totalTime=document.getElementById('stat-time').textContent;
   const pts=waypoints.length;
-  const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(function(s){return s.textContent;});
+  const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(s=>s.textContent).filter((_,i)=>i%1===0).slice(0,waypoints.length);
   let listHtml='';
   waypoints.forEach(function(p,i){
     const name=p.name.replace(/,.*$/,'').substring(0,22);
@@ -557,23 +713,22 @@ function exportImage(){
     const dist=segs[i]?'<span style="color:#e94560;font-size:10px;white-space:nowrap">↓ '+segs[i]+'</span>':'';
     listHtml+='<tr><td style="padding:3px 5px 3px 0;vertical-align:middle"><span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:'+COLORS[i%10]+';align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0a0a1a">'+(i+1)+'</span></td><td style="padding:3px 4px;font-size:11px;color:#1a1a2e;line-height:1.3;width:100%"><b>'+name+'</b><span style="color:#888;font-size:9px"> — '+country+'</span></td><td style="padding:3px 0 3px 6px;text-align:right">'+dist+'</td></tr>';
   });
-  const mapEl=document.getElementById('map-canvas');
-  html2canvas(mapEl,{useCORS:true,allowTaint:true,scale:1.5,logging:false}).then(function(mapCanvas){
+  html2canvas(document.getElementById('map-canvas'),{useCORS:true,allowTaint:true,scale:1.5,logging:false}).then(function(mapCanvas){
     const mapDataUrl=mapCanvas.toDataURL('image/jpeg',0.92);
     const w=window.open('','_blank');
     w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MapRoots Rota</title>');
-    w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#f0f4f8}.page{width:1100px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12)}.body{display:flex}.sidebar{width:230px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;height:100%;object-fit:cover;display:block;min-height:500px}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media print{body{background:#fff}.page{box-shadow:none;border-radius:0;width:100%;margin:0}#btnbar{display:none}}</style>');
+    w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px}.page{width:1100px;max-width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.4)}.body{display:flex}.sidebar{width:230px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;height:100%;object-fit:cover;display:block;min-height:520px}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media print{body{background:#fff;padding:0}.page{box-shadow:none;border-radius:0;width:100%}#btnbar{display:none}}</style>');
     w.document.write('</head><body>');
-    w.document.write('<div id="btnbar" style="text-align:center;padding:12px;display:flex;gap:10px;justify-content:center">');
-    w.document.write('<button onclick="window.print()" style="background:#e94560;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">🖨️ Salvar PDF</button>');
-    w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">⬇️ Baixar Imagem</button>');
-    w.document.write('<button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer">✕ Fechar</button></div>');
+    w.document.write('<div id="btnbar" style="width:1100px;max-width:100%;text-align:center;padding:0 0 16px;display:flex;gap:10px;justify-content:center">');
+    w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4)">⬇️ Baixar Imagem (.png)</button>');
+    w.document.write('<button onclick="window.close()" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:12px 20px;border-radius:8px;font-size:14px;cursor:pointer">✕ Fechar</button>');
+    w.document.write('</div>');
     w.document.write('<div class="page" id="exportpage">');
     w.document.write('<div style="background:#1a1a2e;padding:14px 20px;display:flex;align-items:center;justify-content:space-between"><div style="font-size:18px;font-weight:700;color:#fff">Map<span style="color:#e94560">Roots</span> — Roteiro da Viagem</div><div style="font-size:12px;color:#f5a623;display:flex;gap:16px"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div></div>');
     w.document.write('<div class="body">');
     w.document.write('<div class="sidebar"><div style="background:#1a1a2e;padding:14px 16px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#8a9bb5;margin-bottom:10px">Resumo da viagem</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">DISTÂNCIA</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalKm+'</div></div><div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">TEMPO EST.</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalTime+'</div></div><div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;grid-column:span 2"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">PONTOS NA ROTA</div><div style="font-size:15px;font-weight:700;color:#e94560">'+pts+' destinos</div></div></div></div>');
     w.document.write('<div style="padding:12px 14px;overflow-y:auto;flex:1"><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px">Roteiro</div><table style="width:100%;border-collapse:collapse">'+listHtml+'</table></div></div>');
-    w.document.write('<div class="map-area"><img src="'+mapDataUrl+'" style="width:100%;display:block" /></div></div>');
+    w.document.write('<div class="map-area"><img src="'+mapDataUrl+'" style="width:100%;display:block"/></div></div>');
     w.document.write('<div class="footer">Gerado por MapRoots — maproots.vercel.app</div></div>');
     w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
     w.document.write('<sc'+'ript>document.getElementById("dlbtn").onclick=function(){var bar=document.getElementById("btnbar");bar.style.display="none";html2canvas(document.getElementById("exportpage"),{scale:2}).then(function(c){bar.style.display="flex";var a=document.createElement("a");a.download="maproots-rota.png";a.href=c.toDataURL("image/png");a.click();}).catch(function(){bar.style.display="flex";});};</sc'+'ript>');
@@ -582,7 +737,12 @@ function exportImage(){
   }).catch(function(){alert('Erro ao capturar o mapa.');});
 }
 
-function initMap(){window._mapReady=true;if(window._mapInitCb)window._mapInitCb();}
+function initMap(){
+  window._mapReady=true;
+  setupSearch('search-input','autocomplete-list');
+  setupSearch('search-input-mobile','autocomplete-list-mobile');
+  if(window._mapInitCb)window._mapInitCb();
+}
 setUserUI();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
