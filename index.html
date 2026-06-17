@@ -282,24 +282,6 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   </div>
 </div>
 
-<!-- MODAL SIGNUP PROMPT -->
-<div class="modal-backdrop" id="modal-signup-prompt">
-  <div class="modal" style="text-align:center;max-width:400px">
-    <div style="font-size:52px;margin-bottom:12px">🗺️</div>
-    <h3 style="margin-bottom:8px">Você está quase lá!</h3>
-    <p class="modal-sub">Você usou os <strong style="color:var(--gold)">3 pontos gratuitos</strong>. Crie uma conta grátis e desbloqueie até <strong style="color:var(--accent)">30 pontos</strong> na sua rota.</p>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:20px">
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="color:var(--gold)">✓</span> Adicione até 30 pontos por rota</div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="color:var(--gold)">✓</span> Exporte seu roteiro em imagem</div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="color:var(--gold)">✓</span> Acesso gratuito, para sempre</div>
-      </div>
-    </div>
-    <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;margin-bottom:10px" onclick="closeModal('modal-signup-prompt');authMode='register';renderAuth();openModal('modal-auth')">Criar conta grátis →</button>
-    <button class="btn btn-ghost" style="width:100%;padding:10px;font-size:13px" onclick="closeModal('modal-signup-prompt')">Continuar sem conta</button>
-  </div>
-</div>
-
 <!-- MODAL AUTH -->
 <div class="modal-backdrop" id="modal-auth">
   <div class="modal">
@@ -618,6 +600,14 @@ function renderList(segs){
   });
   a.innerHTML=h;
   b.innerHTML=h;
+  // Auto-open panel when points added
+  if(b&&b.style.display==='none'){
+    b.style.display='flex';
+    const footer=document.getElementById('mobile-panel-footer');
+    if(footer)footer.style.display='block';
+    const arrow=document.getElementById('mobile-panel-arrow');
+    if(arrow)arrow.style.transform='rotate(180deg)';
+  }
 }
 
 // Search setup for both desktop and mobile
@@ -756,6 +746,16 @@ function exportImage(){
     w.document.write('</body></html>');
     w.document.close();
   }).catch(function(){alert('Erro ao capturar o mapa.');});
+}
+
+function toggleMobilePanel(){
+  const list=document.getElementById('mobile-points-list');
+  const footer=document.getElementById('mobile-panel-footer');
+  const arrow=document.getElementById('mobile-panel-arrow');
+  const isOpen=list.style.display!=='none';
+  list.style.display=isOpen?'none':'flex';
+  if(footer)footer.style.display=isOpen?'none':'block';
+  arrow.style.transform=isOpen?'':'rotate(180deg)';
 }
 
 function initMap(){
