@@ -405,9 +405,7 @@ function updateLimitBanner(){}
 
 function openApp(){
   document.getElementById('landing').style.display='none';
-  document.getElementById('app-view').style.display='block';
-  const mob=document.getElementById('mobile-bottom-panel');
-  if(mob&&window.innerWidth<=900)mob.style.display='block';
+  document.getElementById('app-view').style.display='flex';
   if(window._mapReady)startMap();else window._mapInitCb=startMap;
 }
 
@@ -501,6 +499,8 @@ function startMap(){
       if(st==='OK'&&res[0])addPoint(res[0].formatted_address,e.latLng.lat(),e.latLng.lng());
     });
   });
+  // Load saved route after map is ready
+  setTimeout(loadSavedRoute,300);
 }
 
 function canAdd(){return true;}
@@ -864,21 +864,18 @@ function initMap(){
   setupSearch('search-input','autocomplete-list');
   setupSearch('search-input-mobile','autocomplete-list-mobile');
   if(window._mapInitCb)window._mapInitCb();
-  else startMap(); // start map directly if no callback pending
   setTimeout(loadSavedRoute,400);
 }
 
-// Auto-open app if URL has route or localStorage has route
+// Auto-open ONLY if URL has ?r= param (shared link)
 (function(){
-  const hasUrl=new URLSearchParams(window.location.search).get('r');
-  let hasLocal=false;
-  try{hasLocal=!!localStorage.getItem('maproots_route');}catch(e){}
-  if(hasUrl||hasLocal){
-    // Open app immediately so map loads
-    document.getElementById('landing').style.display='none';
-    document.getElementById('app-view').style.display='flex';
-    // Map will be initialized by Google callback, then loadSavedRoute runs
-  }
+  try{
+    const r=new URLSearchParams(window.location.search).get('r');
+    if(r&&JSON.parse(atob(r)).length){
+      document.getElementById('landing').style.display='none';
+      document.getElementById('app-view').style.display='flex';
+    }
+  }catch(e){}
 })();
 setUserUI();
 </script>
