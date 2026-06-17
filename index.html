@@ -442,6 +442,7 @@ function updateLimitBanner(){}
 function openApp(){
   document.getElementById('landing').style.display='none';
   document.getElementById('app-view').style.display='flex';
+  wakeBackend(); // wake up backend early
   if(window._mapReady && !map)startMap();
   else if(!window._mapReady)window._mapInitCb=startMap;
 }
@@ -1121,31 +1122,52 @@ const BACKEND_URL='https://maproots-api.onrender.com';
 async function gerarRoteiroPDF(){
   if(!waypoints.length){alert('Adicione pontos na rota antes de gerar o roteiro!');return;}
 
-  // Show loading modal
   const btns=document.querySelectorAll('[onclick="gerarRoteiroPDF()"]');
   btns.forEach(b=>{b.textContent='⏳ Gerando roteiro...';b.disabled=true;});
 
+  // Show progress toast
+  const toast=document.createElement('div');
+  toast.id='pdf-toast';
+  toast.innerHTML='✍️ Gerando seu roteiro personalizado...<br><small style="opacity:0.8;font-size:11px">Isso pode levar até 30 segundos</small>';
+  toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#378ADD;color:#fff;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
+  document.body.appendChild(toast);
+
   try{
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),90000); // 90s timeout
+
     const r=await fetch(BACKEND_URL+'/gerar-roteiro',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
+      signal:controller.signal,
       body:JSON.stringify({
         waypoints:waypoints.map(p=>({name:p.name,stay:p.stay||'passagem',days:p.days||1})),
         totalKm:document.getElementById('stat-km').textContent,
         totalTime:document.getElementById('stat-time').textContent
       })
     });
+    clearTimeout(timeout);
 
-    if(!r.ok)throw new Error('Erro no servidor');
+    if(!r.ok){const e=await r.json();throw new Error(e.error||'Erro no servidor');}
     const data=await r.json();
     if(data.error)throw new Error(data.error);
-
+    try{document.body.removeChild(toast);}catch(e){}
     abrirPDF(data);
   }catch(e){
-    alert('Erro ao gerar roteiro: '+e.message);
+    try{document.body.removeChild(toast);}catch(e2){}
+    if(e.name==='AbortError'){
+      alert('O servidor demorou muito para responder. Tente novamente em alguns segundos.');
+    }else{
+      alert('Erro ao gerar roteiro: '+e.message);
+    }
   }finally{
     btns.forEach(b=>{b.textContent='📄 Gerar Roteiro de Viagem';b.disabled=false;});
   }
+}
+
+// Wake up backend when app opens
+function wakeBackend(){
+  fetch(BACKEND_URL+'/').catch(()=>{});
 }
 
 function abrirPDF(data){
