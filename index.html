@@ -819,18 +819,13 @@ function saveRoute(){
 
 function loadSavedRoute(){
   let pts=null;
-  // 1. Try URL first
-  try{
-    const r=new URLSearchParams(window.location.search).get('r');
-    if(r)pts=JSON.parse(atob(r));
-  }catch(e){}
-  // 2. Try localStorage
+  try{const r=new URLSearchParams(window.location.search).get('r');if(r)pts=JSON.parse(atob(r));}catch(e){}
   if(!pts||!pts.length){
     try{const s=localStorage.getItem('maproots_route');if(s)pts=JSON.parse(s);}catch(e){}
   }
   if(!pts||!pts.length)return;
-
-  // Add all points at once without recalculating each time
+  // Wait for map to be initialized
+  if(!map){setTimeout(loadSavedRoute,200);return;}
   pts.forEach(function(p){
     const idx=waypoints.length,color=COLORS[idx%COLORS.length];
     waypoints.push({name:p.name,lat:p.lat,lng:p.lng,color:color});
@@ -840,11 +835,9 @@ function loadSavedRoute(){
       icon:{path:google.maps.SymbolPath.CIRCLE,scale:14,fillColor:color,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5}
     }));
   });
-  // Fit map to all points
   const bounds=new google.maps.LatLngBounds();
   waypoints.forEach(function(p){bounds.extend({lat:p.lat,lng:p.lng});});
   map.fitBounds(bounds);
-  // Recalc once
   recalc();
 }
 
@@ -871,7 +864,8 @@ function initMap(){
   setupSearch('search-input','autocomplete-list');
   setupSearch('search-input-mobile','autocomplete-list-mobile');
   if(window._mapInitCb)window._mapInitCb();
-  loadSavedRoute();
+  else startMap(); // start map directly if no callback pending
+  setTimeout(loadSavedRoute,400);
 }
 
 // Auto-open app if URL has route or localStorage has route
