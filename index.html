@@ -31,6 +31,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 /* LANDING */
 #landing{display:flex;flex-direction:column;align-items:center;min-height:calc(100vh - 53px);padding:0;overflow:hidden}
 .hero-section{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px 40px;position:relative;width:100%}
+.brand-hero{display:flex;flex-direction:column;align-items:center;margin-bottom:24px}
+.brand-logo-big{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.brand-map-icon{font-size:clamp(48px,8vw,72px);line-height:1;filter:drop-shadow(0 4px 16px rgba(233,69,96,0.3))}
+.brand-name{font-family:'Space Grotesk',sans-serif;font-size:clamp(42px,9vw,86px);font-weight:700;letter-spacing:-2px;color:var(--white);line-height:1}
+.brand-name em{font-style:normal;color:var(--accent)}
+.brand-tagline{font-size:13px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-weight:500}
 .hero-tag{font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
 h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,5vw,58px);font-weight:700;line-height:1.1;letter-spacing:-1px;max-width:680px;margin:0 auto 18px}
 h1 em{font-style:normal;color:var(--accent)}
@@ -172,19 +178,19 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 
 <nav>
   <div class="logo">🗺️ Map<span>Roots</span></div>
-  <div class="nav-right">
-    <span class="badge-plan" id="plan-badge">Visitante</span>
-    <button class="btn btn-ghost" id="btn-login" onclick="openLoginModal()">Entrar</button>
-    <button class="btn btn-ghost" id="btn-logout" style="display:none" onclick="logout()">Sair</button>
-  </div>
 </nav>
 
 <!-- LANDING -->
 <div id="landing">
   <div class="hero-section">
-    <p class="hero-tag">Planejador de viagens</p>
-    <h1>Planeje sua rota,<br/><em>conquiste o destino</em></h1>
-    <p class="hero-sub">Adicione cidades, veja distâncias reais e tempos de viagem. Do Brasil até a Patagônia.</p>
+    <div class="brand-hero">
+      <div class="brand-logo-big">
+        <span class="brand-map-icon">🗺️</span>
+        <span class="brand-name">Map<em>Roots</em></span>
+      </div>
+      <p class="brand-tagline">Planejador de rotas de viagem</p>
+    </div>
+    <p class="hero-sub">Adicione cidades, veja distâncias reais e tempos de viagem.<br/>Do Brasil até a Patagônia.</p>
     <div class="hero-cta">
       <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
     </div>
