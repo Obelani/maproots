@@ -500,8 +500,7 @@ function startMap(){
       if(st==='OK'&&res[0])addPoint(res[0].formatted_address,e.latLng.lat(),e.latLng.lng());
     });
   });
-  // Load saved route after map is ready
-  setTimeout(loadSavedRoute,300);
+  loadSavedRoute();
 }
 
 function canAdd(){return true;}
@@ -819,13 +818,15 @@ function saveRoute(){
 }
 
 function loadSavedRoute(){
+  if(waypoints.length>0)return; // already has points, skip
   let pts=null;
+  // 1. URL takes priority
   try{const r=new URLSearchParams(window.location.search).get('r');if(r)pts=JSON.parse(atob(r));}catch(e){}
+  // 2. localStorage fallback
   if(!pts||!pts.length){
     try{const s=localStorage.getItem('maproots_route');if(s)pts=JSON.parse(s);}catch(e){}
   }
   if(!pts||!pts.length)return;
-  // Wait for map to be initialized
   if(!map){setTimeout(loadSavedRoute,200);return;}
   pts.forEach(function(p){
     const idx=waypoints.length,color=COLORS[idx%COLORS.length];
@@ -876,7 +877,7 @@ function initMap(){
       if(pts&&pts.length){
         document.getElementById('landing').style.display='none';
         document.getElementById('app-view').style.display='flex';
-        window._mapInitCb=function(){startMap();setTimeout(loadSavedRoute,300);};
+        window._mapInitCb=startMap;
       }
     }
   }catch(e){}
