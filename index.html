@@ -739,6 +739,7 @@ function exportImage(){
       '#dlbtn{flex:1;background:#1D9E75;color:#fff;border:none;padding:16px 0;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(29,158,117,0.45)}',
       '#dlbtn:hover{opacity:0.9}',
       '.close-btn{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:16px 24px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;white-space:nowrap}',
+      '.share-btn{background:rgba(55,138,221,0.3);color:#fff;border:1px solid rgba(55,138,221,0.5);padding:16px 24px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;white-space:nowrap}',
       /* Divider */
       '.divider{width:100%;max-width:860px;height:1px;background:rgba(255,255,255,0.1);margin-bottom:24px}',
       /* Preview */
@@ -759,7 +760,7 @@ function exportImage(){
     /* Logo */
     w.document.write('<div class="logo-area"><div class="logo-text">🗺️ Map<span>Roots</span></div><div style="font-size:12px;color:#8a9bb5;margin-top:4px">Seu roteiro de viagem</div></div>');
     /* Buttons */
-    w.document.write('<div class="btn-row"><button id="dlbtn">⬇️ Baixar Imagem (.png)</button><button class="close-btn" onclick="window.close()">✕ Fechar</button></div>');
+    w.document.write('<div class="btn-row"><button id="dlbtn">⬇️ Baixar Imagem (.png)</button><button class="share-btn" onclick="shareRoute()">🔗 Compartilhar</button><button class="close-btn" onclick="window.close()">✕ Fechar</button></div>');
     /* Divider */
     w.document.write('<div class="divider"></div>');
     /* Preview card */
@@ -772,6 +773,16 @@ function exportImage(){
     w.document.write('<div class="preview-footer">Gerado por MapRoots — maproots.vercel.app</div></div>');
     w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
     w.document.write('<sc'+'ript>');
+    // Share function for export page
+    w.document.write('function shareRoute(){');
+    w.document.write('  var url="'+window.location.origin+window.location.pathname+'?r='+btoa(JSON.stringify(waypoints.map(function(p){return {name:p.name,lat:p.lat,lng:p.lng};})))+'";');
+    w.document.write('  navigator.clipboard.writeText(url).then(function(){');
+    w.document.write('    var t=document.createElement("div");');
+    w.document.write('    t.textContent="🔗 Link copiado!";');
+    w.document.write('    t.style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999";');
+    w.document.write('    document.body.appendChild(t);setTimeout(function(){document.body.removeChild(t);},2500);');
+    w.document.write('  }).catch(function(){prompt("Copie o link:",url);});');
+    w.document.write('}');
     w.document.write('document.getElementById("dlbtn").onclick=function(){');
     w.document.write('  var bar=document.querySelector(".btn-row");');
     w.document.write('  var logo=document.querySelector(".logo-area");');
@@ -807,39 +818,34 @@ function saveRoute(){
 }
 
 function loadSavedRoute(){
+  let pts=null;
   // 1. Try URL first
-  const params=new URLSearchParams(window.location.search);
-  const r=params.get('r');
-  if(r){
-    try{
-      const pts=JSON.parse(atob(r));
-      if(Array.isArray(pts)&&pts.length){
-        openApp();
-        // Wait for map to be ready
-        const tryLoad=function(){
-          if(!map){setTimeout(tryLoad,200);return;}
-          pts.forEach(function(p){addPoint(p.name,p.lat,p.lng);});
-        };
-        setTimeout(tryLoad,500);
-        return;
-      }
-    }catch(e){}
-  }
-  // 2. Try localStorage
   try{
-    const saved=localStorage.getItem('maproots_route');
-    if(saved){
-      const pts=JSON.parse(saved);
-      if(Array.isArray(pts)&&pts.length){
-        openApp();
-        const tryLoad=function(){
-          if(!map){setTimeout(tryLoad,200);return;}
-          pts.forEach(function(p){addPoint(p.name,p.lat,p.lng);});
-        };
-        setTimeout(tryLoad,500);
-      }
-    }
+    const r=new URLSearchParams(window.location.search).get('r');
+    if(r)pts=JSON.parse(atob(r));
   }catch(e){}
+  // 2. Try localStorage
+  if(!pts||!pts.length){
+    try{const s=localStorage.getItem('maproots_route');if(s)pts=JSON.parse(s);}catch(e){}
+  }
+  if(!pts||!pts.length)return;
+
+  // Add all points at once without recalculating each time
+  pts.forEach(function(p){
+    const idx=waypoints.length,color=COLORS[idx%COLORS.length];
+    waypoints.push({name:p.name,lat:p.lat,lng:p.lng,color:color});
+    markers.push(new google.maps.Marker({
+      position:{lat:p.lat,lng:p.lng},map,zIndex:10+idx,
+      label:{text:String(idx+1),color:'#0f0f1a',fontSize:'11px',fontWeight:'700'},
+      icon:{path:google.maps.SymbolPath.CIRCLE,scale:14,fillColor:color,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5}
+    }));
+  });
+  // Fit map to all points
+  const bounds=new google.maps.LatLngBounds();
+  waypoints.forEach(function(p){bounds.extend({lat:p.lat,lng:p.lng});});
+  map.fitBounds(bounds);
+  // Recalc once
+  recalc();
 }
 
 function shareRoute(){
@@ -865,8 +871,21 @@ function initMap(){
   setupSearch('search-input','autocomplete-list');
   setupSearch('search-input-mobile','autocomplete-list-mobile');
   if(window._mapInitCb)window._mapInitCb();
-  setTimeout(loadSavedRoute,300);
+  loadSavedRoute();
 }
+
+// Auto-open app if URL has route or localStorage has route
+(function(){
+  const hasUrl=new URLSearchParams(window.location.search).get('r');
+  let hasLocal=false;
+  try{hasLocal=!!localStorage.getItem('maproots_route');}catch(e){}
+  if(hasUrl||hasLocal){
+    // Open app immediately so map loads
+    document.getElementById('landing').style.display='none';
+    document.getElementById('app-view').style.display='flex';
+    // Map will be initialized by Google callback, then loadSavedRoute runs
+  }
+})();
 setUserUI();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
