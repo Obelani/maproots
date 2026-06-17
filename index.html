@@ -809,86 +809,94 @@ function exportImage(){
     w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
     w.document.write('<sc'+'ript>');
     // Share function — URL generated at click time from opener waypoints
-    w.document.write('function shareRoute(){');
-    w.document.write('  try{');
-    w.document.write('    var wps=window.opener&&window.opener.waypoints;');
-    w.document.write('    if(!wps||!wps.length){alert("Abra esta página a partir do MapRoots.");return;}');
-    w.document.write('    var data=wps.map(function(p){return[Math.round(p.lat*100000)/100000,Math.round(p.lng*100000)/100000];});');
-    w.document.write('    var longUrl=window.opener.location.origin+window.opener.location.pathname+"?r="+btoa(JSON.stringify(data));');
-    w.document.write('    fetch("https://is.gd/create.php?format=simple&url="+encodeURIComponent(longUrl)).then(function(r){return r.text();}).then(function(s){');
-    w.document.write('      var url=s.startsWith("https://")?s:longUrl;');
-    w.document.write('      navigator.clipboard.writeText(url).then(function(){');
-    w.document.write('        var t=document.createElement("div");t.textContent="🔗 Link copiado! "+url;');
-    w.document.write('        t.style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;max-width:90vw;text-align:center";');
-    w.document.write('        document.body.appendChild(t);setTimeout(function(){document.body.removeChild(t);},3000);');
-    w.document.write('      }).catch(function(){prompt("Copie o link:",url);});');
-    w.document.write('    }).catch(function(){navigator.clipboard.writeText(longUrl).catch(function(){prompt("Copie o link:",longUrl);});});');
-    w.document.write('  }catch(e){alert("Erro ao gerar link.");}');
-    w.document.write('}');
-    w.document.write('document.getElementById("dlbtn").onclick=function(){');
-    w.document.write('  var bar=document.querySelector(".btn-row");');
-    w.document.write('  var logo=document.querySelector(".logo-area");');
-    w.document.write('  var div=document.querySelector(".divider");');
-    w.document.write('  bar.style.display="none";logo.style.display="none";div.style.display="none";');
-    w.document.write('  html2canvas(document.getElementById("exportpage"),{scale:2,useCORS:true,allowTaint:true}).then(function(c){');
-    w.document.write('    bar.style.display="flex";logo.style.display="block";div.style.display="block";');
-    w.document.write('    var a=document.createElement("a");a.download="maproots-rota.png";a.href=c.toDataURL("image/png");a.click();');
-    w.document.write('  }).catch(function(){bar.style.display="flex";logo.style.display="block";div.style.display="block";});');
-    w.document.write('};');
-    w.document.write('</sc'+'ript>');
-    w.document.write('</body></html>');
-    w.document.close();
-  }; // end mapImg.onload
-  mapImg.onerror=function(){alert('Erro ao carregar mapa. Verifique sua conexão.');};
-  mapImg.src=staticUrl;
+    w.document.write('function encodeRoute(wps){
+  // Compact: integers (coord * 10000) separated by semicolons — no base64 needed
+  return wps.map(function(p){
+    return Math.round(p.lat*10000)+','+Math.round(p.lng*10000);
+  }).join(';');
 }
 
-function toggleMobilePanel(){
-  const list=document.getElementById('mobile-points-list');
-  const footer=document.getElementById('mobile-panel-footer');
-  const arrow=document.getElementById('mobile-panel-arrow');
-  const isOpen=list.style.display!=='none';
-  list.style.display=isOpen?'none':'flex';
-  if(footer)footer.style.display=isOpen?'none':'block';
-  arrow.style.transform=isOpen?'':'rotate(180deg)';
+function shareRoute(){
+  if(!waypoints.length){alert('Adicione pontos na rota antes de compartilhar!');return;}
+  const encoded=encodeRoute(waypoints);
+  const longUrl=window.location.origin+window.location.pathname+'?r='+encoded;
+
+  const toast=document.createElement('div');
+  toast.textContent='⏳ Gerando link curto...';
+  toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#378ADD;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
+  document.body.appendChild(toast);
+
+  fetch('https://cleanuri.com/api/v1/shorten',{
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'url='+encodeURIComponent(longUrl)
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    try{document.body.removeChild(toast);}catch(e){}
+    const url=(d&&d.result_url)?d.result_url:longUrl;
+    navigator.clipboard.writeText(url).then(function(){
+      const t=document.createElement('div');
+      t.innerHTML='🔗 Link copiado!<br><small style="opacity:0.85;font-weight:400">'+url+'</small>';
+      t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3);text-align:center;max-width:90vw';
+      document.body.appendChild(t);
+      setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},3500);
+    }).catch(function(){prompt('Copie o link da sua rota:',url);});
+  })
+  .catch(function(){
+    try{document.body.removeChild(toast);}catch(e){}
+    navigator.clipboard.writeText(longUrl).then(function(){
+      const t=document.createElement('div');
+      t.textContent='🔗 Link copiado!';
+      t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999';
+      document.body.appendChild(t);
+      setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},2500);
+    }).catch(function(){prompt('Copie o link:',longUrl);});
+  });
 }
 
-// SAVE/LOAD ROUTE
+
 function saveRoute(){
   if(!waypoints.length)return;
-  localStorage.setItem('maproots_route',JSON.stringify(waypoints));
+  localStorage.setItem('maproots_route',JSON.stringify(waypoints.map(function(p){return{name:p.name,lat:p.lat,lng:p.lng};})));
 }
 
 function loadSavedRoute(){
   if(waypoints.length>0)return;
-  let pts=null;
-  try{const r=new URLSearchParams(window.location.search).get('r');if(r)pts=JSON.parse(atob(r));}catch(e){}
-  if(!pts||!pts.length){
-    try{const s=localStorage.getItem('maproots_route');if(s)pts=JSON.parse(s);}catch(e){}
-  }
-  if(!pts||!pts.length)return;
+  let raw=null,isInteger=false,isCompact=false;
+  try{
+    const r=new URLSearchParams(window.location.search).get('r');
+    if(r){
+      if(r.indexOf(';')!==-1||/^-?\d+,-?\d+$/.test(r)){isInteger=true;raw=r;}
+      else{const p=JSON.parse(atob(r));isCompact=Array.isArray(p[0]);raw=p;}
+    }
+  }catch(e){}
+  if(!raw){try{const s=localStorage.getItem('maproots_route');if(s)raw=JSON.parse(s);}catch(e){}}
+  if(!raw||(typeof raw==='string'&&!raw.length)||(Array.isArray(raw)&&!raw.length))return;
   if(!map){setTimeout(loadSavedRoute,200);return;}
 
-  // Detect format: compact [[lat,lng]] or full [{name,lat,lng}]
-  const isCompact=Array.isArray(pts[0]);
-
-  if(isCompact){
-    // Reverse geocode each point to get names
-    let loaded=0;
-    const normalized=pts.map(function(p){return{lat:p[0],lng:p[1],name:null};});
-    showLoading(true);
-    normalized.forEach(function(p,i){
+  if(isInteger){
+    const pts=raw.split(';').map(function(pair,i){
+      const p=pair.split(',');return{lat:parseInt(p[0])/10000,lng:parseInt(p[1])/10000,name:'Ponto '+(i+1)};
+    });
+    let done=0;showLoading(true);
+    pts.forEach(function(p,i){
       geocoder.geocode({location:{lat:p.lat,lng:p.lng}},function(res,st){
-        normalized[i].name=(st==='OK'&&res[0])?res[0].formatted_address:'Ponto '+(i+1);
-        loaded++;
-        if(loaded===normalized.length){
-          showLoading(false);
-          _addAllPoints(normalized);
-        }
+        pts[i].name=(st==='OK'&&res[0])?res[0].formatted_address:pts[i].name;
+        if(++done===pts.length){showLoading(false);_addAllPoints(pts);}
+      });
+    });
+  } else if(isCompact){
+    const pts=raw.map(function(p,i){return{lat:p[0],lng:p[1],name:'Ponto '+(i+1)};});
+    let done=0;showLoading(true);
+    pts.forEach(function(p,i){
+      geocoder.geocode({location:{lat:p.lat,lng:p.lng}},function(res,st){
+        pts[i].name=(st==='OK'&&res[0])?res[0].formatted_address:pts[i].name;
+        if(++done===pts.length){showLoading(false);_addAllPoints(pts);}
       });
     });
   } else {
-    _addAllPoints(pts);
+    _addAllPoints(raw);
   }
 }
 
@@ -906,46 +914,6 @@ function _addAllPoints(pts){
   waypoints.forEach(function(p){bounds.extend({lat:p.lat,lng:p.lng});});
   map.fitBounds(bounds);
   recalc();
-}
-
-function shareRoute(){
-  if(!waypoints.length){alert('Adicione pontos na rota antes de compartilhar!');return;}
-  // Compact format: only [lat, lng] with 5 decimal places (saves ~74% vs full names)
-  const data=waypoints.map(function(p){return[Math.round(p.lat*100000)/100000,Math.round(p.lng*100000)/100000];});
-  const encoded=btoa(JSON.stringify(data));
-  const longUrl=window.location.origin+window.location.pathname+'?r='+encoded;
-
-  // Show loading toast
-  const toast=document.createElement('div');
-  toast.textContent='⏳ Gerando link...';
-  toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#378ADD;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
-  document.body.appendChild(toast);
-
-  // Shorten via TinyURL API
-  fetch('https://is.gd/create.php?format=simple&url='+encodeURIComponent(longUrl))
-    .then(function(r){return r.text();})
-    .then(function(shortUrl){
-      document.body.removeChild(toast);
-      const url=shortUrl.startsWith('https://')?shortUrl:longUrl;
-      navigator.clipboard.writeText(url).then(function(){
-        const t=document.createElement('div');
-        t.innerHTML='🔗 Link copiado!<br><small style="opacity:0.8">'+url+'</small>';
-        t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3);text-align:center;max-width:90vw';
-        document.body.appendChild(t);
-        setTimeout(function(){document.body.removeChild(t);},3000);
-      }).catch(function(){prompt('Copie o link da sua rota:',url);});
-    })
-    .catch(function(){
-      // TinyURL failed, use long URL
-      try{document.body.removeChild(toast);}catch(e){}
-      navigator.clipboard.writeText(longUrl).then(function(){
-        const t=document.createElement('div');
-        t.textContent='🔗 Link copiado!';
-        t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999';
-        document.body.appendChild(t);
-        setTimeout(function(){document.body.removeChild(t);},2500);
-      }).catch(function(){prompt('Copie o link:',longUrl);});
-    });
 }
 
 function initMap(){
