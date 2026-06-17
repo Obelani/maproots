@@ -535,11 +535,11 @@ function clearAll(){
   waypoints=[];markers.forEach(m=>m.setMap(null));markers=[];
   if(dirRender)dirRender.setDirections({routes:[]});
   localStorage.removeItem('maproots_route');
-  updateLimitBanner();renderList([]);updateStats(0,0);
+  updateLimitBanner();renderList([],null);updateStats(0,0);
 }
 
 function recalc(){
-  if(waypoints.length<2){if(dirRender)dirRender.setDirections({routes:[]});renderList([]);updateStats(0,0);return;}
+  if(waypoints.length<2){if(dirRender)dirRender.setDirections({routes:[]});renderList([],null);updateStats(0,0);return;}
   const o={lat:waypoints[0].lat,lng:waypoints[0].lng};
   const d={lat:waypoints[waypoints.length-1].lat,lng:waypoints[waypoints.length-1].lng};
   const s=waypoints.slice(1,-1).map(p=>({location:new google.maps.LatLng(p.lat,p.lng),stopover:true}));
@@ -556,7 +556,30 @@ function recalc(){
       const legs=res.routes[0].legs;
       let td=0,tt=0;
       const segs=legs.map(l=>{td+=l.distance.value;tt+=l.duration.value;return Math.round(l.distance.value/1000);});
-      updateStats(td,tt);renderList(segs);saveRoute();
+      updateStats(td,tt);renderList(segs,null);saveRoute();
+    } else {
+      // Route failed — still show all points in list with error
+      dirRender.setDirections({routes:[]});
+      renderList([],st);
+      updateStats(0,0);
+    }
+  });
+}
+
+function editPoint(idx){
+  const current=waypoints[idx].name.replace(/,.*$/,'');
+  const newName=prompt('Editar destino '+(idx+1)+':',current);
+  if(!newName||!newName.trim())return;
+  showLoading(true);
+  geocoder.geocode({address:newName.trim()},(res,st)=>{
+    showLoading(false);
+    if(st==='OK'&&res[0]){
+      const l=res[0].geometry.location;
+      waypoints[idx]={name:res[0].formatted_address,lat:l.lat(),lng:l.lng(),color:waypoints[idx].color};
+      markers[idx].setPosition({lat:l.lat(),lng:l.lng()});
+      saveRoute();recalc();
+    } else {
+      alert('Destino não encontrado. Tente outro nome.');
     }
   });
 }
@@ -575,7 +598,7 @@ function updateStats(dm,ts){
   document.getElementById('m-pts-count').textContent=pts;
 }
 
-function renderList(segs){
+function renderList(segs,routeError){
   const a=document.getElementById('points-area');
   const b=document.getElementById('mobile-points-list');
   if(!waypoints.length){
@@ -584,9 +607,20 @@ function renderList(segs){
     b.innerHTML='<div class="empty-state" style="padding:12px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto ainda.</div>';
     return;
   }
-  let h='';
+  // Error banner
+  const errBanner=routeError?'<div style="background:rgba(233,69,96,0.12);border:1px solid rgba(233,69,96,0.4);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#ff6b81">⚠️ <b>Rota impossível</b> — um ou mais pontos não têm conexão viária entre si. Clique no nome para editar ou remova o ponto problemático.</div>':'';
+  let h=errBanner;
   waypoints.forEach((pt,i)=>{
-    h+='<div class="point-row"><div class="point-dot" style="background:'+pt.color+'">'+(i+1)+'</div><div class="point-info"><div class="point-name">'+pt.name+'</div></div><button class="point-del" onclick="removePoint('+i+')">✕</button></div>';
+    const hasError=routeError&&i>0;
+    const rowStyle=hasError?'border-color:rgba(233,69,96,0.5);':'';
+    h+='<div class="point-row" style="'+rowStyle+'">'
+      +'<div class="point-dot" style="background:'+pt.color+'">'+(i+1)+'</div>'
+      +'<div class="point-info" onclick="editPoint('+i+')" style="cursor:pointer" title="Clique para editar">'
+        +'<div class="point-name" style="color:'+(hasError?'#ff6b81':'inherit')+'">'+pt.name+'</div>'
+        +'<div style="font-size:10px;color:var(--muted)">✏️ clique para editar</div>'
+      +'</div>'
+      +'<button class="point-del" onclick="removePoint('+i+')">✕</button>'
+      +'</div>';
     if(i<segs.length)h+='<div class="seg-arrow"><div class="seg-line"></div><span>↓ '+segs[i].toLocaleString('pt-BR')+' km</span><div class="seg-line"></div></div>';
   });
   a.innerHTML=h;
