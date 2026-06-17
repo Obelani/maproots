@@ -916,14 +916,18 @@ function _loadParsedRoute(raw,fmt,save){
       geocoder.geocode({location:{lat:p.lat,lng:p.lng}},function(res,st){
         if(st==='OK'&&res[0]){
           const comps=res[0].address_components;
-          let city='',state='',country='';
+          let locality='',admin2='',admin1='',country='';
           comps.forEach(function(c){
-            if(c.types.indexOf('administrative_area_level_2')!==-1)city=c.long_name;
-            else if(c.types.indexOf('locality')!==-1)city=c.long_name;
-            else if(c.types.indexOf('administrative_area_level_1')!==-1)state=c.short_name;
-            else if(c.types.indexOf('country')!==-1)country=c.long_name;
+            if(c.types.indexOf('locality')!==-1)locality=c.long_name;
+            if(c.types.indexOf('administrative_area_level_2')!==-1)admin2=c.long_name;
+            if(c.types.indexOf('administrative_area_level_1')!==-1)admin1=c.short_name;
+            if(c.types.indexOf('country')!==-1)country=c.long_name;
           });
-          pts[i].name=city?(city+(state?', '+state:'')+(country?', '+country:'')):res[0].formatted_address;
+          // Prefer locality (actual city name) over admin_level_2 (which can be "Municipality B", "Comuna 1" etc)
+          // Filter out generic/numeric admin names
+          const badPattern=/^(municipality|comuna|district|commune|canton|county|borough|\d)/i;
+          let city=locality||((!badPattern.test(admin2))? admin2:'');
+          pts[i].name=city?(city+(admin1?', '+admin1:'')+(country?', '+country:'')):res[0].formatted_address;
         }else{pts[i].name='Ponto '+(i+1);}
         if(++done===pts.length){showLoading(false);cb(pts);}
       });
