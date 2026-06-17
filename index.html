@@ -808,93 +808,72 @@ function exportImage(){
     w.document.write('<div class="preview-footer">Gerado por MapRoots — maproots.vercel.app</div></div>');
     w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
     w.document.write('<sc'+'ript>');
-    // Share function — URL generated at click time from opener waypoints
-    w.document.write('function encodeRoute(wps){
-  // Compact: integers (coord * 10000) separated by semicolons — no base64 needed
-  return wps.map(function(p){
-    return Math.round(p.lat*10000)+','+Math.round(p.lng*10000);
-  }).join(';');
+    w.document.write('function shareRoute(){var wps=window.opener&&window.opener.waypoints;if(!wps||!wps.length){alert("Abra a partir do MapRoots.");return;}var enc=wps.map(function(p){return Math.round(p.lat*10000)+","+Math.round(p.lng*10000);}).join(";");var longUrl=window.opener.location.origin+window.opener.location.pathname+"?r="+enc;fetch("https://cleanuri.com/api/v1/shorten",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"url="+encodeURIComponent(longUrl)}).then(function(r){return r.json();}).then(function(d){var url=d&&d.result_url?d.result_url:longUrl;navigator.clipboard.writeText(url).then(function(){var t=document.createElement("div");t.textContent="🔗 Link copiado! "+url;t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;max-width:90vw;text-align:center";document.body.appendChild(t);setTimeout(function(){document.body.removeChild(t);},3000);}).catch(function(){prompt("Copie:",url);});}).catch(function(){navigator.clipboard.writeText(longUrl).catch(function(){prompt("Copie:",longUrl);});});}');
+    w.document.write('document.getElementById("dlbtn").onclick=function(){');
+    w.document.write('  var bar=document.querySelector(".btn-row");');
+    w.document.write('  var logo=document.querySelector(".logo-area");');
+    w.document.write('  var div=document.querySelector(".divider");');
+    w.document.write('  bar.style.display="none";logo.style.display="none";div.style.display="none";');
+    w.document.write('  html2canvas(document.getElementById("exportpage"),{scale:2,useCORS:true,allowTaint:true}).then(function(c){');
+    w.document.write('    bar.style.display="flex";logo.style.display="block";div.style.display="block";');
+    w.document.write('    var a=document.createElement("a");a.download="maproots-rota.png";a.href=c.toDataURL("image/png");a.click();');
+    w.document.write('  }).catch(function(){bar.style.display="flex";logo.style.display="block";div.style.display="block";});');
+    w.document.write('};');
+    w.document.write('</sc'+'ript>');
+    w.document.write('</body></html>');
+    w.document.close();
+  }; // end mapImg.onload
+  mapImg.onerror=function(){alert('Erro ao carregar mapa. Verifique sua conexão.');};
+  mapImg.src=staticUrl;
 }
 
-function shareRoute(){
-  if(!waypoints.length){alert('Adicione pontos na rota antes de compartilhar!');return;}
-  const encoded=encodeRoute(waypoints);
-  const longUrl=window.location.origin+window.location.pathname+'?r='+encoded;
-
-  const toast=document.createElement('div');
-  toast.textContent='⏳ Gerando link curto...';
-  toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#378ADD;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
-  document.body.appendChild(toast);
-
-  fetch('https://cleanuri.com/api/v1/shorten',{
-    method:'POST',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body:'url='+encodeURIComponent(longUrl)
-  })
-  .then(function(r){return r.json();})
-  .then(function(d){
-    try{document.body.removeChild(toast);}catch(e){}
-    const url=(d&&d.result_url)?d.result_url:longUrl;
-    navigator.clipboard.writeText(url).then(function(){
-      const t=document.createElement('div');
-      t.innerHTML='🔗 Link copiado!<br><small style="opacity:0.85;font-weight:400">'+url+'</small>';
-      t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3);text-align:center;max-width:90vw';
-      document.body.appendChild(t);
-      setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},3500);
-    }).catch(function(){prompt('Copie o link da sua rota:',url);});
-  })
-  .catch(function(){
-    try{document.body.removeChild(toast);}catch(e){}
-    navigator.clipboard.writeText(longUrl).then(function(){
-      const t=document.createElement('div');
-      t.textContent='🔗 Link copiado!';
-      t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999';
-      document.body.appendChild(t);
-      setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},2500);
-    }).catch(function(){prompt('Copie o link:',longUrl);});
-  });
+function toggleMobilePanel(){
+  const list=document.getElementById('mobile-points-list');
+  const footer=document.getElementById('mobile-panel-footer');
+  const arrow=document.getElementById('mobile-panel-arrow');
+  const isOpen=list.style.display!=='none';
+  list.style.display=isOpen?'none':'flex';
+  if(footer)footer.style.display=isOpen?'none':'block';
+  arrow.style.transform=isOpen?'':'rotate(180deg)';
 }
 
-
+// SAVE/LOAD ROUTE
 function saveRoute(){
   if(!waypoints.length)return;
-  localStorage.setItem('maproots_route',JSON.stringify(waypoints.map(function(p){return{name:p.name,lat:p.lat,lng:p.lng};})));
+  localStorage.setItem('maproots_route',JSON.stringify(waypoints));
 }
 
 function loadSavedRoute(){
   if(waypoints.length>0)return;
-  let raw=null,isInteger=false,isCompact=false;
+  let raw=null,fmt='full';
   try{
     const r=new URLSearchParams(window.location.search).get('r');
     if(r){
-      if(r.indexOf(';')!==-1||/^-?\d+,-?\d+$/.test(r)){isInteger=true;raw=r;}
-      else{const p=JSON.parse(atob(r));isCompact=Array.isArray(p[0]);raw=p;}
+      if(r.indexOf(';')!==-1){fmt='int';raw=r;}
+      else{const p=JSON.parse(atob(r));fmt=Array.isArray(p[0])?'compact':'full';raw=p;}
     }
   }catch(e){}
-  if(!raw){try{const s=localStorage.getItem('maproots_route');if(s)raw=JSON.parse(s);}catch(e){}}
+  if(!raw){try{const s=localStorage.getItem('maproots_route');if(s){raw=JSON.parse(s);fmt='full';}}catch(e){}}
   if(!raw||(typeof raw==='string'&&!raw.length)||(Array.isArray(raw)&&!raw.length))return;
   if(!map){setTimeout(loadSavedRoute,200);return;}
 
-  if(isInteger){
+  function revGeo(pts,cb){
+    let done=0;showLoading(true);
+    pts.forEach(function(p,i){
+      geocoder.geocode({location:{lat:p.lat,lng:p.lng}},function(res,st){
+        pts[i].name=(st==='OK'&&res[0])?res[0].formatted_address:'Ponto '+(i+1);
+        if(++done===pts.length){showLoading(false);cb(pts);}
+      });
+    });
+  }
+  if(fmt==='int'){
     const pts=raw.split(';').map(function(pair,i){
       const p=pair.split(',');return{lat:parseInt(p[0])/10000,lng:parseInt(p[1])/10000,name:'Ponto '+(i+1)};
     });
-    let done=0;showLoading(true);
-    pts.forEach(function(p,i){
-      geocoder.geocode({location:{lat:p.lat,lng:p.lng}},function(res,st){
-        pts[i].name=(st==='OK'&&res[0])?res[0].formatted_address:pts[i].name;
-        if(++done===pts.length){showLoading(false);_addAllPoints(pts);}
-      });
-    });
-  } else if(isCompact){
+    revGeo(pts,_addAllPoints);
+  } else if(fmt==='compact'){
     const pts=raw.map(function(p,i){return{lat:p[0],lng:p[1],name:'Ponto '+(i+1)};});
-    let done=0;showLoading(true);
-    pts.forEach(function(p,i){
-      geocoder.geocode({location:{lat:p.lat,lng:p.lng}},function(res,st){
-        pts[i].name=(st==='OK'&&res[0])?res[0].formatted_address:pts[i].name;
-        if(++done===pts.length){showLoading(false);_addAllPoints(pts);}
-      });
-    });
+    revGeo(pts,_addAllPoints);
   } else {
     _addAllPoints(raw);
   }
@@ -915,6 +894,43 @@ function _addAllPoints(pts){
   map.fitBounds(bounds);
   recalc();
 }
+
+function encodeRoute(wps){
+  return wps.map(function(p){return Math.round(p.lat*10000)+','+Math.round(p.lng*10000);}).join(';');
+}
+
+function shareRoute(){
+  if(!waypoints.length){alert('Adicione pontos na rota antes de compartilhar!');return;}
+  const longUrl=window.location.origin+window.location.pathname+'?r='+encodeRoute(waypoints);
+  const toast=document.createElement('div');
+  toast.textContent='⏳ Gerando link...';
+  toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#378ADD;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999';
+  document.body.appendChild(toast);
+  fetch('https://cleanuri.com/api/v1/shorten',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'url='+encodeURIComponent(longUrl)})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    try{document.body.removeChild(toast);}catch(e){}
+    const url=(d&&d.result_url)?d.result_url:longUrl;
+    navigator.clipboard.writeText(url).then(function(){
+      const t=document.createElement('div');
+      t.innerHTML='🔗 Link copiado!<br><small style="opacity:0.8;font-size:12px">'+url+'</small>';
+      t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;text-align:center;max-width:90vw';
+      document.body.appendChild(t);
+      setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},3000);
+    }).catch(function(){prompt('Copie o link:',url);});
+  })
+  .catch(function(){
+    try{document.body.removeChild(toast);}catch(e){}
+    navigator.clipboard.writeText(longUrl).then(function(){
+      const t=document.createElement('div');
+      t.textContent='🔗 Link copiado!';
+      t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999';
+      document.body.appendChild(t);
+      setTimeout(function(){try{document.body.removeChild(t);}catch(e){}},2500);
+    }).catch(function(){prompt('Copie o link:',longUrl);});
+  });
+}
+
 
 function initMap(){
   window._mapReady=true;
