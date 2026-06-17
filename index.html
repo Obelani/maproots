@@ -113,13 +113,13 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 .mobile-points-list{padding:8px 12px;display:flex;flex-direction:column;gap:5px}
 
 @media(max-width:900px){
-  .app-layout{display:flex;flex-direction:column}
+  #app-view{display:flex!important;flex-direction:column;min-height:calc(100vh - 53px);overflow-y:auto}
+  .app-layout{flex:none;display:flex;flex-direction:column}
   .sidebar{display:none!important}
-  .map-area{height:55vw;min-height:260px;max-height:400px;position:relative;flex-shrink:0}
+  .map-area{height:56vw;min-height:260px;max-height:380px;position:relative;flex-shrink:0;width:100%}
   #map-canvas{width:100%;height:100%}
-  .mobile-top-bar{display:flex}
-  .mobile-bottom-panel{display:flex}
-  #app-view{overflow-y:auto;min-height:calc(100vh - 53px)}
+  .mobile-top-bar{display:flex;flex-shrink:0}
+  .mobile-bottom-panel{display:flex;flex-shrink:0}
 }
 @media(max-width:600px){
   nav{padding:10px 14px}
@@ -612,10 +612,10 @@ function exportImage(){
 
     const w=window.open('','_blank');
     w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MapRoots Rota</title>');
-    w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px;gap:20px}#btnbar{width:100%;max-width:1100px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.page{width:1100px;max-width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.4)}.body{display:flex}.sidebar{width:230px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;height:100%;object-fit:cover;display:block;min-height:520px}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media(max-width:700px){.body{flex-direction:column}.sidebar{width:100%;border-right:none;border-bottom:1px solid #e0e6ef}.map-area img{min-height:280px}}@media print{body{background:#fff;padding:0}.page{box-shadow:none;border-radius:0;width:100%}#btnbar{display:none}}</style>');
+    w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:16px}#btnbar{width:100%;max-width:1100px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}#dlbtn{width:100%;max-width:460px}.page{width:100%;max-width:1100px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,0.4)}.body{display:flex;flex-direction:column}.sidebar{width:100%;background:#f7f9fc;border-bottom:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;display:block}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media(min-width:700px){.body{flex-direction:row}.sidebar{width:230px;border-bottom:none;border-right:1px solid #e0e6ef}.map-area img{min-height:520px}}@media print{body{background:#fff;padding:0}.page{box-shadow:none;border-radius:0;width:100%}#btnbar{display:none}}</style>');
     w.document.write('</head><body>');
     w.document.write('<div id="btnbar">');
-    w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:18px 0;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(29,158,117,0.5);width:100%;max-width:420px">⬇️ Baixar Imagem (.png)</button>');
+    w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:18px 0;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(29,158,117,0.5);width:100%;max-width:460px;letter-spacing:0.3px">⬇️ Baixar Imagem (.png)</button>');
     w.document.write('<button onclick="window.close()" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:14px 24px;border-radius:10px;font-size:14px;cursor:pointer">✕ Fechar</button>');
     w.document.write('</div>');
     w.document.write('<div class="page" id="exportpage">');
