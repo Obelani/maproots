@@ -7,117 +7,132 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --road: #1a1a2e; --road-mid: #16213e;
-    --accent: #e94560; --accent-light: #ff6b81; --gold: #f5a623;
-    --white: #ffffff; --off-white: #f0f0f0; --muted: #8a9bb5;
-    --border: rgba(255,255,255,0.1); --card: rgba(255,255,255,0.05);
-    --card-hover: rgba(255,255,255,0.09); --radius: 10px; --radius-lg: 16px;
-  }
-  body { font-family: 'Inter', sans-serif; background: var(--road); color: var(--white); min-height: 100vh; overflow-x: hidden; }
-  nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: var(--road-mid); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 200; }
-  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
-  .logo span { color: var(--accent); }
-  .nav-right { display: flex; align-items: center; gap: 10px; }
-  .badge-plan { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; background: var(--card); border: 1px solid var(--border); color: var(--muted); }
-  .badge-plan.pro { background: rgba(245,166,35,0.15); border-color: rgba(245,166,35,0.4); color: var(--gold); }
-  .btn { padding: 8px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
-  .btn-ghost { background: transparent; color: var(--white); border: 1px solid var(--border); }
-  .btn-ghost:hover { background: var(--card); }
-  .btn-primary { background: var(--accent); color: var(--white); }
-  .btn-primary:hover { background: var(--accent-light); }
-  .btn-gold { background: var(--gold); color: var(--road); }
-  .btn-gold:hover { opacity: 0.9; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --road:#1a1a2e;--road-mid:#16213e;--accent:#e94560;--accent-light:#ff6b81;--gold:#f5a623;
+  --white:#fff;--off-white:#f0f0f0;--muted:#8a9bb5;
+  --border:rgba(255,255,255,0.1);--card:rgba(255,255,255,0.05);--card-hover:rgba(255,255,255,0.09);
+  --radius:10px;--radius-lg:16px;
+}
+body{font-family:'Inter',sans-serif;background:var(--road);color:var(--white);min-height:100vh;overflow-x:hidden}
 
-  /* LANDING */
-  #landing { display: block; padding: 80px 24px 60px; text-align: center; }
-  .hero-tag { font-size: 12px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
-  h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(36px, 6vw, 60px); font-weight: 700; line-height: 1.1; letter-spacing: -1px; max-width: 700px; margin: 0 auto 20px; }
-  h1 em { font-style: normal; color: var(--accent); }
-  .hero-sub { font-size: 17px; color: var(--muted); max-width: 480px; line-height: 1.6; margin: 0 auto 36px; }
-  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 80px; }
-  .hero-btns .btn { padding: 12px 28px; font-size: 15px; }
-  .section-label { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
-  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; margin-bottom: 40px; }
-  .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; max-width: 600px; margin: 0 auto; }
-  .plan-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 24px; position: relative; text-align: left; }
-  .plan-card.featured { border-color: var(--gold); background: rgba(245,166,35,0.08); }
-  .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--road); font-size: 11px; font-weight: 600; padding: 3px 14px; border-radius: 20px; white-space: nowrap; }
-  .plan-name { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
-  .plan-price { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; margin-bottom: 4px; }
-  .plan-price sup { font-size: 16px; vertical-align: super; }
-  .plan-period { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
-  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
-  .plan-features li { font-size: 13px; color: var(--off-white); display: flex; align-items: center; gap: 8px; }
-  .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 600; flex-shrink: 0; }
-  .plan-features li.off::before { content: '–'; color: var(--muted); }
-  .plan-features li.off { color: var(--muted); }
-  .plan-btn { width: 100%; padding: 11px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--white); }
-  .plan-btn.gold { background: var(--gold); color: var(--road); border: none; }
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--road-mid);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.5px;display:flex;align-items:center;gap:6px}
+.logo span{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.badge-plan{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--card);border:1px solid var(--border);color:var(--muted)}
+.btn{padding:8px 18px;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s}
+.btn-ghost{background:transparent;color:var(--white);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--card)}
+.btn-primary{background:var(--accent);color:var(--white)}
+.btn-primary:hover{background:var(--accent-light)}
+.btn-gold{background:var(--gold);color:var(--road)}
+.btn-gold:hover{opacity:0.9}
 
-  /* APP */
-  #app-view { display: none; }
-  .app-layout { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 53px); }
-  .sidebar { background: var(--road-mid); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-  .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); }
-  .sidebar-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 10px; }
-  .search-wrap { position: relative; }
-  .search-input { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px 9px 36px; color: var(--white); font-size: 13px; outline: none; }
-  .search-input::placeholder { color: var(--muted); }
-  .search-input:focus { border-color: rgba(255,255,255,0.3); }
-  .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-  #autocomplete-list { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--road); border: 1px solid var(--border); border-radius: var(--radius); z-index: 300; max-height: 180px; overflow-y: auto; display: none; }
-  .ac-item { padding: 9px 12px; font-size: 13px; cursor: pointer; color: var(--off-white); border-bottom: 1px solid var(--border); }
-  .ac-item:last-child { border-bottom: none; }
-  .ac-item:hover { background: var(--card-hover); }
-  .sidebar-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
-  .stat-box { background: var(--card); border-radius: var(--radius); padding: 10px 12px; }
-  .stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
-  .stat-val { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; }
-  .points-area { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; }
-  .empty-state { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 13px; line-height: 1.6; }
-  .empty-icon { font-size: 32px; margin-bottom: 12px; display: block; }
-  .point-row { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 10px; }
-  .point-dot { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; color: #0f0f1a; }
-  .point-info { flex: 1; min-width: 0; }
-  .point-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .point-del { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px 4px; font-size: 15px; line-height: 1; border-radius: 4px; }
-  .point-del:hover { color: var(--accent); }
-  .seg-arrow { text-align: center; color: var(--muted); font-size: 11px; padding: 2px 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .seg-line { height: 1px; flex: 1; background: var(--border); }
-  .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
-  .clear-link { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; text-align: left; padding: 0; }
-  .clear-link:hover { color: var(--accent); }
-  .paywall-banner { background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.3); border-radius: var(--radius); padding: 12px 14px; display: none; }
-  .paywall-banner.visible { display: block; }
-  .paywall-banner p { font-size: 12px; color: var(--off-white); margin-bottom: 8px; line-height: 1.5; }
-  .paywall-banner strong { color: var(--gold); }
-  .map-area { position: relative; height: 100%; }
-  #map-canvas { width: 100%; height: 100%; }
-  .map-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15,52,96,0.9); border: 1px solid var(--border); border-radius: 20px; padding: 7px 16px; font-size: 12px; color: var(--muted); pointer-events: none; white-space: nowrap; z-index: 10; }
-  .loading-overlay { position: absolute; inset: 0; background: rgba(26,26,46,0.6); display: none; align-items: center; justify-content: center; font-size: 13px; color: var(--muted); gap: 10px; z-index: 20; }
-  .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
-  .modal-backdrop.open { display: flex; }
-  .modal { background: var(--road-mid); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; max-width: 420px; width: 100%; }
-  .modal h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-  .modal p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
-  .modal-input { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; color: var(--white); font-size: 14px; outline: none; margin-bottom: 10px; }
-  .modal-input:focus { border-color: rgba(255,255,255,0.3); }
-  .modal-btns { display: flex; gap: 8px; margin-top: 4px; }
-  .modal-btns .btn { flex: 1; padding: 11px; font-size: 14px; }
-  .modal-error { font-size: 12px; color: var(--accent); min-height: 16px; margin-bottom: 8px; }
-  .modal-switch { font-size: 13px; color: var(--muted); text-align: center; margin-top: 16px; }
-  .modal-switch a { color: var(--off-white); cursor: pointer; text-decoration: underline; }
-  .upgrade-features { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-  .upgrade-features li { font-size: 13px; display: flex; align-items: center; gap: 8px; }
-  .upgrade-features li::before { content: '✓'; color: var(--gold); font-weight: 600; }
-  @media (max-width: 700px) {
-    .app-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-    .sidebar { max-height: 45vh; }
-  }
+/* LANDING */
+#landing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 53px);padding:40px 24px;text-align:center}
+.hero-tag{font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(32px,6vw,64px);font-weight:700;line-height:1.1;letter-spacing:-1px;max-width:700px;margin:0 auto 20px}
+h1 em{font-style:normal;color:var(--accent)}
+.hero-sub{font-size:17px;color:var(--muted);max-width:480px;line-height:1.6;margin:0 auto 36px}
+.hero-features{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.feature-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--off-white)}
+.hero-cta .btn{padding:14px 36px;font-size:16px;border-radius:12px}
+
+/* APP */
+#app-view{display:none}
+.app-layout{display:grid;grid-template-columns:320px 1fr;height:calc(100vh - 53px)}
+
+/* SIDEBAR */
+.sidebar{background:var(--road-mid);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{padding:14px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px}
+.search-wrap{position:relative}
+.search-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:9px 12px 9px 34px;color:var(--white);font-size:13px;outline:none}
+.search-input::placeholder{color:var(--muted)}
+.search-input:focus{border-color:rgba(255,255,255,0.3)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:14px}
+#autocomplete-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--road);border:1px solid var(--border);border-radius:var(--radius);z-index:300;max-height:180px;overflow-y:auto;display:none}
+.ac-item{padding:9px 12px;font-size:13px;cursor:pointer;color:var(--off-white);border-bottom:1px solid var(--border)}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover{background:var(--card-hover)}
+.sidebar-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.stat-box{background:var(--card);border-radius:var(--radius);padding:8px 10px}
+.stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px}
+.stat-val{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700}
+.points-area{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:5px}
+.empty-state{text-align:center;padding:28px 16px;color:var(--muted);font-size:13px;line-height:1.6}
+.empty-icon{font-size:28px;margin-bottom:10px;display:block}
+.point-row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px}
+.point-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;color:#0f0f1a}
+.point-info{flex:1;min-width:0}
+.point-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.point-del{background:none;border:none;color:var(--muted);cursor:pointer;padding:2px 4px;font-size:14px;line-height:1;border-radius:4px}
+.point-del:hover{color:var(--accent)}
+.seg-arrow{text-align:center;color:var(--muted);font-size:11px;padding:1px 0;display:flex;align-items:center;justify-content:center;gap:6px}
+.seg-line{height:1px;flex:1;background:var(--border)}
+.sidebar-footer{padding:10px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.clear-link{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-align:left;padding:0}
+.clear-link:hover{color:var(--accent)}
+
+/* LIMIT BANNER */
+.limit-banner{background:linear-gradient(135deg,rgba(245,166,35,0.12),rgba(233,69,96,0.12));border:1px solid rgba(245,166,35,0.3);border-radius:var(--radius);padding:10px 12px;display:none}
+.limit-banner.visible{display:block}
+.limit-banner p{font-size:12px;color:var(--off-white);margin-bottom:8px;line-height:1.5}
+.limit-banner strong{color:var(--gold)}
+
+/* MAP */
+.map-area{position:relative;height:100%}
+#map-canvas{width:100%;height:100%}
+.map-hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(15,52,96,0.9);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);pointer-events:none;white-space:nowrap;z-index:10}
+.loading-overlay{position:absolute;inset:0;background:rgba(26,26,46,0.6);display:none;align-items:center;justify-content:center;font-size:13px;color:var(--muted);gap:10px;z-index:20}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MODALS */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--road-mid);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto}
+.modal h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.form-label{font-size:12px;color:var(--muted);font-weight:500}
+.modal-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;color:var(--white);font-size:13px;outline:none}
+.modal-input:focus{border-color:rgba(255,255,255,0.3)}
+select.modal-input option{background:var(--road-mid);color:var(--white)}
+.modal-error{font-size:12px;color:var(--accent);min-height:16px;margin-bottom:8px}
+.modal-success{font-size:13px;color:#1D9E75;background:rgba(29,158,117,0.1);border:1px solid rgba(29,158,117,0.3);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;display:none}
+.modal-btns{display:flex;gap:8px;margin-top:4px}
+.modal-btns .btn{flex:1;padding:11px;font-size:14px}
+.modal-switch{font-size:13px;color:var(--muted);text-align:center;margin-top:14px}
+.modal-switch a{color:var(--off-white);cursor:pointer;text-decoration:underline}
+.divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* MOBILE TOGGLE */
+.mobile-sidebar-toggle{display:none;position:fixed;bottom:20px;right:20px;z-index:150;background:var(--accent);color:var(--white);border:none;border-radius:50%;width:50px;height:50px;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(233,69,96,0.4)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .app-layout{grid-template-columns:1fr;grid-template-rows:1fr auto}
+  .sidebar{position:fixed;bottom:0;left:0;right:0;z-index:100;max-height:55vh;border-right:none;border-top:1px solid var(--border);border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform 0.3s ease}
+  .sidebar.open{transform:translateY(0)}
+  .map-area{height:calc(100vh - 53px)}
+  #map-canvas{height:100%}
+  .mobile-sidebar-toggle{display:flex;align-items:center;justify-content:center}
+}
+@media(max-width:600px){
+  nav{padding:10px 16px}
+  .logo{font-size:17px}
+  h1{font-size:28px}
+  .hero-sub{font-size:15px}
+  .hero-features{gap:10px}
+  .feature-pill{font-size:12px;padding:6px 12px}
+  .modal{padding:20px}
+  .form-row{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -125,59 +140,33 @@
 <nav>
   <div class="logo">🗺️ Map<span>Roots</span></div>
   <div class="nav-right">
-    <span class="badge-plan" id="plan-badge">Gratuito</span>
-    <button class="btn btn-gold" id="btn-upgrade" style="display:none" onclick="openUpgradeModal()">Upgrade Pro</button>
+    <span class="badge-plan" id="plan-badge">Visitante</span>
     <button class="btn btn-ghost" id="btn-login" onclick="openLoginModal()">Entrar</button>
-    <button class="btn btn-primary" id="btn-logout" style="display:none" onclick="logout()">Sair</button>
+    <button class="btn btn-ghost" id="btn-logout" style="display:none" onclick="logout()">Sair</button>
   </div>
 </nav>
 
+<!-- LANDING -->
 <div id="landing">
   <p class="hero-tag">Planejador de viagens</p>
   <h1>Sua rota,<br/><em>do jeito que você quer</em></h1>
-  <p class="hero-sub">Adicione pontos no mapa, veja distâncias reais e tempos de viagem. Planeje do Brasil até Ushuaia.</p>
-  <div class="hero-btns">
-    <button class="btn btn-primary" onclick="openApp()">Começar grátis</button>
-    <button class="btn btn-ghost" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Ver planos</button>
+  <p class="hero-sub">Adicione pontos no mapa, veja distâncias reais e tempos de viagem. Do Brasil até Ushuaia.</p>
+  <div class="hero-features">
+    <div class="feature-pill">📍 Busca por cidade</div>
+    <div class="feature-pill">🗺️ Clique no mapa</div>
+    <div class="feature-pill">📏 Distâncias reais</div>
+    <div class="feature-pill">⏱ Tempo estimado</div>
+    <div class="feature-pill">📸 Exportar roteiro</div>
   </div>
-  <div id="pricing">
-    <p class="section-label">Planos</p>
-    <p class="section-title">Simples e direto</p>
-    <div class="plans-grid">
-      <div class="plan-card">
-        <p class="plan-name">Gratuito</p>
-        <p class="plan-price">R$0</p>
-        <p class="plan-period">para sempre</p>
-        <ul class="plan-features">
-          <li>Até 5 pontos por rota</li>
-          <li>Distância e tempo em km</li>
-          <li>Clique no mapa ou busca por cidade</li>
-          <li class="off">Rotas ilimitadas salvas</li>
-          <li class="off">Compartilhar link da rota</li>
-        </ul>
-        <button class="plan-btn" onclick="openApp()">Começar grátis</button>
-      </div>
-      <div class="plan-card featured">
-        <div class="plan-badge">Mais popular</div>
-        <p class="plan-name">Pro</p>
-        <p class="plan-price">R$19,90</p>
-        <p class="plan-period">por mês · cancele quando quiser</p>
-        <ul class="plan-features">
-          <li>Pontos ilimitados por rota</li>
-          <li>Distância e tempo em km</li>
-          <li>Clique no mapa ou busca por cidade</li>
-          <li>Rotas ilimitadas salvas</li>
-          <li>Compartilhar link da rota</li>
-        </ul>
-        <button class="plan-btn gold" onclick="startCheckout()">Assinar Pro — R$19,90/mês</button>
-      </div>
-    </div>
+  <div class="hero-cta">
+    <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app-view">
   <div class="app-layout">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <h2>Pontos da rota</h2>
         <div class="search-wrap">
@@ -190,88 +179,135 @@
         <div class="stat-box"><div class="stat-lbl">Distância total</div><div class="stat-val" id="stat-km">— km</div></div>
         <div class="stat-box"><div class="stat-lbl">Tempo est.</div><div class="stat-val" id="stat-time">—</div></div>
         <div class="stat-box"><div class="stat-lbl">Pontos</div><div class="stat-val" id="stat-pts">0</div></div>
-        <div class="stat-box"><div class="stat-lbl">Limite</div><div class="stat-val" id="stat-limit" style="color:var(--gold)">5 pts</div></div>
+        <div class="stat-box"><div class="stat-lbl">Limite</div><div class="stat-val" id="stat-limit" style="color:var(--gold)">3 pts</div></div>
       </div>
       <div class="points-area" id="points-area">
         <div class="empty-state"><span class="empty-icon">📍</span>Adicione o primeiro ponto buscando uma cidade ou clicando no mapa.</div>
       </div>
       <div class="sidebar-footer">
-        <div class="paywall-banner" id="paywall-banner">
-          <p>Você atingiu o limite de <strong>5 pontos</strong> no plano gratuito.</p>
-          <button class="btn btn-gold" style="width:100%;padding:9px;font-size:13px" onclick="openUpgradeModal()">Ver plano Pro — R$19,90/mês</button>
+        <div class="limit-banner" id="limit-banner">
+          <p id="limit-banner-text">Crie uma conta grátis para adicionar até <strong>30 pontos</strong> na sua rota.</p>
+          <button class="btn btn-gold" style="width:100%;padding:8px;font-size:13px" id="limit-banner-btn" onclick="openLoginModal()">Criar conta grátis</button>
         </div>
+        <button class="btn btn-primary" style="width:100%;padding:8px;font-size:13px" onclick="exportImage()">📸 Exportar roteiro</button>
         <button class="clear-link" onclick="clearAll()">🗑 Limpar rota</button>
-        <button class="btn btn-primary" style="width:100%;padding:9px;font-size:13px;margin-top:4px" onclick="exportImage()">📸 Exportar imagem da rota</button>
       </div>
     </div>
     <div class="map-area">
       <div id="map-canvas"></div>
       <div class="loading-overlay" id="loading"><div class="spinner"></div> Calculando...</div>
-      <div class="map-hint">Clique no mapa para adicionar pontos</div>
+      <div class="map-hint" id="map-hint">Clique no mapa para adicionar pontos</div>
     </div>
   </div>
 </div>
 
+<button class="mobile-sidebar-toggle" id="mobile-toggle" onclick="toggleSidebar()" title="Ver pontos">📍</button>
+
+<!-- MODAL AUTH -->
 <div class="modal-backdrop" id="modal-auth">
   <div class="modal">
     <h3 id="auth-title">Entrar</h3>
-    <p id="auth-desc">Acesse sua conta para salvar suas rotas.</p>
-    <input class="modal-input" type="email" id="auth-email" placeholder="seu@email.com" />
-    <input class="modal-input" type="password" id="auth-pass" placeholder="Senha" />
+    <p class="modal-sub" id="auth-desc">Acesse sua conta para adicionar até 30 pontos na rota.</p>
+    <div class="modal-success" id="auth-success"></div>
+
+    <!-- Login fields -->
+    <div id="login-fields">
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input class="modal-input" type="email" id="auth-email" placeholder="seu@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input class="modal-input" type="password" id="auth-pass" placeholder="Sua senha" />
+      </div>
+    </div>
+
+    <!-- Register extra fields -->
+    <div id="register-fields" style="display:none">
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input class="modal-input" type="email" id="reg-email" placeholder="seu@email.com" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">País</label>
+          <select class="modal-input" id="reg-country">
+            <option value="">Selecione...</option>
+            <option value="BR">🇧🇷 Brasil</option>
+            <option value="AR">🇦🇷 Argentina</option>
+            <option value="UY">🇺🇾 Uruguai</option>
+            <option value="PY">🇵🇾 Paraguai</option>
+            <option value="CL">🇨🇱 Chile</option>
+            <option value="BO">🇧🇴 Bolívia</option>
+            <option value="PE">🇵🇪 Peru</option>
+            <option value="CO">🇨🇴 Colômbia</option>
+            <option value="PT">🇵🇹 Portugal</option>
+            <option value="OTHER">🌍 Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input class="modal-input" type="tel" id="reg-whatsapp" placeholder="+55 11 99999-9999" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input class="modal-input" type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar senha</label>
+        <input class="modal-input" type="password" id="reg-pass2" placeholder="Repita a senha" />
+      </div>
+    </div>
+
     <p class="modal-error" id="auth-error"></p>
     <div class="modal-btns">
       <button class="btn btn-ghost" onclick="closeModal('modal-auth')">Cancelar</button>
       <button class="btn btn-primary" id="auth-submit-btn" onclick="submitAuth()">Entrar</button>
     </div>
-    <p class="modal-switch" id="auth-switch">Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a></p>
+    <div class="divider">ou</div>
+    <p class="modal-switch" id="auth-switch">Não tem conta? <a onclick="toggleAuthMode()">Criar conta grátis</a></p>
   </div>
 </div>
 
-<div class="modal-backdrop" id="modal-upgrade">
-  <div class="modal">
-    <h3>⚡ Upgrade para Pro</h3>
-    <p>Desbloqueie tudo para planejar rotas sem limites.</p>
-    <ul class="upgrade-features">
-      <li>Pontos ilimitados em qualquer rota</li>
-      <li>Salve e acesse suas rotas de qualquer lugar</li>
-      <li>Compartilhe rotas com um link</li>
-    </ul>
-    <div class="modal-btns">
-      <button class="btn btn-ghost" onclick="closeModal('modal-upgrade')">Agora não</button>
-      <button class="btn btn-gold" onclick="startCheckout()">Assinar — R$19,90/mês</button>
-    </div>
+<!-- MODAL EMAIL CONFIRM -->
+<div class="modal-backdrop" id="modal-confirm">
+  <div class="modal" style="text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">📧</div>
+    <h3>Confirme seu e-mail</h3>
+    <p class="modal-sub" style="margin-top:8px">Enviamos um link de confirmação para o seu e-mail. Clique no link para ativar sua conta e depois entre normalmente.</p>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="closeModal('modal-confirm');openLoginModal()">Já confirmei, entrar</button>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px">Não recebeu? Verifique a caixa de spam.</p>
   </div>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://rzovdzhllmzgdmtaxqij.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_eVYOnLpwqhJc63u2DKHO-w_MrSM9F3u';
-const MERCADOPAGO_LINK = 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_PLANO_ID';
-const FREE_LIMIT = 9999;
-const COLORS = ['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
+const SUPABASE_URL='https://rzovdzhllmzgdmtaxqij.supabase.co';
+const SUPABASE_KEY='sb_publishable_eVYOnLpwqhJc63u2DKHO-w_MrSM9F3u';
+const LIMIT_GUEST=3;
+const LIMIT_USER=30;
+const COLORS=['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
+const COLORS_HEX=['e94560','f5a623','1D9E75','378ADD','a855f7','0ea5e9','f59e0b','10b981','ef4444','8b5cf6'];
 
-let map, geocoder, dirSvc, dirRender;
-let waypoints = [], markers = [];
-let user = null, isPro = false, authMode = 'login', acTimeout = null;
+let map,geocoder,dirSvc,dirRender;
+let waypoints=[],markers=[];
+let user=null,authMode='login',acTimeout=null;
 
-async function sbFetch(path, opts={}) {
-  const r = await fetch(SUPABASE_URL+path, {...opts, headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(user?.access_token||SUPABASE_KEY),'Content-Type':'application/json',...opts.headers}});
+function getLimit(){return user?LIMIT_USER:LIMIT_GUEST;}
+
+async function sbFetch(path,opts={}){
+  const r=await fetch(SUPABASE_URL+path,{...opts,headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(user?.access_token||SUPABASE_KEY),'Content-Type':'application/json',...opts.headers}});
   return r.json();
 }
-async function sbLogin(email,pass) {
-  const d = await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password:pass})});
-  if(d.error||d.error_code) throw new Error(d.error_description||d.message||d.error);
+async function sbLogin(email,pass){
+  const d=await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password:pass})});
+  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'Erro ao entrar');
   return {access_token:d.access_token,user:d.user};
 }
-async function sbRegister(email,pass) {
-  const d = await sbFetch('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password:pass})});
-  if(d.error||d.error_code) throw new Error(d.error_description||d.message||d.error);
-  return {access_token:d.access_token,user:d.user};
-}
-async function checkPro() {
-  if(!user) return false;
-  const d = await sbFetch('/rest/v1/subscriptions?user_id=eq.'+user.user.id+'&status=eq.active&select=id');
-  return Array.isArray(d)&&d.length>0;
+async function sbRegister(email,pass,meta){
+  const d=await sbFetch('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password:pass,data:meta})});
+  if(d.error||d.error_code)throw new Error(d.error_description||d.message||'Erro ao cadastrar');
+  return d;
 }
 
 function openModal(id){document.getElementById(id).classList.add('open');}
@@ -282,58 +318,101 @@ function setUserUI(){
   const li=!!user;
   document.getElementById('btn-login').style.display=li?'none':'';
   document.getElementById('btn-logout').style.display=li?'':'none';
-  document.getElementById('plan-badge').textContent=isPro?'Pro ⚡':'Gratuito';
-  document.getElementById('plan-badge').className='badge-plan'+(isPro?' pro':'');
-  document.getElementById('btn-upgrade').style.display=(li&&!isPro)?'':'none';
-  document.getElementById('stat-limit').textContent=isPro?'∞':FREE_LIMIT+' pts';
+  const badge=document.getElementById('plan-badge');
+  if(li){badge.textContent=user.user.email.split('@')[0];badge.style.color='var(--gold)';}
+  else{badge.textContent='Visitante';badge.style.color='';}
+  document.getElementById('stat-limit').textContent=getLimit()+' pts';
+  updateLimitBanner();
+}
+
+function updateLimitBanner(){
+  const banner=document.getElementById('limit-banner');
+  const limit=getLimit();
+  if(waypoints.length>=limit){
+    banner.classList.add('visible');
+    if(!user){
+      document.getElementById('limit-banner-text').innerHTML='Crie uma conta grátis para adicionar até <strong>30 pontos</strong>.';
+      document.getElementById('limit-banner-btn').textContent='Criar conta grátis';
+      document.getElementById('limit-banner-btn').onclick=openLoginModal;
+    } else {
+      document.getElementById('limit-banner-text').innerHTML='Você atingiu o limite de <strong>30 pontos</strong>.';
+      document.getElementById('limit-banner-btn').style.display='none';
+    }
+  } else {
+    banner.classList.remove('visible');
+  }
 }
 
 function openApp(){
   document.getElementById('landing').style.display='none';
   document.getElementById('app-view').style.display='block';
-  if(window._mapReady) startMap(); else window._mapInitCb=startMap;
+  document.getElementById('mobile-toggle').style.display='flex';
+  if(window._mapReady)startMap();else window._mapInitCb=startMap;
 }
 
 function openLoginModal(){authMode='login';renderAuth();openModal('modal-auth');}
-function openUpgradeModal(){openModal('modal-upgrade');}
 
 function renderAuth(){
-  const l=authMode==='login';
-  document.getElementById('auth-title').textContent=l?'Entrar':'Criar conta';
-  document.getElementById('auth-desc').textContent=l?'Acesse sua conta para salvar suas rotas.':'Crie uma conta gratuita agora.';
-  document.getElementById('auth-submit-btn').textContent=l?'Entrar':'Criar conta';
-  document.getElementById('auth-switch').innerHTML=l?'Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a>':'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+  const isLogin=authMode==='login';
+  document.getElementById('auth-title').textContent=isLogin?'Entrar':'Criar conta grátis';
+  document.getElementById('auth-desc').textContent=isLogin?'Acesse sua conta para adicionar até 30 pontos na rota.':'Cadastre-se gratuitamente e planeje rotas com até 30 pontos.';
+  document.getElementById('auth-submit-btn').textContent=isLogin?'Entrar':'Criar conta';
+  document.getElementById('login-fields').style.display=isLogin?'block':'none';
+  document.getElementById('register-fields').style.display=isLogin?'none':'block';
+  document.getElementById('auth-switch').innerHTML=isLogin
+    ?'Não tem conta? <a onclick="toggleAuthMode()">Criar conta grátis</a>'
+    :'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
   document.getElementById('auth-error').textContent='';
+  document.getElementById('auth-success').style.display='none';
 }
+
 function toggleAuthMode(){authMode=authMode==='login'?'register':'login';renderAuth();}
 
 async function submitAuth(){
-  const email=document.getElementById('auth-email').value.trim();
-  const pass=document.getElementById('auth-pass').value;
   const err=document.getElementById('auth-error');
   err.textContent='';
-  if(!email||!pass){err.textContent='Preencha e-mail e senha.';return;}
-  try{
-    const d=authMode==='login'?await sbLogin(email,pass):await sbRegister(email,pass);
-    user=d;isPro=await checkPro();setUserUI();closeModal('modal-auth');openApp();
-  }catch(e){err.textContent=e.message;}
+  if(authMode==='login'){
+    const email=document.getElementById('auth-email').value.trim();
+    const pass=document.getElementById('auth-pass').value;
+    if(!email||!pass){err.textContent='Preencha e-mail e senha.';return;}
+    try{
+      const d=await sbLogin(email,pass);
+      user=d;setUserUI();closeModal('modal-auth');
+      if(document.getElementById('app-view').style.display==='none')openApp();
+    }catch(e){err.textContent=e.message;}
+  } else {
+    const email=document.getElementById('reg-email').value.trim();
+    const country=document.getElementById('reg-country').value;
+    const whatsapp=document.getElementById('reg-whatsapp').value.trim();
+    const pass=document.getElementById('reg-pass').value;
+    const pass2=document.getElementById('reg-pass2').value;
+    if(!email||!country||!whatsapp||!pass){err.textContent='Preencha todos os campos.';return;}
+    if(pass.length<6){err.textContent='Senha deve ter pelo menos 6 caracteres.';return;}
+    if(pass!==pass2){err.textContent='As senhas não coincidem.';return;}
+    try{
+      await sbRegister(email,pass,{country,whatsapp});
+      closeModal('modal-auth');
+      openModal('modal-confirm');
+    }catch(e){err.textContent=e.message;}
+  }
 }
 
 function logout(){
-  user=null;isPro=false;setUserUI();
-  document.getElementById('landing').style.display='block';
+  user=null;setUserUI();
+  document.getElementById('landing').style.display='flex';
   document.getElementById('app-view').style.display='none';
+  document.getElementById('mobile-toggle').style.display='none';
   clearAll();
 }
 
-function startCheckout(){
-  if(!user){closeModal('modal-upgrade');openLoginModal();return;}
-  window.open(MERCADOPAGO_LINK+'&external_reference='+encodeURIComponent(user.user.id),'_blank');
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
 }
 
 function startMap(){
   map=new google.maps.Map(document.getElementById('map-canvas'),{
-    center:{lat:-25,lng:-52},zoom:4,mapTypeId:'roadmap',disableDefaultUI:true,zoomControl:true,
+    center:{lat:-25,lng:-52},zoom:4,mapTypeId:'roadmap',
+    disableDefaultUI:true,zoomControl:true,
     styles:[
       {featureType:'poi',stylers:[{visibility:'off'}]},
       {featureType:'transit',stylers:[{visibility:'off'}]},
@@ -354,9 +433,7 @@ function startMap(){
 }
 
 function canAdd(){
-  if(waypoints.length>=(isPro?Infinity:FREE_LIMIT)){
-    document.getElementById('paywall-banner').classList.add('visible');return false;
-  }
+  if(waypoints.length>=getLimit()){updateLimitBanner();return false;}
   return true;
 }
 
@@ -367,11 +444,13 @@ function addPoint(name,lat,lng){
   markers.push(new google.maps.Marker({
     position:{lat,lng},map,zIndex:10+idx,
     label:{text:String(idx+1),color:'#0f0f1a',fontSize:'11px',fontWeight:'700'},
-    icon:{path:google.maps.SymbolPath.CIRCLE,scale:15,fillColor:color,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5}
+    icon:{path:google.maps.SymbolPath.CIRCLE,scale:14,fillColor:color,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5}
   }));
   map.panTo({lat,lng});
-  if(waypoints.length===1) map.setZoom(10);
+  if(waypoints.length===1)map.setZoom(10);
   recalc();
+  // Auto-open sidebar on mobile
+  if(window.innerWidth<=900)document.getElementById('sidebar').classList.add('open');
 }
 
 function removePoint(idx){
@@ -379,18 +458,16 @@ function removePoint(idx){
   markers.forEach((m,i)=>{
     const c=COLORS[i%COLORS.length];
     m.setLabel({text:String(i+1),color:'#0f0f1a',fontSize:'11px',fontWeight:'700'});
-    m.setIcon({path:google.maps.SymbolPath.CIRCLE,scale:15,fillColor:c,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5});
+    m.setIcon({path:google.maps.SymbolPath.CIRCLE,scale:14,fillColor:c,fillOpacity:1,strokeColor:'#fff',strokeWeight:2.5});
     waypoints[i].color=c;
   });
-  document.getElementById('paywall-banner').classList.remove('visible');
-  recalc();
+  updateLimitBanner();recalc();
 }
 
 function clearAll(){
   waypoints=[];markers.forEach(m=>m.setMap(null));markers=[];
   if(dirRender)dirRender.setDirections({routes:[]});
-  document.getElementById('paywall-banner').classList.remove('visible');
-  renderList([]);updateStats(0,0);
+  updateLimitBanner();renderList([]);updateStats(0,0);
 }
 
 function recalc(){
@@ -405,11 +482,7 @@ function recalc(){
       dirRender.setDirections(res);
       window._lastDirectionsResult=(function(){
         var pts=[];
-        res.routes[0].legs.forEach(function(leg){
-          leg.steps.forEach(function(step){
-            step.path.forEach(function(p){pts.push(p.lat()+','+p.lng());});
-          });
-        });
+        res.routes[0].legs.forEach(function(leg){leg.steps.forEach(function(step){step.path.forEach(function(p){pts.push(p.lat()+','+p.lng());});});});
         return pts;
       })();
       const legs=res.routes[0].legs;
@@ -438,6 +511,7 @@ function renderList(segs){
   a.innerHTML=h;
 }
 
+// SEARCH
 document.getElementById('search-input').addEventListener('input',e=>{
   clearTimeout(acTimeout);
   const val=e.target.value.trim(),list=document.getElementById('autocomplete-list');
@@ -455,11 +529,9 @@ document.getElementById('search-input').addEventListener('input',e=>{
     });
   },280);
 });
-
 document.getElementById('search-input').addEventListener('keydown',e=>{
   if(e.key==='Enter'){const v=document.getElementById('search-input').value.trim();if(v){document.getElementById('autocomplete-list').style.display='none';geoAdd(v);document.getElementById('search-input').value='';}}
 });
-
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))document.getElementById('autocomplete-list').style.display='none';});
 
 function geoAdd(q){
@@ -471,38 +543,23 @@ function geoAdd(q){
   });
 }
 
+// EXPORT
 function exportImage(){
   if(waypoints.length===0){alert('Adicione pontos na rota antes de exportar!');return;}
-  const COLORS=['#e94560','#f5a623','#1D9E75','#378ADD','#a855f7','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6'];
   const totalKm=document.getElementById('stat-km').textContent;
   const totalTime=document.getElementById('stat-time').textContent;
   const pts=waypoints.length;
   const segs=Array.from(document.querySelectorAll('.seg-arrow span')).map(function(s){return s.textContent;});
-
-  // Capture the actual live map from screen using html2canvas
-  const mapEl=document.getElementById('map-canvas');
-
-  // Build points list HTML
   let listHtml='';
   waypoints.forEach(function(p,i){
     const name=p.name.replace(/,.*$/,'').substring(0,22);
     const country=p.name.split(',').slice(-1)[0].trim().substring(0,12);
     const dist=segs[i]?'<span style="color:#e94560;font-size:10px;white-space:nowrap">↓ '+segs[i]+'</span>':'';
-    listHtml+='<tr>'
-      +'<td style="padding:3px 5px 3px 0;vertical-align:middle">'
-        +'<span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:'+COLORS[i%10]+';align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0a0a1a">'+(i+1)+'</span>'
-      +'</td>'
-      +'<td style="padding:3px 4px;font-size:11px;color:#1a1a2e;line-height:1.3;width:100%">'
-        +'<b>'+name+'</b><span style="color:#888;font-size:9px"> — '+country+'</span>'
-      +'</td>'
-      +'<td style="padding:3px 0 3px 6px;text-align:right">'+dist+'</td>'
-    +'</tr>';
+    listHtml+='<tr><td style="padding:3px 5px 3px 0;vertical-align:middle"><span style="display:inline-flex;width:20px;height:20px;border-radius:50%;background:'+COLORS[i%10]+';align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0a0a1a">'+(i+1)+'</span></td><td style="padding:3px 4px;font-size:11px;color:#1a1a2e;line-height:1.3;width:100%"><b>'+name+'</b><span style="color:#888;font-size:9px"> — '+country+'</span></td><td style="padding:3px 0 3px 6px;text-align:right">'+dist+'</td></tr>';
   });
-
-  // Use html2canvas to capture live map then build export page
+  const mapEl=document.getElementById('map-canvas');
   html2canvas(mapEl,{useCORS:true,allowTaint:true,scale:1.5,logging:false}).then(function(mapCanvas){
     const mapDataUrl=mapCanvas.toDataURL('image/jpeg',0.92);
-
     const w=window.open('','_blank');
     w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MapRoots Rota</title>');
     w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#f0f4f8}.page{width:1100px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12)}.body{display:flex}.sidebar{width:230px;flex-shrink:0;background:#f7f9fc;border-right:1px solid #e0e6ef;display:flex;flex-direction:column}.map-area{flex:1}.map-area img{width:100%;height:100%;object-fit:cover;display:block;min-height:500px}.footer{background:#16213e;padding:8px 20px;text-align:center;font-size:10px;color:#8a9bb5}@media print{body{background:#fff}.page{box-shadow:none;border-radius:0;width:100%;margin:0}#btnbar{display:none}}</style>');
@@ -510,49 +567,19 @@ function exportImage(){
     w.document.write('<div id="btnbar" style="text-align:center;padding:12px;display:flex;gap:10px;justify-content:center">');
     w.document.write('<button onclick="window.print()" style="background:#e94560;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">🖨️ Salvar PDF</button>');
     w.document.write('<button id="dlbtn" style="background:#1D9E75;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer">⬇️ Baixar Imagem</button>');
-    w.document.write('<button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer">✕ Fechar</button>');
-    w.document.write('</div>');
+    w.document.write('<button onclick="window.close()" style="background:#eee;color:#333;border:none;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer">✕ Fechar</button></div>');
     w.document.write('<div class="page" id="exportpage">');
-    // Header
-    w.document.write('<div style="background:#1a1a2e;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">');
-    w.document.write('<div style="font-size:18px;font-weight:700;color:#fff">Map<span style="color:#e94560">Roots</span> — Roteiro da Viagem</div>');
-    w.document.write('<div style="font-size:12px;color:#f5a623;display:flex;gap:16px"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div>');
-    w.document.write('</div>');
+    w.document.write('<div style="background:#1a1a2e;padding:14px 20px;display:flex;align-items:center;justify-content:space-between"><div style="font-size:18px;font-weight:700;color:#fff">Map<span style="color:#e94560">Roots</span> — Roteiro da Viagem</div><div style="font-size:12px;color:#f5a623;display:flex;gap:16px"><span>📍 '+pts+' pontos</span><span>📏 '+totalKm+'</span><span>⏱ '+totalTime+'</span></div></div>');
     w.document.write('<div class="body">');
-    // Sidebar
-    w.document.write('<div class="sidebar">');
-    w.document.write('<div style="background:#1a1a2e;padding:14px 16px">');
-    w.document.write('<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#8a9bb5;margin-bottom:10px">Resumo da viagem</div>');
-    w.document.write('<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">');
-    w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">DISTÂNCIA</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalKm+'</div></div>');
-    w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">TEMPO EST.</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalTime+'</div></div>');
-    w.document.write('<div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;grid-column:span 2"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">PONTOS NA ROTA</div><div style="font-size:15px;font-weight:700;color:#e94560">'+pts+' destinos</div></div>');
-    w.document.write('</div></div>');
-    w.document.write('<div style="padding:12px 14px;overflow-y:auto;flex:1">');
-    w.document.write('<div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px">Roteiro</div>');
-    w.document.write('<table style="width:100%;border-collapse:collapse">'+listHtml+'</table>');
-    w.document.write('</div></div>');
-    // Map — captured from screen
-    w.document.write('<div class="map-area"><img src="'+mapDataUrl+'" style="width:100%;display:block" /></div>');
-    w.document.write('</div>');
-    w.document.write('<div class="footer">Gerado por MapRoots — maproots.vercel.app</div>');
-    w.document.write('</div>');
-    // Download button
+    w.document.write('<div class="sidebar"><div style="background:#1a1a2e;padding:14px 16px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#8a9bb5;margin-bottom:10px">Resumo da viagem</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">DISTÂNCIA</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalKm+'</div></div><div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">TEMPO EST.</div><div style="font-size:15px;font-weight:700;color:#f5a623">'+totalTime+'</div></div><div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;grid-column:span 2"><div style="font-size:9px;color:#8a9bb5;margin-bottom:2px">PONTOS NA ROTA</div><div style="font-size:15px;font-weight:700;color:#e94560">'+pts+' destinos</div></div></div></div>');
+    w.document.write('<div style="padding:12px 14px;overflow-y:auto;flex:1"><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px">Roteiro</div><table style="width:100%;border-collapse:collapse">'+listHtml+'</table></div></div>');
+    w.document.write('<div class="map-area"><img src="'+mapDataUrl+'" style="width:100%;display:block" /></div></div>');
+    w.document.write('<div class="footer">Gerado por MapRoots — maproots.vercel.app</div></div>');
     w.document.write('<sc'+'ript src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></sc'+'ript>');
-    w.document.write('<sc'+'ript>');
-    w.document.write('document.getElementById("dlbtn").onclick=function(){');
-    w.document.write('  var bar=document.getElementById("btnbar");bar.style.display="none";');
-    w.document.write('  html2canvas(document.getElementById("exportpage"),{scale:2}).then(function(c){');
-    w.document.write('    bar.style.display="flex";');
-    w.document.write('    var a=document.createElement("a");a.download="maproots-rota.png";a.href=c.toDataURL("image/png");a.click();');
-    w.document.write('  }).catch(function(){bar.style.display="flex";});');
-    w.document.write('};');
-    w.document.write('</sc'+'ript>');
+    w.document.write('<sc'+'ript>document.getElementById("dlbtn").onclick=function(){var bar=document.getElementById("btnbar");bar.style.display="none";html2canvas(document.getElementById("exportpage"),{scale:2}).then(function(c){bar.style.display="flex";var a=document.createElement("a");a.download="maproots-rota.png";a.href=c.toDataURL("image/png");a.click();}).catch(function(){bar.style.display="flex";});};</sc'+'ript>');
     w.document.write('</body></html>');
     w.document.close();
-  }).catch(function(){
-    alert('Erro ao capturar o mapa. Tente usar Salvar PDF.');
-  });
+  }).catch(function(){alert('Erro ao capturar o mapa.');});
 }
 
 function initMap(){window._mapReady=true;if(window._mapInitCb)window._mapInitCb();}
