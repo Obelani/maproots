@@ -1295,6 +1295,25 @@ body{font-family:'Inter',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;font-
 .gastro-grid{display:flex;flex-wrap:wrap;gap:6px}
 .gastro-item{background:linear-gradient(135deg,#fdf2f8,#fce7f3);border:1px solid #fbcfe8;border-radius:8px;padding:5px 12px;font-size:12px;color:#9d174d;font-weight:500}
 
+/* DIAS ROTEIRO */
+.dias-roteiro{display:flex;flex-direction:column;gap:12px}
+.dia-card{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden}
+.dia-header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.dia-num{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;background:#e94560;color:#fff;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.dia-title{font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:0.5px}
+.dia-body{display:flex;flex-direction:column}
+.periodo{display:flex;gap:0;border-bottom:1px solid #f3f4f6}
+.periodo:last-child{border-bottom:none}
+.periodo-icon{width:48px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:14px 0 14px;gap:4px;flex-shrink:0;border-right:1px solid #f3f4f6}
+.periodo-emoji{font-size:18px;line-height:1}
+.periodo-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.8px;color:#9ca3af;font-weight:600;writing-mode:horizontal-tb}
+.periodo-content{padding:12px 14px;flex:1}
+.periodo-text{font-size:13px;color:#374151;line-height:1.55}
+.periodo-manha .periodo-icon{background:#fffbeb}
+.periodo-tarde .periodo-icon{background:#eff6ff}
+.periodo-noite .periodo-icon{background:#1a1a2e}
+.periodo-noite .periodo-lbl{color:#6b7280}
+
 /* DICA */
 .dica-box{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;border-radius:10px;padding:12px 16px;display:flex;gap:10px}
 .dica-icon{font-size:18px;flex-shrink:0;margin-top:1px}
@@ -1390,7 +1409,37 @@ body{font-family:'Inter',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;font-
     if(c.tipo==='passagem'){
       html+=`<div class="city-transit">&#128663; Ponto de passagem &mdash; continue a viagem.</div>`;
     } else {
-      if(c.atracoes&&c.atracoes.length){
+      // ── ROTEIRO DIA A DIA (cidades com dias de estadia) ──
+      if(c.dias_roteiro&&c.dias_roteiro.length){
+        html+=`<div class="section">
+          <div class="section-header"><div class="section-icon atracoes">&#128197;</div><div class="section-title">Roteiro dia a dia</div></div>
+          <div class="dias-roteiro">`;
+        c.dias_roteiro.forEach(function(d){
+          html+=`<div class="dia-card">
+            <div class="dia-header">
+              <span class="dia-num">Dia ${d.dia}</span>
+              <span class="dia-title">Programa completo</span>
+            </div>
+            <div class="dia-body">
+              <div class="periodo periodo-manha">
+                <div class="periodo-icon"><div class="periodo-emoji">&#9728;</div><div class="periodo-lbl">Manh&atilde;</div></div>
+                <div class="periodo-content"><div class="periodo-text">${d.manha}</div></div>
+              </div>
+              <div class="periodo periodo-tarde">
+                <div class="periodo-icon"><div class="periodo-emoji">&#9925;</div><div class="periodo-lbl">Tarde</div></div>
+                <div class="periodo-content"><div class="periodo-text">${d.tarde}</div></div>
+              </div>
+              <div class="periodo periodo-noite">
+                <div class="periodo-icon"><div class="periodo-emoji">&#127769;</div><div class="periodo-lbl">Noite</div></div>
+                <div class="periodo-content"><div class="periodo-text" style="color:#e2e8f0">${d.noite}</div></div>
+              </div>
+            </div>
+          </div>`;
+        });
+        html+=`</div></div>`;
+      }
+      // ── ATRAÇÕES (pernoite) ──
+      else if(c.atracoes&&c.atracoes.length){
         html+=`<div class="section">
           <div class="section-header"><div class="section-icon atracoes">&#127963;</div><div class="section-title">O que visitar</div></div>
           <div class="atracoes-list">`;
@@ -1401,7 +1450,7 @@ body{font-family:'Inter',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;font-
       }
       if(c.gastronomia&&c.gastronomia.length){
         html+=`<div class="section">
-          <div class="section-header"><div class="section-icon gastro">&#127869;</div><div class="section-title">Gastronomia</div></div>
+          <div class="section-header"><div class="section-icon gastro">&#127869;</div><div class="section-title">Gastronomia t&iacute;pica</div></div>
           <div class="gastro-grid">`;
         c.gastronomia.forEach(function(g){html+=`<span class="gastro-item">&#127860; ${g}</span>`;});
         html+=`</div></div>`;
