@@ -320,7 +320,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
       </div>
       <div class="sidebar-footer">
         <button class="btn btn-primary" style="width:100%;padding:11px;font-size:14px;font-weight:600" onclick="exportImage()">📸 Exportar roteiro</button>
-        <button class="btn btn-ghost" style="width:100%;padding:10px;font-size:13px;border-color:var(--gold);color:var(--gold)" onclick="gerarRoteiroPDF()">📄 Gerar Roteiro de Viagem</button>
+        <!-- <button class="btn btn-ghost" style="width:100%;padding:10px;font-size:13px;border-color:var(--gold);color:var(--gold)" onclick="gerarRoteiroPDF()">📄 Gerar Roteiro de Viagem</button> -->
         <button class="btn btn-ghost" style="width:100%;padding:9px;font-size:13px" onclick="shareRoute()">🔗 Compartilhar rota</button>
         <button class="clear-link" onclick="clearAll()">🗑 Limpar rota</button>
       </div>
@@ -828,7 +828,7 @@ function renderList(segs,routeError){
   // Lista mobile: pontos + botões de ação no final (scroll único)
   const footerBtns=`<div class="mobile-footer-btns">
     <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;font-weight:700" onclick="exportImage()">📸 Exportar roteiro</button>
-    <button class="btn btn-ghost" style="width:100%;padding:11px;font-size:14px;border-color:var(--gold);color:var(--gold)" onclick="gerarRoteiroPDF()">📄 Gerar Roteiro de Viagem</button>
+    <!-- <button class="btn btn-ghost" style="width:100%;padding:11px;font-size:14px;border-color:var(--gold);color:var(--gold)" onclick="gerarRoteiroPDF()">📄 Gerar Roteiro de Viagem</button> -->
     <button class="btn btn-ghost" style="width:100%;padding:10px;font-size:13px" onclick="shareRoute()">🔗 Compartilhar rota</button>
     <button class="btn btn-ghost" style="width:100%;padding:9px;font-size:13px" onclick="clearAll()">🗑 Limpar rota</button>
   </div>`;
