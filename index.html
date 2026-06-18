@@ -4,6 +4,14 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MapRoots — Planejador de Rotas</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EMWDJNHCSX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-EMWDJNHCSX');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
@@ -487,6 +495,7 @@ function setUserUI(){
 function updateLimitBanner(){}
 
 function openApp(){
+  if(typeof gtag!=='undefined') gtag('event','comecar_rota',{event_category:'engajamento'});
   document.getElementById('landing').style.display='none';
   const appView=document.getElementById('app-view');
   appView.style.display='flex';
@@ -886,6 +895,7 @@ function geoAdd(q){
 
 // EXPORT
 function exportImage(){
+  if(typeof gtag!=="undefined") gtag("event","exportar_imagem",{event_category:"engajamento",pontos:waypoints.length});
   if(waypoints.length===0){alert('Adicione pontos na rota antes de exportar!');return;}
   const MAPS_KEY='AIzaSyAr1Q-jwFyMH5Qwc8XPlzcvH_HJCmh1hwM';
   const COLORS_HEX=['e94560','f5a623','1D9E75','378ADD','a855f7','0ea5e9','f59e0b','10b981','ef4444','8b5cf6'];
@@ -1112,6 +1122,7 @@ function loadMyRoute(){
 }
 
 function _loadParsedRoute(raw,fmt,save){
+  if(typeof gtag!=="undefined") gtag("event","rota_aberta_link",{event_category:"engajamento"});
   function revGeo(pts,cb){
     let done=0;showLoading(true);
     pts.forEach(function(p,i){
@@ -1160,6 +1171,7 @@ function _addAllPoints(pts){
   pts.forEach(function(p){
     const idx=waypoints.length,color=COLORS[idx%COLORS.length];
     waypoints.push({name:p.name,lat:p.lat,lng:p.lng,color:color,stay:p.stay||'passagem',days:p.days||1});
+  if(typeof gtag!=='undefined') gtag('event','ponto_adicionado',{event_category:'rota',total_pontos:waypoints.length});
     markers.push(new google.maps.Marker({
       position:{lat:p.lat,lng:p.lng},map,zIndex:10+idx,
       label:{text:String(idx+1),color:'#0f0f1a',fontSize:'11px',fontWeight:'700'},
@@ -1200,6 +1212,7 @@ function decodeRoute(r){
 }
 
 function shareRoute(){
+  if(typeof gtag!=="undefined") gtag("event","rota_compartilhada",{event_category:"engajamento",pontos:waypoints.length});
   if(!waypoints.length){alert('Adicione pontos na rota antes de compartilhar!');return;}
   const url=window.location.origin+window.location.pathname+'?r='+encodeRoute(waypoints);
   navigator.clipboard.writeText(url).then(function(){
