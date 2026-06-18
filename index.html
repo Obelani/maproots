@@ -195,7 +195,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   }
   #map-canvas{width:100%!important;height:100%!important}
 
-  /* Painel de pontos: ocupa o resto abaixo do mapa */
+  /* Painel de pontos: ocupa o resto abaixo do mapa — tudo num scroll único */
   .mobile-bottom-panel{
     position:absolute!important;
     top:calc(var(--mobile-topbar-h,110px) + 42vh)!important;
@@ -208,17 +208,29 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   }
   .mobile-bottom-panel[style*="display:none"]{display:none!important}
   .mobile-bottom-panel:not([style*="display:none"]){display:flex!important}
+  /* Lista + botões num único scroll */
   .mobile-points-list{
     flex:1!important;min-height:0!important;
     overflow-y:auto!important;overflow-x:hidden!important;
-    padding:8px 12px!important;
+    padding:8px 12px 20px!important;
     display:flex!important;flex-direction:column!important;gap:4px!important;
     -webkit-overflow-scrolling:touch;
     scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.15) transparent;
   }
   .mobile-points-list .point-row{flex-shrink:0!important;min-height:44px}
   .mobile-points-list .seg-arrow{flex-shrink:0!important}
-  .mobile-footer-btns{padding:10px 12px 16px!important;display:flex!important;flex-direction:column!important;gap:8px!important;flex-shrink:0!important}
+  /* Botões ficam dentro da lista, no final */
+  .mobile-footer-btns{
+    flex-shrink:0!important;
+    display:flex!important;flex-direction:column!important;
+    gap:8px!important;
+    padding:12px 0 8px!important;
+    margin-top:8px!important;
+    border-top:1px solid var(--border)!important;
+  }
+  /* Header do painel não encolhe, body ocupa o resto */
+  #mobile-bottom-panel > div:first-child{flex-shrink:0!important}
+  #mobile-panel-body{flex:1!important;min-height:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
 }
 @media(min-width:901px){
   .mobile-top-bar,.mobile-bottom-panel{display:none!important}
@@ -334,12 +346,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
       <div class="mobile-points-list" id="mobile-points-list">
         <div class="empty-state" style="padding:16px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto adicionado ainda.</div>
       </div>
-      <div class="mobile-footer-btns">
-        <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;font-weight:700" onclick="exportImage()">📸 Exportar roteiro</button>
-        <button class="btn btn-ghost" style="width:100%;padding:11px;font-size:14px;border-color:var(--gold);color:var(--gold)" onclick="gerarRoteiroPDF()">📄 Gerar Roteiro de Viagem</button>
-        <button class="btn btn-ghost" style="width:100%;padding:10px;font-size:13px" onclick="shareRoute()">🔗 Compartilhar rota</button>
-        <button class="btn btn-ghost" style="width:100%;padding:9px;font-size:13px" onclick="clearAll()">🗑 Limpar rota</button>
-      </div>
+      <!-- Botões movidos para dentro da mobile-points-list via JS -->
     </div>
   </div>
 </div>
@@ -817,7 +824,16 @@ function renderList(segs,routeError){
     if(i<segs.length)h+='<div class="seg-arrow"><div class="seg-line"></div><span>↓ '+segs[i].toLocaleString('pt-BR')+' km</span><div class="seg-line"></div></div>';
   });
   a.innerHTML=h;
-  b.innerHTML=h;
+
+  // Lista mobile: pontos + botões de ação no final (scroll único)
+  const footerBtns=`<div class="mobile-footer-btns">
+    <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;font-weight:700" onclick="exportImage()">📸 Exportar roteiro</button>
+    <button class="btn btn-ghost" style="width:100%;padding:11px;font-size:14px;border-color:var(--gold);color:var(--gold)" onclick="gerarRoteiroPDF()">📄 Gerar Roteiro de Viagem</button>
+    <button class="btn btn-ghost" style="width:100%;padding:10px;font-size:13px" onclick="shareRoute()">🔗 Compartilhar rota</button>
+    <button class="btn btn-ghost" style="width:100%;padding:9px;font-size:13px" onclick="clearAll()">🗑 Limpar rota</button>
+  </div>`;
+  b.innerHTML = h + (waypoints.length ? footerBtns : '');
+
   const panelBody=document.getElementById('mobile-panel-body');
   const panelArrow=document.getElementById('mobile-panel-arrow');
   if(panelBody&&panelBody.style.display!=='flex'){
