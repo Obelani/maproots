@@ -268,7 +268,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 <div id="app-view">
 
   <!-- MOBILE TOP BAR -->
-  <div class="mobile-top-bar" id="mobile-top-bar">
+  <div class="mobile-top-bar" id="mobile-top-bar" style="display:none">
     <div class="mobile-search-row">
       <div class="search-wrap" style="flex:1">
         <span class="search-icon">🔍</span>
@@ -319,7 +319,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   </div>
 
   <!-- MOBILE BOTTOM PANEL -->
-  <div class="mobile-bottom-panel" id="mobile-bottom-panel">
+  <div class="mobile-bottom-panel" id="mobile-bottom-panel" style="display:none">
     <div onclick="toggleMobilePanel()" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:linear-gradient(135deg,rgba(233,69,96,0.2),rgba(55,138,221,0.2));border-top:2px solid var(--accent)">
       <span style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:10px">
         <span style="background:var(--accent);width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">📍</span>
@@ -480,6 +480,11 @@ function openApp(){
   document.getElementById('landing').style.display='none';
   const appView=document.getElementById('app-view');
   appView.style.display='flex';
+  // Mostrar elementos mobile
+  const tb=document.getElementById('mobile-top-bar');
+  const bp=document.getElementById('mobile-bottom-panel');
+  if(tb)tb.style.display='';
+  if(bp)bp.style.display='';
   wakeBackend();
   if(window._mapReady && !map)startMap();
   else if(!window._mapReady)window._mapInitCb=startMap;
