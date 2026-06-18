@@ -159,16 +159,35 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 
 /* MOBILE */
 @media(max-width:900px){
-  /* App view scrolls vertically */
-  #app-view{overflow-y:auto!important;height:auto!important;min-height:calc(100vh - 53px)}
-  .app-layout{display:flex;flex-direction:column;height:auto}
+  /* App view: altura fixa = viewport menos a nav. Nada cresce além disso. */
+  #app-view{
+    overflow:hidden!important;
+    height:calc(100vh - 53px)!important;
+    max-height:calc(100vh - 53px)!important;
+    display:flex!important;
+    flex-direction:column!important;
+  }
+  /* Layout mobile: coluna — mapa em cima, painel em baixo */
+  .app-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    height:100%!important;
+    overflow:hidden!important;
+  }
   .sidebar{display:none!important}
 
-  /* Map fixed height — never changes */
-  .map-area{height:56vw;min-height:260px;max-height:380px;flex-shrink:0;position:relative}
+  /* Mapa: altura fixa, nunca muda independente do que acontece embaixo */
+  .map-area{
+    height:45vh!important;
+    min-height:220px!important;
+    max-height:45vh!important;
+    flex-shrink:0!important;
+    position:relative!important;
+    overflow:hidden!important;
+  }
   #map-canvas{width:100%;height:100%}
 
-  /* Mobile top bar */
+  /* Mobile top bar: dentro do mapa em cima */
   .mobile-top-bar{display:flex!important;flex-direction:column;background:var(--road-mid);border-bottom:1px solid var(--border);padding:10px 12px;gap:8px;position:relative;z-index:50;flex-shrink:0}
   .mobile-search-row{display:flex;gap:8px;align-items:center}
   .mobile-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -176,11 +195,32 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   .mobile-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase}
   .mobile-stat-val{font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif}
 
-  /* Mobile bottom panel — altura fixa com scroll interno */
-  .mobile-bottom-panel{display:block!important;background:var(--road-mid);border-top:none;flex-shrink:0}
-  .mobile-points-list{overflow-y:auto;height:calc(100vh - 56vw - 53px - 90px);min-height:200px;max-height:55vh;padding:8px 12px;display:flex;flex-direction:column;gap:4px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.15) transparent}
-  .mobile-points-list .point-row{flex-shrink:0;min-height:44px}
-  .mobile-points-list .seg-arrow{flex-shrink:0}
+  /* Painel de pontos: ocupa o restante da tela com scroll interno — nunca empurra o mapa */
+  .mobile-bottom-panel{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:1!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    background:var(--road-mid);
+    border-top:2px solid var(--accent);
+    min-height:120px!important;
+  }
+  .mobile-points-list{
+    flex:1!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    padding:8px 12px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:4px!important;
+    min-height:0!important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,0.15) transparent;
+  }
+  .mobile-points-list .point-row{flex-shrink:0!important;min-height:44px}
+  .mobile-points-list .seg-arrow{flex-shrink:0!important}
 }
 @media(min-width:901px){
   .mobile-top-bar,.mobile-bottom-panel{display:none!important}
@@ -284,7 +324,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
   </div>
 
   <!-- MOBILE BOTTOM PANEL -->
-  <div class="mobile-bottom-panel" id="mobile-bottom-panel" style="display:none">
+  <div class="mobile-bottom-panel" id="mobile-bottom-panel">
     <div onclick="toggleMobilePanel()" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:linear-gradient(135deg,rgba(233,69,96,0.2),rgba(55,138,221,0.2));border-top:2px solid var(--accent)">
       <span style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:10px">
         <span style="background:var(--accent);width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">📍</span>
@@ -292,7 +332,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
       </span>
       <span id="mobile-panel-arrow" style="font-size:20px;color:var(--accent);transition:transform 0.3s">▼</span>
     </div>
-    <div id="mobile-panel-body" style="display:none;flex-direction:column">
+    <div id="mobile-panel-body" style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden">
       <div class="mobile-points-list" id="mobile-points-list">
         <div class="empty-state" style="padding:16px;font-size:12px"><span class="empty-icon" style="font-size:20px;margin-bottom:6px">📍</span>Nenhum ponto adicionado ainda.</div>
       </div>
@@ -520,9 +560,13 @@ function logout(){
 function toggleMobilePanel(){
   const body=document.getElementById('mobile-panel-body');
   const arrow=document.getElementById('mobile-panel-arrow');
-  const isOpen=body.style.display==='flex';
+  const isOpen=body.style.display!=='none'&&body.style.display!=='';
   body.style.display=isOpen?'none':'flex';
-  arrow.style.transform=isOpen?'':'rotate(180deg)';
+  body.style.flexDirection='column';
+  body.style.flex=isOpen?'':'1';
+  body.style.minHeight=isOpen?'':'0';
+  body.style.overflow=isOpen?'':'hidden';
+  arrow.style.transform=isOpen?'rotate(0deg)':'rotate(180deg)';
 }
 
 function startMap(){
