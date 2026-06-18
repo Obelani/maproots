@@ -165,7 +165,27 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 .divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:12px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
+/* PLACE CARD */
+.place-card{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);width:320px;max-width:90vw;background:#1e2235;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.5);z-index:1000;overflow:hidden;border:1px solid rgba(255,255,255,0.1);animation:slideUp 0.25s ease}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+.place-card-img{width:100%;height:160px;object-fit:cover;display:block;background:#2a3050}
+.place-card-img-placeholder{width:100%;height:120px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:40px}
+.place-card-body{padding:14px 16px}
+.place-card-name{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.2}
+.place-card-type{font-size:11px;color:#8a9bb5;text-transform:capitalize;margin-bottom:8px}
+.place-card-rating{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.place-card-stars{color:#f5a623;font-size:13px}
+.place-card-rating-num{font-size:13px;font-weight:600;color:#f5a623}
+.place-card-rating-count{font-size:11px;color:#8a9bb5}
+.place-card-addr{font-size:11px;color:#8a9bb5;margin-bottom:12px;line-height:1.4}
+.place-card-btns{display:flex;gap:8px}
+.place-card-add{flex:1;background:#e94560;color:#fff;border:none;padding:9px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.place-card-add:hover{background:#ff6b81}
+.place-card-close{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:9px 14px;border-radius:8px;font-size:13px;cursor:pointer}
+.place-card-close:hover{background:rgba(255,255,255,0.14)}
+
 /* MOBILE */
+
 @media(max-width:900px){
   /* app-view: position fixed, display controlado pelo JS */
   #app-view{
@@ -604,13 +624,23 @@ function startMap(){
   map=new google.maps.Map(document.getElementById('map-canvas'),{
     center:{lat:-25,lng:-52},zoom:4,mapTypeId:'roadmap',
     disableDefaultUI:true,zoomControl:true,
-    styles:[{featureType:'poi',stylers:[{visibility:'off'}]},{featureType:'transit',stylers:[{visibility:'off'}]}]
+    styles:[{featureType:'transit',stylers:[{visibility:'off'}]}]
   });
   geocoder=new google.maps.Geocoder();
   dirSvc=new google.maps.DirectionsService();
   dirRender=new google.maps.DirectionsRenderer({suppressMarkers:true,polylineOptions:{strokeColor:'#e94560',strokeWeight:4,strokeOpacity:0.9}});
   dirRender.setMap(map);
+  placesService=new google.maps.places.PlacesService(map);
+
+  // Clique em POI do mapa — mostra card do lugar
   map.addListener('click',(e)=>{
+    // Se clicou em um POI do Google
+    if(e.placeId){
+      e.stop(); // impede comportamento padrão
+      showPlaceCard(e.placeId, e.latLng);
+      return;
+    }
+    // Clique normal no mapa — adiciona ponto
     if(!canAdd())return;
     showLoading(true);
     geocoder.geocode({location:e.latLng},(res,st)=>{
@@ -619,6 +649,80 @@ function startMap(){
     });
   });
   loadSavedRoute();
+}
+
+// Variável global do PlacesService
+let placesService=null;
+
+function showPlaceCard(placeId, latLng){
+  // Remover card anterior se existir
+  closePlaceCard();
+
+  placesService.getDetails({
+    placeId: placeId,
+    fields: ['name','rating','user_ratings_total','formatted_address','photos','types','geometry']
+  }, (place, status) => {
+    if(status !== google.maps.places.PlacesServiceStatus.OK) return;
+
+    const tipo = place.types
+      ? place.types[0].replace(/_/g,' ')
+      : 'Local';
+
+    const stars = place.rating
+      ? '★'.repeat(Math.round(place.rating)) + '☆'.repeat(5-Math.round(place.rating))
+      : '';
+
+    const card = document.createElement('div');
+    card.className = 'place-card';
+    card.id = 'place-card';
+
+    const imgHtml = place.photos && place.photos.length
+      ? `<img class="place-card-img" src="${place.photos[0].getUrl({maxWidth:640,maxHeight:320})}" alt="${place.name}">`
+      : `<div class="place-card-img-placeholder">📍</div>`;
+
+    const ratingHtml = place.rating
+      ? `<div class="place-card-rating">
+          <span class="place-card-stars">${stars}</span>
+          <span class="place-card-rating-num">${place.rating}</span>
+          <span class="place-card-rating-count">(${(place.user_ratings_total||0).toLocaleString('pt-BR')})</span>
+         </div>`
+      : '';
+
+    card.innerHTML = `
+      ${imgHtml}
+      <div class="place-card-body">
+        <div class="place-card-name">${place.name}</div>
+        <div class="place-card-type">${tipo}</div>
+        ${ratingHtml}
+        ${place.formatted_address ? `<div class="place-card-addr">📍 ${place.formatted_address}</div>` : ''}
+        <div class="place-card-btns">
+          <button class="place-card-add" onclick="addPointFromCard('${place.name.replace(/'/g,"\'")}',${place.geometry.location.lat()},${place.geometry.location.lng()})">+ Adicionar à rota</button>
+          <button class="place-card-close" onclick="closePlaceCard()">✕</button>
+        </div>
+      </div>`;
+
+    document.body.appendChild(card);
+
+    // Fechar ao clicar fora
+    setTimeout(()=>{
+      document.addEventListener('click', function handler(e){
+        if(!document.getElementById('place-card')?.contains(e.target)){
+          closePlaceCard();
+          document.removeEventListener('click', handler);
+        }
+      });
+    }, 300);
+  });
+}
+
+function closePlaceCard(){
+  const card = document.getElementById('place-card');
+  if(card) card.remove();
+}
+
+function addPointFromCard(name, lat, lng){
+  closePlaceCard();
+  addPoint(name, lat, lng);
 }
 
 function canAdd(){return true;}
