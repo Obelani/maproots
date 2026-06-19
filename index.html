@@ -831,43 +831,47 @@ function clearAll(){
 }
 
 function recalc(){
-  if(waypoints.length<2){if(dirRender)dirRender.setDirections({routes:[]});renderList([],null);updateStats(0,0);return;}
+  if(waypoints.length<2){
+    if(dirRender)dirRender.setDirections({routes:[]});
+    if(window._chunkRenderers){window._chunkRenderers.forEach(r=>r.setMap(null));window._chunkRenderers=[];}
+    renderList([],null);updateStats(0,0);return;
+  }
 
-  const MAX_WP=23; // Google permite 25 waypoints + origin + destination = 27 total; usamos 23 para segurança
+  const MAX_WP=23;
   const total=waypoints.length;
 
-  // Se cabe numa requisição só — comportamento normal
-  if(total<=MAX_WP+2){
-    _recalcSegment(waypoints,function(segs,td,tt,ok,errSt){
+  // Limpar renderers anteriores
+  if(window._chunkRenderers){
+    window._chunkRenderers.forEach(r=>r.setMap(null));
+    window._chunkRenderers=[];
+  }
+
+  // Dividir em chunks de MAX_WP+2 pontos
+  const chunks=[];
+  let i=0;
+  while(i<total-1){
+    const end=Math.min(i+MAX_WP+1,total-1);
+    chunks.push(waypoints.slice(i,end+1));
+    i=end;
+  }
+
+  showLoading(true);
+
+  // Um chunk — usa dirRender principal
+  if(chunks.length===1){
+    _routeChunk(chunks[0],dirRender,function(segs,td,tt,ok,errSt){
+      showLoading(false);
       if(ok){updateStats(td,tt);window._segs=segs;renderList(segs,null);saveRoute();}
       else{dirRender.setDirections({routes:[]});renderList([],errSt);updateStats(0,0);}
     });
     return;
   }
 
-  // Mais de 25 pontos — dividir em chunks encadeados
-  // Ex: 30 pontos → chunk1=[0..24], chunk2=[24..29] (ponto 24 é origin do chunk2)
-  showLoading(true);
-  const chunks=[];
-  let i=0;
-  while(i<total-1){
-    const end=Math.min(i+MAX_WP+1,total-1);
-    chunks.push(waypoints.slice(i,end+1));
-    i=end; // próximo chunk começa no último ponto deste
-  }
-
-  // Apagar polylines anteriores e criar novos renderers por chunk
-  if(window._chunkRenderers){
-    window._chunkRenderers.forEach(r=>r.setMap(null));
-  }
-  window._chunkRenderers=[];
-  dirRender.setDirections({routes:[]}); // limpar renderer principal
-
-  const COLORS_ROUTE=['#e94560'];
+  // Multiplos chunks
+  dirRender.setDirections({routes:[]});
   let allSegs=[];
   let totalDist=0,totalTime=0;
-  let done=0;
-  let hasError=false;
+  let done=0,hasError=false,lastErr='';
 
   chunks.forEach(function(chunk,ci){
     const renderer=new google.maps.DirectionsRenderer({
@@ -878,61 +882,33 @@ function recalc(){
     renderer.setMap(map);
     window._chunkRenderers.push(renderer);
 
-    _recalcSegment(chunk,function(segs,td,tt,ok,errSt){
+    _routeChunk(chunk,renderer,function(segs,td,tt,ok,errSt){
       done++;
       if(ok){
-        // Inserir segs na posição correta
         const offset=chunks.slice(0,ci).reduce((a,c)=>a+(c.length-1),0);
         segs.forEach(function(s,si){allSegs[offset+si]=s;});
         totalDist+=td;totalTime+=tt;
-        // Desenhar este chunk
-        // Re-chamar dirSvc para pegar o resultado e setar no renderer
-        const o2={lat:chunk[0].lat,lng:chunk[0].lng};
-        const d2={lat:chunk[chunk.length-1].lat,lng:chunk[chunk.length-1].lng};
-        const s2=chunk.slice(1,-1).map(p=>({location:new google.maps.LatLng(p.lat,p.lng),stopover:true}));
-        dirSvc.route({origin:o2,destination:d2,waypoints:s2,travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.METRIC},function(res2,st2){
-          if(st2==='OK') renderer.setDirections(res2);
-        });
-      } else {
-        hasError=true;
-      }
+      } else {hasError=true;lastErr=errSt||'ERROR';}
       if(done===chunks.length){
         showLoading(false);
-        if(!hasError){
-          window._segs=allSegs;
-          updateStats(totalDist,totalTime);
-          renderList(allSegs,null);
-          saveRoute();
-        } else {
-          renderList([],errSt||'ERROR');
-          updateStats(0,0);
-        }
+        if(!hasError){window._segs=allSegs;updateStats(totalDist,totalTime);renderList(allSegs,null);saveRoute();}
+        else{renderList([],lastErr);updateStats(0,0);}
       }
     });
   });
 }
 
-// Helper: calcula uma única requisição de rota e retorna (segs, totalDist, totalTime, ok, errStatus)
-function _recalcSegment(wps, cb){
+function _routeChunk(wps,renderer,cb){
   const o={lat:wps[0].lat,lng:wps[0].lng};
   const d={lat:wps[wps.length-1].lat,lng:wps[wps.length-1].lng};
   const s=wps.slice(1,-1).map(p=>({location:new google.maps.LatLng(p.lat,p.lng),stopover:true}));
-  if(wps.length===2){
-    // Apenas origem e destino, sem waypoints intermediários
-    dirSvc.route({origin:o,destination:d,waypoints:[],travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.METRIC},function(res,st){
-      if(st==='OK'){
-        const legs=res.routes[0].legs;
-        let td=0,tt=0;
-        const segs=legs.map(l=>{td+=l.distance.value;tt+=l.duration.value;return Math.round(l.distance.value/1000);});
-        cb(segs,td,tt,true,null);
-      } else cb([],0,0,false,st);
-    });
-    return;
-  }
-  showLoading(true);
-  dirSvc.route({origin:o,destination:d,waypoints:s,travelMode:google.maps.TravelMode.DRIVING,unitSystem:google.maps.UnitSystem.METRIC},function(res,st){
-    showLoading(false);
+  dirSvc.route({
+    origin:o,destination:d,waypoints:s,
+    travelMode:google.maps.TravelMode.DRIVING,
+    unitSystem:google.maps.UnitSystem.METRIC
+  },function(res,st){
     if(st==='OK'){
+      renderer.setDirections(res);
       const legs=res.routes[0].legs;
       let td=0,tt=0;
       const segs=legs.map(l=>{td+=l.distance.value;tt+=l.duration.value;return Math.round(l.distance.value/1000);});
@@ -942,7 +918,9 @@ function _recalcSegment(wps, cb){
         return pts;
       })();
       cb(segs,td,tt,true,null);
-    } else cb([],0,0,false,st);
+    } else {
+      cb([],0,0,false,st);
+    }
   });
 }
 
