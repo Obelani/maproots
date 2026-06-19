@@ -101,27 +101,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
 .btn-primary:hover{background:var(--accent-light)}
 
 /* LANDING */
-#landing{display:flex;flex-direction:column;align-items:center;min-height:calc(100vh - 53px);padding:0;overflow-x:hidden}
-.hero-section{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:0;width:100%;min-height:calc(100vh - 53px);position:relative}
-.hero-left{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:60px 48px 60px 64px;z-index:1}
-.hero-right{position:relative;height:100%;min-height:500px;overflow:hidden}
-.hero-right img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
-.brand-hero{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:20px}
+#landing{display:flex;flex-direction:column;align-items:center;min-height:calc(100vh - 53px);padding:0;overflow:hidden}
+.hero-section{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px 40px;position:relative;width:100%}
+.brand-hero{display:flex;flex-direction:column;align-items:center;margin-bottom:24px}
 .brand-logo-big{display:flex;align-items:center;gap:16px;margin-bottom:8px}
 .brand-map-icon{font-size:clamp(48px,8vw,72px);line-height:1;filter:drop-shadow(0 4px 16px rgba(233,69,96,0.3))}
 .brand-name{font-family:'Space Grotesk',sans-serif;font-size:clamp(42px,9vw,86px);font-weight:700;letter-spacing:-2px;color:var(--white);line-height:1}
 .brand-name em{font-style:normal;color:var(--accent)}
 .brand-tagline{font-size:13px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-weight:500}
 .hero-tag{font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
-@media(max-width:900px){
-  .hero-section{grid-template-columns:1fr;min-height:auto}
-  .hero-left{align-items:center;text-align:center;padding:48px 24px 32px}
-  .hero-right{min-height:260px;max-height:320px}
-  .brand-hero{align-items:center}
-}
 h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,5vw,58px);font-weight:700;line-height:1.1;letter-spacing:-1px;max-width:680px;margin:0 auto 18px}
 h1 em{font-style:normal;color:var(--accent)}
-.hero-sub{font-size:16px;color:var(--muted);max-width:460px;line-height:1.6;margin:0 0 28px}
+.hero-sub{font-size:16px;color:var(--muted);max-width:460px;line-height:1.6;margin:0 auto 28px}
 .hero-cta{margin-bottom:40px}
 .hero-cta .btn{padding:14px 36px;font-size:16px;border-radius:12px;box-shadow:0 4px 20px rgba(233,69,96,0.35)}
 .hero-features{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:48px}
@@ -357,30 +348,23 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
 <!-- LANDING -->
 <div id="landing">
   <div class="hero-section">
-    <!-- ESQUERDA: texto e CTA -->
-    <div class="hero-left">
-      <div class="brand-hero">
-        <div class="brand-logo-big">
-          <span class="brand-map-icon">🗺️</span>
-          <span class="brand-name">Mapa<em>Roots</em></span>
-        </div>
-        <p class="brand-tagline">Planeje. Explore. Compartilhe.</p>
+    <div class="brand-hero">
+      <div class="brand-logo-big">
+        <span class="brand-map-icon">🗺️</span>
+        <span class="brand-name">Mapa<em>Roots</em></span>
       </div>
-      <p class="hero-sub">Sua próxima grande rota começa aqui.<br/>Adicione destinos, calcule distâncias e compartilhe seu roteiro com quem vai junto.</p>
-      <div class="hero-cta">
-        <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
-      </div>
-      <div class="feature-cards">
-        <div class="feature-card"><div class="fc-icon">📍</div><div class="fc-title">Busca por cidade</div><div class="fc-desc">Digite o nome e adicione instantaneamente</div></div>
-        <div class="feature-card"><div class="fc-icon">🗺️</div><div class="fc-title">Clique no mapa</div><div class="fc-desc">Toque em qualquer ponto do mapa</div></div>
-        <div class="feature-card"><div class="fc-icon">📏</div><div class="fc-title">Distâncias reais</div><div class="fc-desc">Calculado pelas rotas reais de estrada</div></div>
-        <div class="feature-card"><div class="fc-icon">⏱</div><div class="fc-title">Tempo estimado</div><div class="fc-desc">Saiba quanto tempo vai levar cada trecho</div></div>
-        <div class="feature-card"><div class="fc-icon">📸</div><div class="fc-title">Exportar roteiro</div><div class="fc-desc">Baixe sua rota completa em imagem</div></div>
-      </div>
+      <p class="brand-tagline">Planeje. Explore. Compartilhe.</p>
     </div>
-    <!-- DIREITA: imagem hero -->
-    <div class="hero-right">
-      <img src="homeimg.webp" alt="MapaRoots — Planejador de Rotas de Viagem" loading="eager" fetchpriority="high"/>
+    <p class="hero-sub">Sua próxima grande rota começa aqui.<br/>Adicione destinos, calcule distâncias e compartilhe seu roteiro com quem vai junto.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="openApp()">Começar minha rota →</button>
+    </div>
+    <div class="feature-cards">
+      <div class="feature-card"><div class="fc-icon">📍</div><div class="fc-title">Busca por cidade</div><div class="fc-desc">Digite o nome e adicione instantaneamente</div></div>
+      <div class="feature-card"><div class="fc-icon">🗺️</div><div class="fc-title">Clique no mapa</div><div class="fc-desc">Toque em qualquer ponto do mapa</div></div>
+      <div class="feature-card"><div class="fc-icon">📏</div><div class="fc-title">Distâncias reais</div><div class="fc-desc">Calculado pelas rotas reais de estrada</div></div>
+      <div class="feature-card"><div class="fc-icon">⏱</div><div class="fc-title">Tempo estimado</div><div class="fc-desc">Saiba quanto tempo vai levar cada trecho</div></div>
+      <div class="feature-card"><div class="fc-icon">📸</div><div class="fc-title">Exportar roteiro</div><div class="fc-desc">Baixe sua rota completa em imagem</div></div>
     </div>
   </div>
 
@@ -430,7 +414,7 @@ select.modal-input option{background:var(--road-mid);color:var(--white)}
         <button class="btn btn-primary" style="width:100%;padding:11px;font-size:14px;font-weight:600" onclick="exportImage()">📸 Exportar roteiro</button>
         <!-- <button class="btn btn-ghost" style="width:100%;padding:10px;font-size:13px;border-color:var(--gold);color:var(--gold)" onclick="gerarRoteiroPDF()">📄 Gerar Roteiro de Viagem</button> -->
         <button class="btn btn-ghost" style="width:100%;padding:9px;font-size:13px" onclick="shareRoute()">🔗 Compartilhar rota</button>
-        <button class="btn btn-ghost" style="width:100%;padding:9px;font-size:13px;border-color:rgba(233,69,96,0.4);color:#e94560" onclick="clearAll()">🗑 Limpar rota</button>
+        <button class="btn btn-ghost" style="width:100%;padding:9px;font-size:13px;border-color:rgba(255,255,255,0.15);color:#cbd5e1;display:flex;align-items:center;justify-content:center;gap:6px" onclick="clearAll()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg> Limpar rota</button>
       </div>
     </div>
 
