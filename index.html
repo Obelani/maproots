@@ -821,10 +821,9 @@ function clearAll(){
   waypoints=[];markers.forEach(m=>m.setMap(null));markers=[];
   if(dirRender)dirRender.setDirections({routes:[]});
   // Limpar renderers dos chunks (rotas com mais de 25 pontos)
-  if(window._chunkRenderers){
-    window._chunkRenderers.forEach(r=>r.setMap(null));
-    window._chunkRenderers=[];
-  }
+  if(!window._chunkRenderers) window._chunkRenderers=[];
+  window._chunkRenderers.forEach(r=>r.setMap(null));
+  window._chunkRenderers=[];
   localStorage.removeItem('maproots_route');
   window._segs=[];
   updateLimitBanner();renderList([],null);updateStats(0,0);
@@ -833,7 +832,9 @@ function clearAll(){
 function recalc(){
   if(waypoints.length<2){
     if(dirRender)dirRender.setDirections({routes:[]});
-    if(window._chunkRenderers){window._chunkRenderers.forEach(r=>r.setMap(null));window._chunkRenderers=[];}
+    if(!window._chunkRenderers) window._chunkRenderers=[];
+    window._chunkRenderers.forEach(r=>r.setMap(null));
+    window._chunkRenderers=[];
     renderList([],null);updateStats(0,0);return;
   }
 
@@ -841,10 +842,9 @@ function recalc(){
   const total=waypoints.length;
 
   // Limpar renderers anteriores
-  if(window._chunkRenderers){
-    window._chunkRenderers.forEach(r=>r.setMap(null));
-    window._chunkRenderers=[];
-  }
+  if(!window._chunkRenderers) window._chunkRenderers=[];
+  window._chunkRenderers.forEach(r=>r.setMap(null));
+  window._chunkRenderers=[];
 
   // Dividir em chunks de MAX_WP+2 pontos
   const chunks=[];
@@ -859,6 +859,7 @@ function recalc(){
 
   // Um chunk — usa dirRender principal
   if(chunks.length===1){
+    dirRender.setMap(map); // garantir que está conectado ao mapa
     _routeChunk(chunks[0],dirRender,function(segs,td,tt,ok,errSt){
       showLoading(false);
       if(ok){updateStats(td,tt);window._segs=segs;renderList(segs,null);saveRoute();}
