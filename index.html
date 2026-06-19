@@ -820,6 +820,11 @@ function removePoint(idx){
 function clearAll(){
   waypoints=[];markers.forEach(m=>m.setMap(null));markers=[];
   if(dirRender)dirRender.setDirections({routes:[]});
+  // Limpar renderers dos chunks (rotas com mais de 25 pontos)
+  if(window._chunkRenderers){
+    window._chunkRenderers.forEach(r=>r.setMap(null));
+    window._chunkRenderers=[];
+  }
   localStorage.removeItem('maproots_route');
   window._segs=[];
   updateLimitBanner();renderList([],null);updateStats(0,0);
